@@ -1,753 +1,961 @@
-// merged_trolley.cpp
-// Single-file merge of: ProductCatalog (BST), CustomerManager (SLL),
-// Order (simple class), OrderHistory (DLL), CartStack (Stack), DeliveryQueue (Queue)
-
-#include <iostream>
-#include <string>
-#include <vector>
-#include <set>
-#include <cctype>
-#include <algorithm>
-#include <cmath>
-
-using namespace std;
-
-/* -------------------------
-   Helper functions
-   ------------------------- */
-void clearScreen() {
-    // Simple screen clear: prints newlines (portable)
-    for (int i = 0; i < 40; ++i) cout << "\n";
-}
-
-void waitForEnter() {
-    cout << "\nPress Enter to continue...";
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-}
-
-/* -------------------------
-   Product (BST)
-   ------------------------- */
-struct Product {
-    int ID;
-    string Name;
-    string Category;
-    double Price;
-    int Stock;
-
-    Product(int id = 0, string name = "", string cat = "",
-            double price = 0.0, int stock = 0) :
-        ID(id), Name(name), Category(cat), Price(price), Stock(stock) {}
-
-    void show() const {
-        cout << "\n-----------------------------------\n";
-        cout << "PRODUCT DETAILS:\n";
-        cout << "ID: " << ID << endl;
-        cout << "Name: " << Name << endl;
-        cout << "Category: " << Category << endl;
-        cout << "Price: $" << Price << endl;
-        cout << "Stock: " << Stock << endl;
-        cout << "-----------------------------------\n";
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Grocery Shop</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#101a2f;
+      --text:#e6edf6;
+      --muted:#9aa7bd;
+      --line:rgba(255,255,255,.08);
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --primary:#6d5efc;
+      --primary2:#4fd1c5;
+      --danger:#ef4444;
+      --radius:18px;
     }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1000px 600px at 20% 10%, rgba(109,94,252,.22) 0%, transparent 55%),
+                  radial-gradient(1000px 700px at 85% 20%, rgba(79,209,197,.14) 0%, transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    .logo-dot{
+      width:12px;height:12px;border-radius:999px;
+      background: linear-gradient(135deg, var(--primary), var(--primary2));
+      box-shadow: 0 0 20px rgba(109,94,252,.35);
+    }
+    .btn{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      transition: transform .05s ease, filter .2s ease;
+    }
+    .btn:active{transform:scale(.98)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(109,94,252,.95), rgba(79,209,197,.65));
+      border-color: transparent;
+    }
+    .btn.ghost{background: rgba(255,255,255,.02)}
+    .btn.danger{
+      background: rgba(239,68,68,.10);
+      border-color: rgba(239,68,68,.35);
+    }
+    .btn.full{width:100%}
+    .badge{
+      display:inline-flex;align-items:center;justify-content:center;
+      min-width:22px;height:22px;border-radius:999px;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.12);
+      margin-left:8px;font-size:12px;
+    }
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .muted{color:var(--muted)}
+    input,select{
+      width:100%;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      padding:12px 12px;
+      border-radius:14px;
+      outline:none;
+    }
+    input::placeholder{color:#6c7a95}
+    .alert{
+      margin-top:12px;
+      border:1px solid rgba(239,68,68,.35);
+      background: rgba(239,68,68,.10);
+      color: #ffd0d0;
+      padding:10px;
+      border-radius:14px;
+      display:none;
+      white-space:pre-wrap;
+    }
+
+    /* AUTH VIEW */
+    .auth-shell{
+      display:grid;
+      grid-template-columns: 440px 1fr;
+      width:100%;
+      min-height:100vh;
+    }
+    .auth-card{
+      padding:24px;
+      border-right:1px solid var(--line);
+      background: rgba(11,18,32,.80);
+      display:flex; flex-direction:column; gap:14px;
+    }
+    .auth-brand{display:flex;gap:10px;align-items:center}
+    .auth-brand h1{margin:0;font-size:18px}
+    .auth-brand p{margin:4px 0 0 0; color:var(--muted); font-size:12px}
+    .tabs{display:flex; gap:8px}
+    .tab{
+      flex:1;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      color:var(--muted);
+    }
+    .tab.active{
+      color:var(--text);
+      background: rgba(109,94,252,.14);
+      border-color: rgba(109,94,252,.30);
+    }
+    .tabpane{display:none; gap:10px}
+    .tabpane.active{display:grid}
+    .hint{margin:0;color:var(--muted);font-size:12px}
+    label{font-size:12px;color:var(--muted)}
+    .auth-side{
+      display:flex;align-items:center;justify-content:center;
+      padding:24px;
+    }
+    .auth-side-inner{
+      max-width:560px;
+      border:1px solid var(--line);
+      border-radius: 22px;
+      padding:22px;
+      background: rgba(255,255,255,.02);
+      box-shadow: var(--shadow);
+    }
+    .auth-side-inner h2{margin:0 0 10px 0}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .chip{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    /* SHOP VIEW */
+    .topbar{
+      position:sticky; top:0; z-index:10;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background: rgba(11,18,32,.72);
+      backdrop-filter: blur(10px);
+    }
+    .brand{display:flex;gap:10px;align-items:center}
+    .brand-title{font-weight:800;letter-spacing:.02em}
+    .brand-sub{font-size:12px;color:var(--muted)}
+    .top-actions{display:flex;gap:10px;align-items:center}
+
+    .layout{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:14px;
+      padding:14px;
+      height: calc(100vh - 64px);
+    }
+    .panel{
+      background: linear-gradient(180deg, rgba(16,26,47,.82), rgba(15,23,42,.78));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:14px;
+      overflow:auto;
+    }
+    .panel h2{margin:0;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .controls{display:grid;gap:10px;margin-top:12px}
+    .panel-divider{height:1px;background:var(--line);margin:14px 0}
+    .mini h3{margin:0 0 8px 0;font-size:13px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+    .mini-box{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      border-radius:16px;
+      padding:10px;
+      min-height:64px;
+    }
+
+    .content{
+      background: linear-gradient(180deg, rgba(16,26,47,.55), rgba(15,23,42,.45));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:auto;
+      padding:14px;
+    }
+    .content-head h1{margin:0;font-size:22px}
+    .content-head p{margin:8px 0 0 0}
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    .card{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: 16px;
+      padding:12px;
+    }
+    .card .top{
+      display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+    }
+    .card h3{margin:0;font-size:16px}
+    .card .meta{margin-top:6px;font-size:12px;color:var(--muted)}
+    .card .price{margin-top:10px;font-size:18px;font-weight:800}
+    .card .actions{margin-top:12px;display:flex;gap:8px;align-items:center}
+    .stepper{display:flex;gap:6px;align-items:center}
+    .stepper button{padding:8px 10px;border-radius:12px}
+    .stepper input{width:70px;text-align:center;padding:10px;border-radius:12px}
+
+    /* Drawer */
+    .drawer-backdrop, .modal-backdrop{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.48);
+      opacity:0; pointer-events:none;
+      transition: opacity .2s ease;
+    }
+    .drawer{
+      position:fixed; top:0; right:0; height:100vh; width:380px;
+      background: rgba(16,26,47,.92);
+      border-left:1px solid var(--line);
+      transform: translateX(102%);
+      transition: transform .22s ease;
+      display:flex; flex-direction:column;
+      z-index:20;
+    }
+    .drawer-head{
+      padding:14px;
+      display:flex;justify-content:space-between;align-items:center;
+      border-bottom:1px solid var(--line);
+    }
+    .drawer-list{padding:14px; overflow:auto; display:grid; gap:10px; flex:1}
+    .drawer-item{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:10px;
+      background: rgba(255,255,255,.03);
+    }
+    .drawer-item .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .drawer-item .name{font-weight:800}
+    .drawer-item .sub{font-size:12px;color:var(--muted);margin-top:4px}
+    .drawer-footer{padding:14px;border-top:1px solid var(--line);display:grid;gap:10px}
+    .row-between{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .row-between.total{font-size:16px}
+
+    /* Modal */
+    .modal{
+      position:fixed; left:50%; top:50%;
+      transform: translate(-50%,-50%) scale(.98);
+      width:min(900px, 92vw);
+      background: rgba(16,26,47,.94);
+      border:1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      opacity:0; pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+      z-index:30;
+    }
+    .modal-head{
+      padding:14px;
+      border-bottom:1px solid var(--line);
+      display:flex;justify-content:space-between;align-items:center;
+    }
+    .modal-body{padding:14px}
+    .two-col{display:grid;grid-template-columns: 1fr 1fr; gap:14px}
+    .field{display:grid;gap:6px;margin-top:10px}
+    .invoice{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      border-radius:16px;
+      padding:10px;
+      min-height:140px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:12px;
+      color: #dbe6ff;
+      white-space:pre;
+      overflow:auto;
+    }
+    .modal-actions{margin-top:12px}
+
+    .hidden{display:none !important}
+
+    @media (max-width: 980px){
+      .layout{grid-template-columns: 1fr; height:auto}
+      .grid{grid-template-columns: repeat(2, minmax(0,1fr))}
+      .auth-shell{grid-template-columns: 1fr}
+      .auth-card{border-right:none;border-bottom:1px solid var(--line)}
+    }
+    @media (max-width: 640px){
+      .grid{grid-template-columns: 1fr}
+      .drawer{width:92vw}
+      .two-col{grid-template-columns: 1fr}
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- AUTH VIEW -->
+<section id="authView" class="auth-shell">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="logo-dot"></div>
+      <div>
+        <h1>Grocery</h1>
+        <p>Log in to shop and track your deliveries.</p>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="login">Log in</button>
+      <button class="tab" data-tab="signup">Sign up</button>
+    </div>
+
+    <div class="tabpane active" id="tab-login">
+      <label>Email</label>
+      <input id="loginEmail" type="email" placeholder="you@email.com" autocomplete="email" />
+      <label>Password</label>
+      <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" />
+      <button class="btn primary" id="btnLogin">Log in</button>
+      <button class="btn ghost" id="btnForgot">Forgot password</button>
+    </div>
+
+    <div class="tabpane" id="tab-signup">
+      <label>Email</label>
+      <input id="signupEmail" type="email" placeholder="you@email.com" autocomplete="email" />
+      <label>Password</label>
+      <input id="signupPass" type="password" placeholder="Min 6 chars" autocomplete="new-password" />
+      <button class="btn primary" id="btnSignup">Create account</button>
+      <p class="hint">Firebase Email/Password must be enabled in Firebase Console.</p>
+    </div>
+
+    <div class="alert" id="authAlert"></div>
+  </div>
+
+  <div class="auth-side">
+    <div class="auth-side-inner">
+      <h2>Clean, modern grocery shopping.</h2>
+      <p class="muted">
+        Browse products, add items to cart, checkout, and track deliveries — all in one interface.
+      </p>
+      <div class="chips">
+        <span class="chip">Search</span>
+        <span class="chip">Categories</span>
+        <span class="chip">Cart drawer</span>
+        <span class="chip">Checkout invoice</span>
+        <span class="chip">Delivery queue</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP VIEW -->
+<section id="shopView" class="hidden">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-dot"></div>
+      <div>
+        <div class="brand-title">Grocery</div>
+        <div class="brand-sub">Browse • Cart • Checkout • Track</div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="pill" id="userPill">Signed in</div>
+      <button class="btn ghost" id="btnSignOut">Sign out</button>
+      <button class="btn primary" id="btnCart">Cart <span class="badge" id="cartBadge">0</span></button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel">
+      <div class="panel-head">
+        <h2>Discover</h2>
+        <p class="muted">Search by name, category, or ID.</p>
+      </div>
+
+      <div class="controls">
+        <input id="search" placeholder="Search (Milk, Dairy, 101)..." />
+        <select id="category">
+          <option value="">All categories</option>
+        </select>
+      </div>
+
+      <div class="panel-divider"></div>
+
+      <div class="mini">
+        <h3>My Orders</h3>
+        <div class="mini-box" id="ordersBox"><div class="muted">No orders yet.</div></div>
+
+        <h3 style="margin-top:14px;">Delivery Tracking</h3>
+        <div class="mini-box" id="deliveryBox"><div class="muted">No pending deliveries.</div></div>
+      </div>
+    </aside>
+
+    <section class="content">
+      <div class="content-head">
+        <h1>Shop</h1>
+        <p class="muted">Pick items, adjust quantities, then checkout.</p>
+      </div>
+
+      <div class="grid" id="productsGrid"></div>
+    </section>
+  </main>
+
+  <!-- CART DRAWER -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="drawer" id="cartDrawer">
+    <div class="drawer-head">
+      <h2>Your Cart</h2>
+      <button class="btn ghost" id="btnCloseCart">Close</button>
+    </div>
+
+    <div class="drawer-list" id="cartList"></div>
+
+    <div class="drawer-footer">
+      <div class="row-between">
+        <span class="muted">Subtotal</span>
+        <strong id="subtotal">$0.00</strong>
+      </div>
+      <div class="row-between total">
+        <span>Total</span>
+        <strong id="total">$0.00</strong>
+      </div>
+
+      <button class="btn primary full" id="btnCheckout">Proceed to Checkout</button>
+      <button class="btn danger full" id="btnClearCart">Clear cart</button>
+    </div>
+  </aside>
+
+  <!-- CHECKOUT MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal" id="checkoutModal">
+    <div class="modal-head">
+      <h2>Checkout</h2>
+      <button class="btn ghost" id="btnCloseCheckout">Close</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="two-col">
+        <div>
+          <h3 style="margin:0;">Customer</h3>
+          <p class="muted" style="margin:8px 0 0 0;">
+            For now (demo), enter your Customer ID.
+          </p>
+          <div class="field">
+            <label>Customer ID</label>
+            <input id="customerId" placeholder="e.g. 1001" />
+          </div>
+        </div>
+
+        <div>
+          <h3 style="margin:0;">Invoice Preview</h3>
+          <div class="invoice" id="invoicePreview"></div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn primary" id="btnPlaceOrder">Place Order</button>
+      </div>
+
+      <div class="alert" id="shopAlert"></div>
+    </div>
+  </div>
+</section>
+
+<script type="module">
+  // Firebase (ESM via CDN)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+  // ✅ Replace with YOUR Firebase config (Firebase Console → Project settings → Web app)
+  const firebaseConfig = {
+  apiKey: "AIzaSyCDQod1xzLOqAFgRDN50ohwLGWBtBwFVLc",
+  authDomain: "trolley-89d31.firebaseapp.com",
+  databaseURL: "https://trolley-89d31-default-rtdb.firebaseio.com",
+  projectId: "trolley-89d31",
+  storageBucket: "trolley-89d31.firebasestorage.app",
+  messagingSenderId: "129434473018",
+  appId: "1:129434473018:web:ae6b35d2d55526a7cedb03",
+  measurementId: "G-81TRQL41K5"
 };
 
-struct TreeNode {
-    Product data;
-    TreeNode* left;
-    TreeNode* right;
-    TreeNode(const Product& p) : data(p), left(nullptr), right(nullptr) {}
-};
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-class ProductCatalog {
-private:
-    TreeNode* root;
-    int count;
+  const $ = (s) => document.querySelector(s);
 
-    static string toLower(const string& s) {
-        string out = s;
-        transform(out.begin(), out.end(), out.begin(), [](unsigned char c){ return tolower(c); });
-        return out;
+  // Views
+  const authView = $("#authView");
+  const shopView = $("#shopView");
+
+  // Auth UI elements
+  const tabs = document.querySelectorAll(".tab");
+  const tabLogin = $("#tab-login");
+  const tabSignup = $("#tab-signup");
+  const authAlert = $("#authAlert");
+  const loginEmail = $("#loginEmail");
+  const loginPass = $("#loginPass");
+  const signupEmail = $("#signupEmail");
+  const signupPass = $("#signupPass");
+  const btnLogin = $("#btnLogin");
+  const btnSignup = $("#btnSignup");
+  const btnForgot = $("#btnForgot");
+
+  function showAuthAlert(msg){
+    authAlert.style.display = "block";
+    authAlert.textContent = msg;
+  }
+  function clearAuthAlert(){
+    authAlert.style.display = "none";
+    authAlert.textContent = "";
+  }
+
+  tabs.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      tabs.forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const which = btn.dataset.tab;
+      tabLogin.classList.toggle("active", which==="login");
+      tabSignup.classList.toggle("active", which==="signup");
+      clearAuthAlert();
+    });
+  });
+
+  btnLogin.addEventListener("click", async ()=>{
+    clearAuthAlert();
+    const email = loginEmail.value.trim();
+    const pass = loginPass.value;
+    if(!email || !pass) return showAuthAlert("Please enter email and password.");
+    try{
+      await signInWithEmailAndPassword(auth, email, pass);
+    }catch(e){
+      showAuthAlert(e.message);
+    }
+  });
+
+  btnSignup.addEventListener("click", async ()=>{
+    clearAuthAlert();
+    const email = signupEmail.value.trim();
+    const pass = signupPass.value;
+    if(!email || !pass) return showAuthAlert("Please enter email and password.");
+    if(pass.length < 6) return showAuthAlert("Password must be at least 6 characters.");
+    try{
+      await createUserWithEmailAndPassword(auth, email, pass);
+    }catch(e){
+      showAuthAlert(e.message);
+    }
+  });
+
+  btnForgot.addEventListener("click", async ()=>{
+    clearAuthAlert();
+    const email = loginEmail.value.trim();
+    if(!email) return showAuthAlert("Enter your email in the login email field first.");
+    try{
+      await sendPasswordResetEmail(auth, email);
+      showAuthAlert("Password reset email sent.");
+    }catch(e){
+      showAuthAlert(e.message);
+    }
+  });
+
+  // Shop UI elements
+  const userPill = $("#userPill");
+  const btnSignOut = $("#btnSignOut");
+  const search = $("#search");
+  const category = $("#category");
+  const productsGrid = $("#productsGrid");
+
+  const btnCart = $("#btnCart");
+  const cartBadge = $("#cartBadge");
+  const drawer = $("#cartDrawer");
+  const drawerBackdrop = $("#drawerBackdrop");
+  const btnCloseCart = $("#btnCloseCart");
+  const cartList = $("#cartList");
+  const subtotalEl = $("#subtotal");
+  const totalEl = $("#total");
+  const btnClearCart = $("#btnClearCart");
+  const btnCheckout = $("#btnCheckout");
+
+  const modalBackdrop = $("#modalBackdrop");
+  const checkoutModal = $("#checkoutModal");
+  const btnCloseCheckout = $("#btnCloseCheckout");
+  const customerId = $("#customerId");
+  const invoicePreview = $("#invoicePreview");
+  const btnPlaceOrder = $("#btnPlaceOrder");
+  const shopAlert = $("#shopAlert");
+
+  const ordersBox = $("#ordersBox");
+  const deliveryBox = $("#deliveryBox");
+
+  function showShopAlert(msg){
+    shopAlert.style.display = "block";
+    shopAlert.textContent = msg;
+  }
+  function clearShopAlert(){
+    shopAlert.style.display = "none";
+    shopAlert.textContent = "";
+  }
+
+  function setView(isLoggedIn){
+    authView.classList.toggle("hidden", isLoggedIn);
+    shopView.classList.toggle("hidden", !isLoggedIn);
+  }
+
+  btnSignOut.addEventListener("click", async ()=>{
+    await signOut(auth);
+  });
+
+  // ===== App State (demo) =====
+  const state = {
+    products: [
+      { ID: 101, Name: "Milk",  Category: "Dairy",   Price: 5.50, Stock: 20 },
+      { ID: 102, Name: "Bread", Category: "Bakery",  Price: 3.00, Stock: 30 },
+      { ID: 103, Name: "Eggs",  Category: "Dairy",   Price: 7.00, Stock: 50 },
+      { ID: 201, Name: "Apple", Category: "Produce", Price: 0.80, Stock: 100 },
+    ],
+    cart: new Map(), // productID -> {ID, Name, Price, qty}
+    orders: [],
+    deliveryQueue: []
+  };
+  let orderCounter = 1000;
+
+  const money = (n) => `$${n.toFixed(2)}`;
+
+  function openDrawer(){
+    drawer.style.transform = "translateX(0)";
+    drawerBackdrop.style.opacity = "1";
+    drawerBackdrop.style.pointerEvents = "auto";
+  }
+  function closeDrawer(){
+    drawer.style.transform = "translateX(102%)";
+    drawerBackdrop.style.opacity = "0";
+    drawerBackdrop.style.pointerEvents = "none";
+  }
+  function openCheckout(){
+    modalBackdrop.style.opacity = "1";
+    modalBackdrop.style.pointerEvents = "auto";
+    checkoutModal.style.opacity = "1";
+    checkoutModal.style.pointerEvents = "auto";
+    checkoutModal.style.transform = "translate(-50%,-50%) scale(1)";
+  }
+  function closeCheckout(){
+    modalBackdrop.style.opacity = "0";
+    modalBackdrop.style.pointerEvents = "none";
+    checkoutModal.style.opacity = "0";
+    checkoutModal.style.pointerEvents = "none";
+    checkoutModal.style.transform = "translate(-50%,-50%) scale(.98)";
+  }
+
+  function getCategories(){
+    return Array.from(new Set(state.products.map(p => p.Category))).sort();
+  }
+
+  function renderCategories(){
+    const cats = getCategories();
+    category.innerHTML = `<option value="">All categories</option>` +
+      cats.map(c=>`<option value="${c}">${c}</option>`).join("");
+  }
+
+  function renderProducts(){
+    const q = search.value.trim().toLowerCase();
+    const cat = category.value;
+
+    const filtered = state.products.filter(p=>{
+      if(cat && p.Category !== cat) return false;
+      if(!q) return true;
+      return (
+        String(p.ID).includes(q) ||
+        p.Name.toLowerCase().includes(q) ||
+        p.Category.toLowerCase().includes(q)
+      );
+    });
+
+    productsGrid.innerHTML = filtered.map(p=>{
+      const out = p.Stock <= 0;
+      return `
+        <div class="card">
+          <div class="top">
+            <div>
+              <h3>${p.Name}</h3>
+              <div class="meta">${p.Category} • ID ${p.ID}</div>
+            </div>
+            <div class="pill">${out ? "Out of stock" : `Stock: ${p.Stock}`}</div>
+          </div>
+
+          <div class="price">${money(p.Price)}</div>
+
+          <div class="actions">
+            <div class="stepper">
+              <button class="btn ghost" data-dec="${p.ID}">−</button>
+              <input data-qty="${p.ID}" value="1" />
+              <button class="btn ghost" data-inc="${p.ID}">+</button>
+            </div>
+            <button class="btn primary" data-add="${p.ID}" ${out ? "disabled" : ""}>Add</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    // steppers
+    productsGrid.querySelectorAll("[data-inc]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const id = Number(b.dataset.inc);
+        const inp = productsGrid.querySelector(`[data-qty="${id}"]`);
+        inp.value = String(Math.min(99, (Number(inp.value)||1) + 1));
+      });
+    });
+    productsGrid.querySelectorAll("[data-dec]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const id = Number(b.dataset.dec);
+        const inp = productsGrid.querySelector(`[data-qty="${id}"]`);
+        inp.value = String(Math.max(1, (Number(inp.value)||1) - 1));
+      });
+    });
+
+    // add
+    productsGrid.querySelectorAll("[data-add]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const id = Number(b.dataset.add);
+        const qty = Number(productsGrid.querySelector(`[data-qty="${id}"]`).value) || 1;
+        addToCart(id, qty);
+      });
+    });
+  }
+
+  function cartTotals(){
+    let subtotal = 0, count = 0;
+    for(const item of state.cart.values()){
+      subtotal += item.Price * item.qty;
+      count += item.qty;
+    }
+    return { subtotal, total: subtotal, count };
+  }
+
+  function renderCart(){
+    const items = Array.from(state.cart.values());
+    const { subtotal, total, count } = cartTotals();
+    cartBadge.textContent = String(count);
+
+    if(items.length === 0){
+      cartList.innerHTML = `<div class="muted">Your cart is empty.</div>`;
+    }else{
+      cartList.innerHTML = items.map(it=>{
+        const line = it.Price * it.qty;
+        return `
+          <div class="drawer-item">
+            <div class="row">
+              <div>
+                <div class="name">${it.Name}</div>
+                <div class="sub">${money(it.Price)} • ID ${it.ID}</div>
+              </div>
+              <strong>${money(line)}</strong>
+            </div>
+            <div class="row" style="margin-top:10px;">
+              <div class="pill">Qty: ${it.qty}</div>
+              <div style="margin-left:auto; display:flex; gap:8px;">
+                <button class="btn ghost" data-minus="${it.ID}">−</button>
+                <button class="btn ghost" data-plus="${it.ID}">+</button>
+                <button class="btn danger" data-remove="${it.ID}">Remove</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      cartList.querySelectorAll("[data-plus]").forEach(btn=>{
+        btn.addEventListener("click", ()=> addToCart(Number(btn.dataset.plus), 1));
+      });
+      cartList.querySelectorAll("[data-minus]").forEach(btn=>{
+        btn.addEventListener("click", ()=> removeQty(Number(btn.dataset.minus), 1));
+      });
+      cartList.querySelectorAll("[data-remove]").forEach(btn=>{
+        btn.addEventListener("click", ()=> removeItem(Number(btn.dataset.remove)));
+      });
     }
 
-    void collectCategories(TreeNode* node, set<string>& categories) {
-        if (!node) return;
-        categories.insert(node->data.Category);
-        collectCategories(node->left, categories);
-        collectCategories(node->right, categories);
+    subtotalEl.textContent = money(subtotal);
+    totalEl.textContent = money(total);
+  }
+
+  function renderOrdersAndDelivery(){
+    if(state.orders.length === 0){
+      ordersBox.innerHTML = `<div class="muted">No orders yet.</div>`;
+    }else{
+      const last = state.orders[state.orders.length - 1];
+      ordersBox.innerHTML = `
+        <div><strong>Last Order:</strong> #${last.orderID}</div>
+        <div class="muted">Items: ${last.lines.length} • Total: ${money(last.total)}</div>
+        <div class="muted">Customer ID: ${last.customerID}</div>
+      `;
     }
 
-    void showCategoryProducts(TreeNode* node, const string& category, bool& found) {
-        if (!node) return;
-        showCategoryProducts(node->left, category, found);
-        if (node->data.Category == category) {
-            node->data.show();
-            found = true;
-        }
-        showCategoryProducts(node->right, category, found);
+    if(state.deliveryQueue.length === 0){
+      deliveryBox.innerHTML = `<div class="muted">No pending deliveries.</div>`;
+    }else{
+      deliveryBox.innerHTML = state.deliveryQueue
+        .map((d, i)=>`<div>• ${d.label} <span class="muted">(pos ${i+1})</span></div>`)
+        .join("");
+    }
+  }
+
+  function renderInvoicePreview(){
+    const { subtotal, total } = cartTotals();
+    const lines = Array.from(state.cart.values()).map(it=>{
+      const line = it.Price * it.qty;
+      return `${it.Name.padEnd(14)} x${String(it.qty).padEnd(2)}  ${money(line)}`;
+    });
+
+    invoicePreview.textContent =
+`INVOICE PREVIEW
+---------------------------
+${lines.join("\n")}
+
+Subtotal: ${money(subtotal)}
+Total:    ${money(total)}
+`;
+  }
+
+  // Stock-aware cart ops
+  function addToCart(productID, qty){
+    clearShopAlert();
+    const p = state.products.find(x=>x.ID===productID);
+    if(!p || qty<=0) return;
+
+    if(p.Stock < qty){
+      showShopAlert(\`Insufficient stock for \${p.Name}. Available: \${p.Stock}\`);
+      return;
     }
 
-    TreeNode* addToTree(TreeNode* node, const Product& p) {
-        if (!node) return new TreeNode(p);
-        if (p.ID < node->data.ID) node->left = addToTree(node->left, p);
-        else node->right = addToTree(node->right, p);
-        return node;
+    p.Stock -= qty;
+    const existing = state.cart.get(productID);
+    if(existing) existing.qty += qty;
+    else state.cart.set(productID, { ID: p.ID, Name: p.Name, Price: p.Price, qty });
+
+    renderProducts();
+    renderCart();
+  }
+
+  function removeQty(productID, qty){
+    clearShopAlert();
+    const p = state.products.find(x=>x.ID===productID);
+    const it = state.cart.get(productID);
+    if(!p || !it) return;
+
+    const dec = Math.min(qty, it.qty);
+    it.qty -= dec;
+    p.Stock += dec;
+
+    if(it.qty <= 0) state.cart.delete(productID);
+
+    renderProducts();
+    renderCart();
+  }
+
+  function removeItem(productID){
+    clearShopAlert();
+    const p = state.products.find(x=>x.ID===productID);
+    const it = state.cart.get(productID);
+    if(!p || !it) return;
+
+    p.Stock += it.qty;
+    state.cart.delete(productID);
+
+    renderProducts();
+    renderCart();
+  }
+
+  function clearCart(){
+    for(const it of state.cart.values()){
+      const p = state.products.find(x=>x.ID===it.ID);
+      if(p) p.Stock += it.qty;
     }
+    state.cart.clear();
+    renderProducts();
+    renderCart();
+  }
 
-    TreeNode* findMin(TreeNode* node) {
-        if (!node) return nullptr;
-        while (node->left) node = node->left;
-        return node;
+  function placeOrder(){
+    clearShopAlert();
+    if(state.cart.size === 0) return showShopAlert("Cart is empty.");
+
+    const cid = customerId.value.trim();
+    if(!cid) return showShopAlert("Please enter a Customer ID (demo).");
+
+    const orderID = ++orderCounter;
+    const lines = Array.from(state.cart.values()).map(it=>({
+      name: it.Name, unit: it.Price, qty: it.qty, lineTotal: it.Price * it.qty
+    }));
+    const total = lines.reduce((s,l)=>s+l.lineTotal,0);
+
+    state.orders.push({ orderID, customerID: cid, lines, total });
+    state.deliveryQueue.push({ orderID, label: `Order ${orderID}` });
+
+    state.cart.clear();
+
+    closeCheckout();
+    closeDrawer();
+
+    renderProducts();
+    renderCart();
+    renderOrdersAndDelivery();
+  }
+
+  // Shop events
+  btnCart.addEventListener("click", ()=>{ renderCart(); openDrawer(); });
+  btnCloseCart.addEventListener("click", closeDrawer);
+  drawerBackdrop.addEventListener("click", closeDrawer);
+
+  btnClearCart.addEventListener("click", clearCart);
+
+  btnCheckout.addEventListener("click", ()=>{
+    if(state.cart.size === 0) return;
+    renderInvoicePreview();
+    openCheckout();
+  });
+  btnCloseCheckout.addEventListener("click", closeCheckout);
+  modalBackdrop.addEventListener("click", closeCheckout);
+
+  btnPlaceOrder.addEventListener("click", placeOrder);
+
+  search.addEventListener("input", renderProducts);
+  category.addEventListener("change", renderProducts);
+
+  // Auth state -> switch views
+  onAuthStateChanged(auth, (user) => {
+    if(user){
+      userPill.textContent = user.email || "Signed in";
+      setView(true);
+
+      // init shop once you’re in
+      renderCategories();
+      renderProducts();
+      renderCart();
+      renderOrdersAndDelivery();
+    }else{
+      setView(false);
     }
-
-    TreeNode* removeFromTree(TreeNode* node, int id) {
-        if (!node) return node;
-        if (id < node->data.ID) node->left = removeFromTree(node->left, id);
-        else if (id > node->data.ID) node->right = removeFromTree(node->right, id);
-        else {
-            if (!node->left) {
-                TreeNode* temp = node->right;
-                delete node;
-                return temp;
-            } else if (!node->right) {
-                TreeNode* temp = node->left;
-                delete node;
-                return temp;
-            } else {
-                TreeNode* temp = findMin(node->right);
-                node->data = temp->data;
-                node->right = removeFromTree(node->right, temp->data.ID);
-            }
-        }
-        return node;
-    }
-
-    Product* findProductNode(TreeNode* node, int id) {
-        TreeNode* current = node;
-        while (current) {
-            if (id == current->data.ID) return &(current->data);
-            else if (id < current->data.ID) current = current->left;
-            else current = current->right;
-        }
-        return nullptr;
-    }
-
-    void showTree(TreeNode* node) const {
-        if (!node) return;
-        showTree(node->left);
-        node->data.show();
-        showTree(node->right);
-    }
-
-    void inOrderSearch(TreeNode* node, const string& keyLower, vector<Product>& out) {
-        if (!node) return;
-        inOrderSearch(node->left, keyLower, out);
-        string nameL = toLower(node->data.Name);
-        string catL = toLower(node->data.Category);
-        string idS = to_string(node->data.ID);
-        if (nameL.find(keyLower) != string::npos ||
-            catL.find(keyLower) != string::npos ||
-            idS.find(keyLower) != string::npos) {
-            out.push_back(node->data);
-        }
-        inOrderSearch(node->right, keyLower, out);
-    }
-
-    void destroy(TreeNode* node) {
-        if (!node) return;
-        destroy(node->left);
-        destroy(node->right);
-        delete node;
-    }
-
-public:
-    ProductCatalog() : root(nullptr), count(0) {
-        cout << "\n=== PRODUCT CATALOG (BST) STARTED ===\n";
-    }
-
-    ~ProductCatalog() {
-        destroy(root);
-    }
-
-    void addProductInteractive() {
-        Product p;
-        cout << "\n--- Enter Product Details ---\n";
-        cout << "ID: "; cin >> p.ID;
-        cout << "Name: "; cin.ignore(); getline(cin, p.Name);
-        cout << "Category: "; getline(cin, p.Category);
-        cout << "Price: $"; cin >> p.Price;
-        cout << "Stock: "; cin >> p.Stock;
-
-        if (findProduct(p.ID) != nullptr) {
-            cout << "Error! Product ID " << p.ID << " already exists.\n";
-            return;
-        }
-        root = addToTree(root, p);
-        count++;
-        cout << "Product added successfully!\n";
-    }
-
-    void addProductDirect(const Product& p) {
-        if (findProduct(p.ID) != nullptr) return;
-        root = addToTree(root, p);
-        ++count;
-    }
-
-    void removeProductInteractive() {
-        if (!root) { cout << "Catalog is empty!\n"; return; }
-        int id; cout << "Enter Product ID to remove: "; cin >> id;
-        if (!findProduct(id)) { cout << "Product with ID " << id << " not found!\n"; return; }
-        root = removeFromTree(root, id);
-        --count;
-        cout << "Product removed successfully!\n";
-    }
-
-    Product* findProduct(int id) {
-        return findProductNode(root, id);
-    }
-
-    void showAll() const {
-        if (!root) { cout << "No products in catalog!\n"; return; }
-        cout << "\n=== ALL PRODUCTS (" << count << ") ===\n";
-        showTree(root);
-        cout << "===============================\n";
-    }
-
-    set<string> getAllCategories() {
-        set<string> cats;
-        collectCategories(root, cats);
-        return cats;
-    }
-
-    void showByCategoryInteractive() {
-        if (!root) { cout << "Catalog is empty!\n"; return; }
-        set<string> cats = getAllCategories();
-        if (cats.empty()) { cout << "No categories found!\n"; return; }
-        cout << "\n=== AVAILABLE CATEGORIES ===\n";
-        vector<string> cl;
-        int idx = 1;
-        for (auto &c : cats) { cout << idx << ". " << c << "\n"; cl.push_back(c); ++idx; }
-        cout << idx << ". Show ALL products\n";
-        cout << "Choose category number: ";
-        int choice; cin >> choice;
-        if (choice < 1 || choice > idx) { cout << "Invalid choice!\n"; return; }
-        if (choice == idx) { showAll(); return; }
-
-        bool found = false;
-        cout << "\n=== PRODUCTS IN CATEGORY: " << cl[choice-1] << " ===\n";
-        showCategoryProducts(root, cl[choice-1], found);
-        if (!found) cout << "No products found in this category.\n";
-    }
-
-    void searchByKeywordInteractive() {
-        cout << "\nEnter search keyword (name/category/id): ";
-        string kw; cin.ignore(); getline(cin, kw);
-        string keyLower = toLower(kw);
-        vector<Product> results;
-        inOrderSearch(root, keyLower, results);
-        if (results.empty()) {
-            cout << "No products found matching \"" << kw << "\".\n";
-            return;
-        }
-        cout << "\nSEARCH RESULTS:\n";
-        for (auto &p : results) {
-            p.show();
-        }
-    }
-
-};
-
-/* -------------------------
-   Customer Manager (SLL)
-   ------------------------- */
-struct Customer {
-    int ID;
-    string Name;
-    string Email;
-    string Phone;
-    string Address;
-
-    Customer(int id = 0, string name = "", string email = "", string phone = "", string address = "") :
-        ID(id), Name(name), Email(email), Phone(phone), Address(address) {}
-
-    void display() const {
-        cout << "\n═══════════════════════════════════\n";
-        cout << "          CUSTOMER DETAILS\n";
-        cout << "═══════════════════════════════════\n";
-        cout << "   ID:      " << ID << endl;
-        cout << "   Name:    " << Name << endl;
-        cout << "   Email:   " << Email << endl;
-        cout << "   Phone:   " << Phone << endl;
-        cout << "   Address: " << Address << endl;
-        cout << "═══════════════════════════════════\n";
-    }
-};
-
-struct CustNode {
-    Customer data;
-    CustNode* next;
-    CustNode(const Customer& c) : data(c), next(nullptr) {}
-};
-
-class CustomerManager {
-private:
-    CustNode* head;
-    CustNode* tail;
-    int customerCount;
-    int nextID;
-
-public:
-    CustomerManager() : head(nullptr), tail(nullptr), customerCount(0), nextID(1001) {
-        cout << "═══════════════════════════════════════════════════\n";
-        cout << "    WELCOME TO CUSTOMER MANAGEMENT SYSTEM\n";
-        cout << "═══════════════════════════════════════════════════\n";
-    }
-
-    ~CustomerManager() {
-        clearAllCustomers();
-    }
-
-    void addNewCustomerInteractive() {
-        Customer c;
-        c.ID = nextID++;
-        cout << "\n═══════════════════════════════════\n";
-        cout << "       ENTER CUSTOMER DETAILS\n";
-        cout << "═══════════════════════════════════\n";
-        cout << "Enter Name: "; cin.ignore(); getline(cin, c.Name);
-        cout << "Enter Email: "; getline(cin, c.Email);
-        cout << "Enter Phone: "; getline(cin, c.Phone);
-        cout << "Enter Address: "; getline(cin, c.Address);
-
-        CustNode* nn = new CustNode(c);
-        if (!head) head = tail = nn;
-        else { tail->next = nn; tail = nn; }
-        ++customerCount;
-        cout << "\n✅ Customer added successfully! ID: " << c.ID << "\n";
-    }
-
-    void displayAllCustomers() {
-        if (!head) { cout << "\n📭 No customers to display!\n"; return; }
-        cout << "\n═══════════════════════════════════════════════════\n";
-        cout << "              ALL CUSTOMERS (" << customerCount << ")\n";
-        cout << "═══════════════════════════════════════════════════\n";
-        CustNode* cur = head; int cnt = 1;
-        while (cur) {
-            cout << "\n【" << cnt++ << "】 ";
-            cout << "ID: " << cur->data.ID << " | ";
-            cout << "Name: " << cur->data.Name << " | ";
-            cout << "Phone: " << cur->data.Phone;
-            cur = cur->next;
-        }
-        cout << "\n═══════════════════════════════════════════════════\n";
-    }
-
-    Customer* findCustomer(int id) {
-        CustNode* cur = head;
-        while (cur) {
-            if (cur->data.ID == id) return &(cur->data);
-            cur = cur->next;
-        }
-        return nullptr;
-    }
-
-    void removeCustomerInteractive() {
-        if (!head) { cout << "\n📭 Customer list is empty!\n"; return; }
-        displayAllCustomers();
-        int id; cout << "\nEnter Customer ID to remove: "; cin >> id;
-        if (head->data.ID == id) {
-            CustNode* temp = head;
-            head = head->next;
-            cout << "\n✅ Customer removed: " << temp->data.Name << "\n";
-            delete temp;
-            --customerCount;
-            if (!head) tail = nullptr;
-            return;
-        }
-        CustNode* cur = head; CustNode* prev = nullptr;
-        while (cur && cur->data.ID != id) { prev = cur; cur = cur->next; }
-        if (!cur) { cout << "\n❌ Customer with ID " << id << " not found!\n"; return; }
-        prev->next = cur->next;
-        if (cur == tail) tail = prev;
-        cout << "\n✅ Customer removed: " << cur->data.Name << "\n";
-        delete cur;
-        --customerCount;
-    }
-
-    void displayCustomerDetailsInteractive() {
-        if (!head) { cout << "\n📭 Customer list is empty!\n"; return; }
-        int id; cout << "\nEnter Customer ID to view details: "; cin >> id;
-        Customer* c = findCustomer(id);
-        if (!c) { cout << "\n❌ Customer with ID " << id << " not found!\n"; return; }
-        cin.ignore();
-        c->display();
-    }
-
-    void displayStatistics() {
-        cout << "\n═══════════════════════════════════\n";
-        cout << "          SYSTEM STATISTICS\n";
-        cout << "═══════════════════════════════════\n";
-        cout << "   Total Customers: " << customerCount << endl;
-        cout << "   Next Customer ID: " << nextID << endl;
-        cout << "═══════════════════════════════════\n";
-    }
-
-    void clearAllCustomers() {
-        CustNode* cur = head;
-        while (cur) {
-            CustNode* tmp = cur;
-            cur = cur->next;
-            delete tmp;
-        }
-        head = tail = nullptr;
-        customerCount = 0;
-    }
-};
-
-/* -------------------------
-   Order class & OrderHistory (DLL)
-   ------------------------- */
-struct Order {
-    int orderID;
-    int customerID;
-    vector<string> itemNames;
-    vector<double> itemUnitPrices;
-    vector<int> itemQty;
-    double totalCost;
-
-    Order(int oid = 0, int cid = 0) : orderID(oid), customerID(cid), totalCost(0.0) {}
-
-    void addLine(const string& name, double unitPrice, int qty) {
-        itemNames.push_back(name);
-        itemUnitPrices.push_back(unitPrice);
-        itemQty.push_back(qty);
-        totalCost += unitPrice * qty;
-    }
-
-    void showInvoice() const {
-        cout << "\n===== INVOICE (Order ID: " << orderID << ") =====\n";
-        cout << "Customer ID: " << customerID << "\n";
-        double sum = 0.0;
-        for (size_t i = 0; i < itemNames.size(); ++i) {
-            double line = itemUnitPrices[i] * itemQty[i];
-            cout << i+1 << ". " << itemNames[i]
-                 << " | Qty: " << itemQty[i]
-                 << " | Unit: $" << itemUnitPrices[i]
-                 << " | Line Total: $" << line << "\n";
-            sum += line;
-        }
-        cout << "Recorded Total: $" << totalCost << "\n";
-        if (fabs(sum - totalCost) > 0.001) {
-            cout << "(Note: computed sum differs by $" << fabs(sum - totalCost) << ")\n";
-        }
-        cout << "=================================\n";
-    }
-};
-
-class OrderHistory {
-private:
-    struct Node {
-        Order* data;
-        Node* next;
-        Node* prev;
-        Node(Order* o) : data(o), next(nullptr), prev(nullptr) {}
-    };
-    Node* head;
-    Node* tail;
-
-public:
-    OrderHistory() : head(nullptr), tail(nullptr) {}
-
-    ~OrderHistory() {
-        Node* cur = head;
-        while (cur) {
-            Node* tmp = cur;
-            cur = cur->next;
-            delete tmp->data;
-            delete tmp;
-        }
-    }
-
-    bool isEmpty() const { return head == nullptr; }
-
-    void addOrder(Order* o) {
-        Node* nn = new Node(o);
-        if (isEmpty()) { head = tail = nn; return; }
-        tail->next = nn; nn->prev = tail; tail = nn;
-    }
-
-    Order* getLastOrder() const { return tail ? tail->data : nullptr; }
-
-    void showLastOrder() {
-        clearScreen();
-        cout << "LAST ORDER\n";
-        cout << "==========\n";
-        if (isEmpty()) { cout << "No previous orders found.\n"; waitForEnter(); return; }
-        Order* last = getLastOrder();
-        if (!last) { cout << "No previous orders found.\n"; waitForEnter(); return; }
-        last->showInvoice();
-        waitForEnter();
-    }
-};
-
-/* -------------------------
-   CartStack (STACK)
-   ------------------------- */
-class CartNode {
-public:
-    string itemName;
-    double price;
-    int qty;
-    CartNode* next;
-    CartNode(const string& n, double p, int q) : itemName(n), price(p), qty(q), next(nullptr) {}
-};
-
-class CartStack {
-private:
-    CartNode* top;
-
-public:
-    CartStack() : top(nullptr) {}
-
-    bool isEmpty() const { return top == nullptr; }
-
-    void pushItem(const string& name, double price, int qty = 1) {
-        CartNode* nn = new CartNode(name, price, qty);
-        nn->next = top;
-        top = nn;
-        cout << "Added to cart: " << name << " ($" << price << ") x" << qty << "\n";
-    }
-
-    void popItem() {
-        if (isEmpty()) { cout << "Cart is empty. Nothing to remove.\n"; return; }
-        CartNode* del = top;
-        cout << "Removed: " << top->itemName << endl;
-        top = top->next;
-        delete del;
-    }
-
-    void displayCart() const {
-        if (isEmpty()) { cout << "Cart is empty.\n"; return; }
-        CartNode* temp = top;
-        cout << "\nItems in cart (LIFO):\n";
-        while (temp) {
-            cout << "- " << temp->itemName << " ($" << temp->price << ") x" << temp->qty << "\n";
-            temp = temp->next;
-        }
-    }
-
-    bool empty() const { return isEmpty(); }
-
-    // Build an Order from the cart (consumes the stack)
-    Order* checkout(int orderID, int customerID) {
-        Order* o = new Order(orderID, customerID);
-        // Since stack is LIFO, we'll collect into a temporary vector then reverse to present in insertion order
-        vector<CartNode*> nodes;
-        while (top) {
-            nodes.push_back(top);
-            top = top->next;
-        }
-        // Nodes now hold pointers but ownership still with heap; we will create order lines and then delete nodes
-        for (auto it = nodes.rbegin(); it != nodes.rend(); ++it) {
-            CartNode* n = *it;
-            o->addLine(n->itemName, n->price, n->qty);
-        }
-        // delete nodes
-        for (CartNode* n : nodes) delete n;
-        return o;
-    }
-
-    // clear without checkout
-    void clear() {
-        while (top) {
-            CartNode* tmp = top; top = top->next; delete tmp;
-        }
-    }
-};
-
-/* -------------------------
-   DeliveryQueue (QUEUE)
-   ------------------------- */
-class DeliveryNode {
-public:
-    string orderName;
-    int orderID;
-    DeliveryNode* next;
-    DeliveryNode(const string& name = "", int id = 0) : orderName(name), orderID(id), next(nullptr) {}
-};
-
-class DeliveryQueue {
-private:
-    DeliveryNode* front;
-    DeliveryNode* rear;
-
-public:
-    DeliveryQueue() : front(nullptr), rear(nullptr) {}
-
-    bool isEmpty() const { return front == nullptr && rear == nullptr; }
-
-    void enqueueDelivery(const string& orderName, int orderID) {
-        DeliveryNode* nn = new DeliveryNode(orderName, orderID);
-        if (isEmpty()) { front = rear = nn; }
-        else { rear->next = nn; rear = nn; }
-        cout << "Order \"" << orderName << "\" (ID " << orderID << ") added to delivery queue.\n";
-    }
-
-    void dequeueDelivery() {
-        if (isEmpty()) { cout << "No deliveries in queue.\n"; return; }
-        DeliveryNode* del = front;
-        cout << "Delivery completed: " << front->orderName << " (ID " << front->orderID << ")\n";
-        if (front == rear) { front = rear = nullptr; }
-        else front = front->next;
-        delete del;
-    }
-
-    void showPendingDeliveries() const {
-        if (isEmpty()) { cout << "No pending deliveries.\n"; return; }
-        DeliveryNode* temp = front;
-        cout << "Pending deliveries:\n";
-        while (temp) {
-            cout << "- " << temp->orderName << " (ID " << temp->orderID << ")\n";
-            temp = temp->next;
-        }
-    }
-
-    void clear() {
-        while (!isEmpty()) dequeueDelivery();
-    }
-};
-
-/* -------------------------
-   Unified main & menus
-   ------------------------- */
-void productsMenu(ProductCatalog& catalog) {
-    int choice = 0;
-    while (choice != 6) {
-        cout << "\n====== PRODUCTS MENU ======\n";
-        cout << "1. Add Product\n2. Remove Product\n3. Search Product (by ID)\n4. Search by keyword\n5. Show products by category\n6. Show all / Back\n";
-        cout << "Enter choice: "; cin >> choice;
-        switch (choice) {
-            case 1: catalog.addProductInteractive(); break;
-            case 2: catalog.removeProductInteractive(); break;
-            case 3: {
-                cout << "Enter Product ID to search: "; int id; cin >> id;
-                Product* p = catalog.findProduct(id);
-                if (p) p->show(); else cout << "Product not found.\n";
-                break;
-            }
-            case 4: catalog.searchByKeywordInteractive(); break;
-            case 5: catalog.showByCategoryInteractive(); break;
-            case 6: catalog.showAll(); break;
-            default: cout << "Wrong choice! Try again.\n";
-        }
-    }
-}
-
-void customersMenu(CustomerManager& mgr) {
-    int choice = 0;
-    while (choice != 6) {
-        cout << "\n═══════════════════════════════════\n";
-        cout << "            CUSTOMERS MENU\n";
-        cout << "1. Add New Customer\n2. Remove Customer\n3. Search Customer (view details)\n4. View All Customers\n5. Display Statistics\n6. Back\n";
-        cout << "Enter your choice: "; cin >> choice;
-        switch (choice) {
-            case 1: mgr.addNewCustomerInteractive(); break;
-            case 2: mgr.removeCustomerInteractive(); break;
-            case 3: mgr.displayCustomerDetailsInteractive(); break;
-            case 4: mgr.displayAllCustomers(); break;
-            case 5: mgr.displayStatistics(); break;
-            case 6: break;
-            default: cout << "Invalid choice!\n";
-        }
-    }
-}
-
-int main() {
-    ProductCatalog catalog;
-    CustomerManager customers;
-    OrderHistory orders;
-    CartStack cart;
-    DeliveryQueue deliveries;
-
-    // Preload some products (optional)
-    catalog.addProductDirect(Product(101, "Milk", "Dairy", 5.50, 20));
-    catalog.addProductDirect(Product(102, "Bread", "Bakery", 3.00, 30));
-    catalog.addProductDirect(Product(103, "Eggs", "Dairy", 7.00, 50));
-    catalog.addProductDirect(Product(201, "Apple", "Produce", 0.8, 100));
-
-    int orderCounter = 1000;
-    int topChoice = 0;
-
-    while (topChoice != 9) {
-        cout << "\n====== MAIN MENU ======\n";
-        cout << "1. Products\n2. Customers\n3. View Cart\n4. Add Product to Cart\n5. Remove top item from Cart\n6. Checkout / Place Order\n7. View Last Order\n8. Delivery Queue\n9. Exit\n";
-        cout << "Enter choice: "; cin >> topChoice;
-        switch (topChoice) {
-            case 1: productsMenu(catalog); break;
-            case 2: customersMenu(customers); break;
-            case 3: {
-                cin.ignore();
-                cart.displayCart();
-                waitForEnter();
-                break;
-            }
-            case 4: {
-                cout << "Enter Product ID to add to cart: "; int pid; cin >> pid;
-                Product* p = catalog.findProduct(pid);
-                if (!p) { cout << "Product not found!\n"; break; }
-                cout << "Enter quantity: "; int q; cin >> q;
-                if (q <= 0) { cout << "Invalid quantity.\n"; break; }
-                if (p->Stock < q) { cout << "Insufficient stock. Available: " << p->Stock << "\n"; break; }
-                // Deduct stock
-                p->Stock -= q;
-                cart.pushItem(p->Name, p->Price, q);
-                break;
-            }
-            case 5: {
-                cart.popItem();
-                break;
-            }
-            case 6: {
-                // Checkout: need a customer ID
-                cout << "Enter Customer ID for this order: "; int cid; cin >> cid;
-                Customer* c = customers.findCustomer(cid);
-                if (!c) { cout << "Customer not found! Please add customer first.\n"; break; }
-                if (cart.empty()) { cout << "Cart empty! Add items before checkout.\n"; break; }
-                int oid = ++orderCounter;
-                Order* o = cart.checkout(oid, cid);
-                orders.addOrder(o);
-                // Enqueue for delivery with simple name
-                deliveries.enqueueDelivery("Order " + to_string(oid), oid);
-                cout << "\nOrder placed successfully. Order ID: " << oid << "\n";
-                o->showInvoice();
-                waitForEnter();
-                break;
-            }
-            case 7:
-                orders.showLastOrder();
-                break;
-            case 8: {
-                int dc = 0;
-                while (dc != 4) {
-                    cout << "\n--- DELIVERY QUEUE MENU ---\n";
-                    cout << "1. Show pending deliveries\n2. Complete next delivery\n3. Clear all deliveries\n4. Back\n";
-                    cout << "Enter choice: "; cin >> dc;
-                    switch (dc) {
-                        case 1: deliveries.showPendingDeliveries(); break;
-                        case 2: deliveries.dequeueDelivery(); break;
-                        case 3: deliveries.clear(); break;
-                        case 4: break;
-                        default: cout << "Invalid choice.\n";
-                    }
-                }
-                break;
-            }
-            case 9:
-                cout << "\n=== PROGRAM ENDED ===\n";
-                break;
-            default:
-                cout << "Wrong choice! Try again.\n";
-        }
-    }
-
-    // cleanup (destructors will run)
-    return 0;
-}
+  });
+</script>
+</body>
+</html>
