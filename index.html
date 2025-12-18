@@ -3,531 +3,324 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Trolley • Grocery</title>
+  <title>Trolley Dashboard</title>
 
-  <!-- Modern font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      /* Modern palette (deep navy + teal + violet) */
-      --bg0:#070A12;
-      --bg1:#0B1220;
-      --card: rgba(255,255,255,.06);
-      --card2: rgba(255,255,255,.045);
-      --line: rgba(255,255,255,.10);
-      --text:#EAF0FF;
-      --muted: rgba(234,240,255,.66);
+      --bg:#F6F8FC;
+      --panel:#FFFFFF;
+      --text:#0F172A;
+      --muted:#64748B;
+      --line:#E6EAF2;
 
-      --a1:#7C5CFF;    /* violet */
-      --a2:#20E3B2;    /* mint */
-      --a3:#26C6F9;    /* cyan */
+      --brand:#2563EB;       /* blue */
+      --brand2:#06B6D4;      /* cyan */
+      --good:#16A34A;
+      --warn:#F59E0B;
+      --bad:#EF4444;
 
-      --danger:#FF4D6D;
-      --warn:#FFB020;
-
-      --radius: 18px;
-      --radius2: 24px;
-
-      --shadow: 0 28px 80px rgba(0,0,0,.55);
-      --shadow2: 0 14px 40px rgba(0,0,0,.42);
+      --radius:16px;
+      --shadow: 0 18px 40px rgba(15, 23, 42, .08);
+      --shadow2: 0 10px 22px rgba(15, 23, 42, .06);
     }
 
-    *{ box-sizing:border-box }
-    html,body{ height:100% }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color: var(--text);
-      background:
-        radial-gradient(900px 560px at 18% 10%, rgba(124,92,255,.26) 0%, transparent 55%),
-        radial-gradient(900px 560px at 82% 14%, rgba(38,198,249,.16) 0%, transparent 55%),
-        radial-gradient(900px 560px at 40% 110%, rgba(32,227,178,.12) 0%, transparent 60%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow-x:hidden;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1000px 600px at 20% 0%, rgba(37,99,235,.10), transparent 55%),
+                  radial-gradient(900px 600px at 85% 10%, rgba(6,182,212,.10), transparent 55%),
+                  var(--bg);
+      color:var(--text);
     }
 
-    /* subtle animated noise-like overlay */
-    body:before{
-      content:"";
-      position:fixed; inset:-2px;
-      pointer-events:none;
-      background:
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,.04), transparent 35%),
-        radial-gradient(circle at 80% 60%, rgba(255,255,255,.03), transparent 40%);
-      mix-blend-mode: overlay;
-      opacity:.55;
-      filter: blur(10px);
-    }
-
-    a{ color:inherit; text-decoration:none }
-    .hidden{ display:none !important; }
-
-    /* Utility */
-    .row{ display:flex; gap:10px; align-items:center; }
-    .between{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
-    .muted{ color: var(--muted); }
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    a{color:inherit; text-decoration:none}
+    .hidden{display:none!important}
 
     /* Buttons */
     .btn{
       border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 14px;
+      background:#fff;
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
       cursor:pointer;
-      transition: transform .08s ease, background .2s ease, border-color .2s ease, filter .2s ease;
-      user-select:none;
+      transition: transform .06s ease, box-shadow .2s ease, border-color .2s ease;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, .04);
     }
-    .btn:hover{
-      background: rgba(255,255,255,.06);
-      border-color: rgba(255,255,255,.16);
-    }
-    .btn:active{ transform: scale(.98); }
+    .btn:hover{border-color:#D7DDEA; box-shadow: 0 10px 18px rgba(15, 23, 42, .06)}
+    .btn:active{transform:scale(.99)}
     .btn.primary{
       border-color: transparent;
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(32,227,178,.70));
-      box-shadow: 0 10px 30px rgba(124,92,255,.18);
+      color:#fff;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      box-shadow: 0 14px 26px rgba(37,99,235,.20);
     }
-    .btn.primary:hover{ filter: brightness(1.05); }
+    .btn.ghost{background: transparent}
     .btn.danger{
-      background: rgba(255,77,109,.12);
-      border-color: rgba(255,77,109,.35);
+      background:#fff;
+      border-color:#F1C7C7;
+      color: var(--bad);
     }
-    .btn.ghost{
-      background: rgba(255,255,255,.02);
-    }
-    .btn.full{ width:100%; }
-    .btn.icon{
-      padding:10px 10px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
-    .btn[disabled]{ opacity:.45; cursor:not-allowed; }
+    .btn.full{width:100%}
 
     /* Inputs */
     input, select{
       width:100%;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-      padding: 12px 12px;
-      border-radius: 14px;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
       outline:none;
-      transition: border-color .2s ease, background .2s ease;
+      background:#fff;
+      color:var(--text);
     }
-    input:focus, select:focus{
-      border-color: rgba(124,92,255,.55);
-      background: rgba(255,255,255,.045);
-    }
-    input::placeholder{ color: rgba(234,240,255,.45); }
+    input:focus, select:focus{border-color: rgba(37,99,235,.45); box-shadow: 0 0 0 4px rgba(37,99,235,.08)}
+    label{font-size:12px;color:var(--muted)}
 
-    /* Chips / badges */
-    .badge{
-      min-width: 22px;
-      height: 22px;
-      padding: 0 8px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      font-size:12px;
-      color: rgba(234,240,255,.85);
-    }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      color: rgba(234,240,255,.70);
-      font-size: 12px;
-    }
-    .chip{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      padding: 8px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      color: rgba(234,240,255,.75);
-      cursor:pointer;
-      transition: background .2s ease, border-color .2s ease, transform .08s ease;
-      user-select:none;
-    }
-    .chip:hover{ background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.16); }
-    .chip:active{ transform: scale(.98); }
-
-    /* Cards / panels (glass) */
-    .glass{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: var(--radius2);
-      box-shadow: var(--shadow2);
-      backdrop-filter: blur(12px);
-    }
-
-    /* Topbar */
-    .topbar{
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      background: rgba(6,10,18,.55);
-      backdrop-filter: blur(14px);
-    }
-    .topbar-inner{
-      max-width: 1200px;
-      margin: 0 auto;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width: 240px;
-    }
-    .logo{
-      width: 36px;
-      height: 36px;
-      border-radius: 14px;
-      background: radial-gradient(10px 10px at 30% 30%, rgba(255,255,255,.9), transparent 40%),
-                  linear-gradient(135deg, rgba(124,92,255,.95), rgba(32,227,178,.75));
-      box-shadow: 0 12px 30px rgba(124,92,255,.22);
-    }
-    .brand-title{ font-weight: 800; letter-spacing: .02em; }
-    .brand-sub{ font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-    /* Layout */
-    .container{
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-    .layout{
-      display:grid;
-      grid-template-columns: 360px 1fr;
-      gap: 14px;
-      align-items:start;
-    }
-
-    /* Sidebar */
-    .sidebar{ padding: 14px; }
-    .sidebar h3{
-      margin: 0;
-      font-size: 14px;
-      letter-spacing: .10em;
-      text-transform: uppercase;
-      color: rgba(234,240,255,.70);
-    }
-    .sidebar p{ margin: 8px 0 0 0; color: var(--muted); font-size: 13px; }
-    .block{ margin-top: 14px; display:grid; gap: 10px; }
-    .divider{ height:1px; background: rgba(255,255,255,.08); margin: 14px 0; }
-    .mini-title{
-      font-size: 12px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: rgba(234,240,255,.62);
-      margin: 0 0 8px 0;
-    }
-    .mini-box{
+    /* Cards */
+    .card{
+      background: var(--panel);
+      border:1px solid var(--line);
       border-radius: var(--radius);
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      padding: 10px;
-      min-height: 60px;
+      box-shadow: var(--shadow2);
+    }
+    .card.pad{padding:16px}
+    .muted{color:var(--muted)}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      color:var(--muted);
+      background:#fff;
+      font-size:12px;
+    }
+    .badge{
+      min-width:22px;height:22px;
+      border-radius:999px;
+      padding:0 8px;
+      display:inline-flex;align-items:center;justify-content:center;
+      background:#EEF2FF;
+      border:1px solid #E0E7FF;
+      color:#3730A3;
+      font-size:12px;
+      font-weight:600;
     }
 
-    /* Main content */
-    .main{ padding: 14px; }
-    .hero{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap: 12px;
-      margin-bottom: 12px;
+    /* AUTH */
+    .auth-wrap{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:18px;
     }
-    .hero h1{
-      margin: 0;
-      font-size: 26px;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
+    .auth-shell{
+      width:min(980px, 96vw);
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      overflow:hidden;
+      border-radius: 22px;
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      background:#fff;
     }
-    .hero p{
-      margin: 6px 0 0 0;
+    .auth-left{padding:18px; border-right:1px solid var(--line)}
+    .auth-right{padding:18px; background: linear-gradient(135deg, rgba(37,99,235,.06), rgba(6,182,212,.06))}
+    .logo{
+      width:34px;height:34px;border-radius:12px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+    }
+    .tabs{display:flex; gap:10px; margin-top:14px}
+    .tab{
+      flex:1;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--muted);
+      cursor:pointer;
+      font-weight:600;
+    }
+    .tab.active{
+      color: var(--text);
+      border-color: rgba(37,99,235,.35);
+      background: rgba(37,99,235,.06);
+    }
+    .pane{display:none; gap:10px; margin-top:12px}
+    .pane.active{display:grid}
+    .alert{
+      display:none;
+      margin-top:12px;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid rgba(239,68,68,.35);
+      background: rgba(239,68,68,.07);
+      color:#7F1D1D;
+      white-space:pre-wrap;
+    }
+
+    /* APP LAYOUT */
+    .app{
+      display:grid;
+      grid-template-columns: 260px 1fr;
+      min-height:100vh;
+    }
+    .sidebar{
+      position:sticky;
+      top:0;
+      height:100vh;
+      padding:14px;
+      border-right:1px solid var(--line);
+      background: rgba(255,255,255,.70);
+      backdrop-filter: blur(10px);
+    }
+    .side-top{
+      display:flex;align-items:center;gap:10px;
+      padding:10px;
+      border-radius:16px;
+      background:#fff;
+      border:1px solid var(--line);
+      box-shadow: var(--shadow2);
+    }
+    .side-top .title{font-weight:800}
+    .side-top .sub{font-size:12px;color:var(--muted); margin-top:2px}
+
+    .nav{
+      margin-top:14px;
+      display:grid;
+      gap:6px;
+    }
+    .nav a{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
       color: var(--muted);
-      font-size: 13px;
+      border:1px solid transparent;
     }
+    .nav a.active{
+      background: rgba(37,99,235,.08);
+      border-color: rgba(37,99,235,.18);
+      color: var(--text);
+      font-weight:700;
+    }
+    .nav a:hover{background: rgba(15,23,42,.04)}
+    .side-bottom{
+      position:absolute;
+      left:14px; right:14px; bottom:14px;
+      display:grid;
+      gap:10px;
+    }
+
+    .main{
+      padding:18px;
+    }
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      margin-bottom:16px;
+    }
+    .topbar h1{margin:0;font-size:22px}
+    .top-actions{display:flex;gap:10px;align-items:center}
+    .grid4{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:12px;
+    }
+    .stat .label{font-size:12px;color:var(--muted)}
+    .stat .value{font-size:22px;font-weight:800;margin-top:6px}
+    .stat .sub{font-size:12px;color:var(--muted);margin-top:6px}
+
+    /* Tables */
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px 10px; border-bottom:1px solid var(--line); text-align:left; font-size:13px}
+    th{color:var(--muted); font-weight:700; font-size:12px; letter-spacing:.03em; text-transform:uppercase}
+    tr:hover td{background: rgba(15,23,42,.02)}
 
     /* Products grid */
-    .grid{
+    .products-grid{
       display:grid;
       grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 12px;
+      gap:12px;
+      margin-top:12px;
     }
-    .product{
-      border-radius: var(--radius2);
-      border: 1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
-      overflow:hidden;
-      transition: transform .12s ease, border-color .2s ease, background .2s ease;
-    }
-    .product:hover{
-      transform: translateY(-2px);
-      border-color: rgba(255,255,255,.16);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
-    }
-    .product-top{
-      padding: 12px;
-      display:flex;
-      justify-content:space-between;
-      gap: 10px;
-      align-items:flex-start;
-    }
-    .thumb{
-      height: 96px;
-      border-radius: 16px;
-      margin: 0 12px 12px 12px;
-      border:1px solid rgba(255,255,255,.10);
-      background:
-        radial-gradient(50px 50px at 30% 30%, rgba(124,92,255,.25), transparent 60%),
-        radial-gradient(60px 60px at 70% 60%, rgba(32,227,178,.18), transparent 65%),
-        rgba(255,255,255,.03);
-    }
-    .pname{
-      margin:0;
-      font-weight: 800;
-      font-size: 16px;
-      letter-spacing: -0.01em;
-    }
-    .pmeta{
-      margin-top: 6px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .price{
-      margin: 6px 0 0 0;
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-    }
-    .product-bottom{
-      padding: 12px;
-      display:flex;
-      gap: 10px;
-      align-items:center;
-      justify-content:space-between;
-      border-top: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.02);
-    }
-    .stepper{
-      display:flex;
-      gap: 6px;
-      align-items:center;
-    }
-    .stepper input{
-      width: 72px;
-      text-align:center;
-      padding: 10px;
-      border-radius: 14px;
-    }
+    .p-item{padding:14px}
+    .p-name{font-weight:800}
+    .p-meta{font-size:12px;color:var(--muted); margin-top:6px}
+    .p-price{font-size:18px;font-weight:800;margin-top:10px}
+    .p-actions{margin-top:12px; display:flex; gap:10px; align-items:center; justify-content:space-between}
+    .stepper{display:flex; gap:6px; align-items:center}
+    .stepper button{padding:10px 12px}
+    .stepper input{width:70px; text-align:center}
 
-    /* Drawer (cart) */
+    /* Drawer (Cart) */
     .backdrop{
       position:fixed; inset:0;
-      background: rgba(0,0,0,.55);
+      background: rgba(15,23,42,.42);
       opacity:0; pointer-events:none;
       transition: opacity .18s ease;
-      z-index: 20;
+      z-index: 50;
     }
     .drawer{
       position:fixed;
-      top: 0;
-      right: 0;
-      height: 100vh;
+      right:18px;
+      top:18px;
       width: 420px;
-      transform: translateX(102%);
-      transition: transform .20s ease;
-      z-index: 25;
-      padding: 14px;
-      display:flex;
-      flex-direction:column;
-      gap: 12px;
-    }
-    .drawer-card{
-      flex:1;
-      padding: 14px;
+      max-width: calc(100vw - 36px);
+      height: calc(100vh - 36px);
+      transform: translateX(110%);
+      transition: transform .2s ease;
+      z-index: 60;
       display:flex;
       flex-direction:column;
       overflow:hidden;
     }
     .drawer-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap: 10px;
-      margin-bottom: 8px;
+      padding:14px;
+      border-bottom:1px solid var(--line);
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
     }
-    .drawer-list{
-      overflow:auto;
-      display:grid;
-      gap: 10px;
-      padding-right: 2px;
-    }
-    .cart-item{
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      border-radius: 18px;
-      padding: 10px;
-    }
-    .cart-item .name{ font-weight: 800; }
-    .cart-item .sub{ font-size: 12px; color: var(--muted); margin-top: 4px; }
-    .drawer-footer{
-      border-top: 1px solid rgba(255,255,255,.08);
-      padding-top: 12px;
-      display:grid;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .totalRow{
-      font-size: 16px;
-      font-weight: 800;
-    }
-
-    /* Modal */
-    .modal{
-      position:fixed;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%,-50%) scale(.98);
-      width: min(920px, 94vw);
-      opacity:0; pointer-events:none;
-      transition: opacity .18s ease, transform .18s ease;
-      z-index: 30;
-      padding: 14px;
-    }
-    .modal-card{ padding: 14px; }
-    .modal-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .modal-grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .invoice{
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      border-radius: 18px;
-      padding: 12px;
-      min-height: 170px;
-      white-space: pre;
-      overflow:auto;
-      color: rgba(234,240,255,.90);
-      font-size: 12px;
-    }
-
-    /* Auth */
-    .authShell{
-      min-height: 100vh;
-      display:grid;
-      grid-template-columns: 460px 1fr;
-    }
-    .authLeft{
-      padding: 22px;
-      border-right: 1px solid rgba(255,255,255,.08);
-      background: rgba(6,10,18,.58);
-      backdrop-filter: blur(14px);
-    }
-    .authCard{
-      margin-top: 14px;
-      padding: 16px;
-    }
-    .tabs{
-      display:flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    .tab{
-      flex:1;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      color: rgba(234,240,255,.72);
-      cursor:pointer;
-    }
-    .tab.active{
-      background: linear-gradient(135deg, rgba(124,92,255,.18), rgba(32,227,178,.10));
-      border-color: rgba(124,92,255,.40);
-      color: rgba(234,240,255,.95);
-    }
-    .pane{ display:none; gap: 10px; margin-top: 12px; }
-    .pane.active{ display:grid; }
-    .authRight{
-      padding: 22px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .feature{
-      max-width: 640px;
-      padding: 18px;
-    }
-    .feature h2{ margin:0; font-size: 28px; letter-spacing: -0.02em; }
-    .feature p{ margin: 10px 0 0 0; color: var(--muted); line-height: 1.5; }
-    .featureGrid{
-      margin-top: 14px;
-      display:flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+    .drawer-body{padding:14px; overflow:auto; display:grid; gap:10px; flex:1}
+    .drawer-foot{padding:14px; border-top:1px solid var(--line); display:grid; gap:10px}
+    .cart-item{padding:12px}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .cart-sub{font-size:12px;color:var(--muted); margin-top:4px}
 
     /* Responsive */
-    @media (max-width: 1020px){
-      .layout{ grid-template-columns: 1fr; }
-      .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .authShell{ grid-template-columns: 1fr; }
-      .authLeft{ border-right:none; border-bottom: 1px solid rgba(255,255,255,.08); }
+    @media (max-width: 1100px){
+      .grid4{grid-template-columns: repeat(2, minmax(0,1fr))}
+      .products-grid{grid-template-columns: repeat(2, minmax(0,1fr))}
     }
-    @media (max-width: 640px){
-      .grid{ grid-template-columns: 1fr; }
-      .drawer{ width: 94vw; }
-      .modal-grid{ grid-template-columns: 1fr; }
+    @media (max-width: 860px){
+      .app{grid-template-columns: 1fr}
+      .sidebar{position:relative;height:auto}
+      .side-bottom{position:relative;left:auto;right:auto;bottom:auto}
+      .auth-shell{grid-template-columns: 1fr}
+      .auth-left{border-right:none;border-bottom:1px solid var(--line)}
+    }
+    @media (max-width: 560px){
+      .products-grid{grid-template-columns: 1fr}
+      .grid4{grid-template-columns: 1fr}
     }
   </style>
 </head>
-
 <body>
 
   <!-- AUTH VIEW -->
-  <section id="authView" class="authShell">
-    <div class="authLeft">
-      <div class="row" style="gap:12px;">
-        <div class="logo"></div>
-        <div>
-          <div style="font-weight:800;">Trolley</div>
-          <div class="muted" style="font-size:12px; margin-top:2px;">Sign in to shop + track deliveries</div>
+  <section id="authView" class="auth-wrap">
+    <div class="auth-shell">
+      <div class="auth-left">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div class="logo"></div>
+          <div>
+            <div style="font-weight:800;">Trolley</div>
+            <div class="muted" style="font-size:12px;">Customer shopping dashboard</div>
+          </div>
         </div>
-      </div>
 
-      <div class="glass authCard">
         <div class="tabs">
           <button class="tab active" data-tab="login">Log in</button>
           <button class="tab" data-tab="signup">Sign up</button>
@@ -535,179 +328,252 @@
 
         <div id="paneLogin" class="pane active">
           <label>Email</label>
-          <input id="loginEmail" type="email" placeholder="you@email.com">
+          <input id="loginEmail" type="email" placeholder="you@email.com" />
           <label>Password</label>
-          <input id="loginPass" type="password" placeholder="••••••••">
+          <input id="loginPass" type="password" placeholder="••••••••" />
           <button id="btnLogin" class="btn primary full">Log in</button>
           <button id="btnForgot" class="btn ghost full">Forgot password</button>
         </div>
 
         <div id="paneSignup" class="pane">
           <label>Email</label>
-          <input id="signupEmail" type="email" placeholder="you@email.com">
+          <input id="signupEmail" type="email" placeholder="you@email.com" />
           <label>Password</label>
-          <input id="signupPass" type="password" placeholder="Min 6 chars">
+          <input id="signupPass" type="password" placeholder="Min 6 chars" />
           <button id="btnSignup" class="btn primary full">Create account</button>
-          <div class="muted" style="font-size:12px; line-height:1.4;">
-            Make sure Firebase → Authentication → Email/Password is enabled.
+          <div class="muted" style="font-size:12px;line-height:1.4;">
+            Enable Firebase Authentication → Email/Password.
           </div>
         </div>
 
         <div id="authAlert" class="alert"></div>
       </div>
-    </div>
 
-    <div class="authRight">
-      <div class="glass feature">
-        <div class="between">
-          <div class="pill"><span class="badge">v1</span> Customer shopping app</div>
-          <div class="pill mono">BST • SLL • Stack • DLL • Queue</div>
-        </div>
-
-        <h2 style="margin-top:12px;">A modern grocery experience.</h2>
-        <p>
-          Browse products, build your cart, checkout, and track delivery — with Firebase authentication.
-        </p>
-
-        <div class="featureGrid">
-          <span class="chip">Fast search</span>
-          <span class="chip">Clean UI</span>
-          <span class="chip">Cart drawer</span>
-          <span class="chip">Checkout invoice</span>
-          <span class="chip">Delivery tracking</span>
+      <div class="auth-right">
+        <div class="card pad">
+          <div class="pill"><span class="badge">UI</span> Sidebar pages like your screenshot</div>
+          <h2 style="margin:12px 0 6px 0;">Clean dashboard layout</h2>
+          <p class="muted" style="margin:0;line-height:1.6;">
+            Dashboard cards, products page, cart drawer, orders table, delivery queue,
+            and settings — all in one single file.
+          </p>
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+            <span class="pill">Dashboard</span>
+            <span class="pill">Products</span>
+            <span class="pill">Customers</span>
+            <span class="pill">Orders</span>
+            <span class="pill">Delivery</span>
+            <span class="pill">Settings</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- SHOP VIEW -->
-  <section id="shopView" class="hidden">
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand">
-          <div class="logo"></div>
-          <div>
-            <div class="brand-title">Trolley</div>
-            <div class="brand-sub">Browse • Cart • Checkout • Track</div>
-          </div>
-        </div>
+  <!-- APP VIEW -->
+  <section id="appView" class="app hidden">
 
-        <div class="row" style="gap:10px;">
-          <div id="userPill" class="pill">Signed in</div>
-          <button id="btnSignOut" class="btn ghost">Sign out</button>
-          <button id="btnCart" class="btn primary icon">
-            🛒 Cart <span id="cartBadge" class="badge">0</span>
-          </button>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="side-top">
+        <div class="logo"></div>
+        <div>
+          <div class="title">Trolley</div>
+          <div class="sub">Customer App</div>
         </div>
       </div>
-    </header>
 
-    <div class="container">
-      <div class="layout">
-        <aside class="glass sidebar">
-          <h3>Discover</h3>
-          <p>Search by name, category, or ID.</p>
+      <nav class="nav" id="nav">
+        <a href="#dashboard" data-page="dashboard" class="active">🏠 Dashboard</a>
+        <a href="#products"  data-page="products">🛒 Products</a>
+        <a href="#customers" data-page="customers">👤 Customers</a>
+        <a href="#orders"    data-page="orders">🧾 Orders</a>
+        <a href="#delivery"  data-page="delivery">🚚 Delivery</a>
+        <a href="#settings"  data-page="settings">⚙️ Settings</a>
+      </nav>
 
-          <div class="block">
-            <input id="search" placeholder="Try: Milk / Dairy / 101">
-            <select id="category">
-              <option value="">All categories</option>
-            </select>
-          </div>
-
-          <div class="divider"></div>
-
-          <div>
-            <div class="mini-title">My Orders</div>
-            <div id="ordersBox" class="mini-box muted">No orders yet.</div>
-          </div>
-
-          <div style="margin-top:14px;">
-            <div class="mini-title">Delivery Tracking</div>
-            <div id="deliveryBox" class="mini-box muted">No pending deliveries.</div>
-          </div>
-        </aside>
-
-        <main class="glass main">
-          <div class="hero">
-            <div>
-              <h1>Shop</h1>
-              <p>Pick items, adjust quantities, then checkout.</p>
-            </div>
-            <div class="pill">Tip: use the cart button on the top right</div>
-          </div>
-
-          <div id="productsGrid" class="grid"></div>
-        </main>
-      </div>
-    </div>
-
-    <!-- Backdrop + Cart Drawer -->
-    <div id="drawerBackdrop" class="backdrop"></div>
-    <aside id="cartDrawer" class="drawer">
-      <div class="glass drawer-card">
-        <div class="drawer-head">
-          <div>
-            <div style="font-weight:800;">Your Cart</div>
-            <div class="muted" style="font-size:12px;">Edit quantities before checkout</div>
-          </div>
-          <button id="btnCloseCart" class="btn ghost">Close</button>
+      <div class="side-bottom">
+        <div class="card pad">
+          <div class="muted" style="font-size:12px;">Signed in as</div>
+          <div id="userEmail" style="font-weight:700; margin-top:6px;">—</div>
         </div>
-
-        <div id="cartList" class="drawer-list muted">Your cart is empty.</div>
-
-        <div class="drawer-footer">
-          <div class="between">
-            <div class="muted">Subtotal</div>
-            <div id="subtotal" style="font-weight:800;">$0.00</div>
-          </div>
-          <div class="between totalRow">
-            <div>Total</div>
-            <div id="total">$0.00</div>
-          </div>
-
-          <button id="btnCheckout" class="btn primary full">Proceed to Checkout</button>
-          <button id="btnClearCart" class="btn danger full">Clear cart</button>
-        </div>
+        <button id="btnSignOut" class="btn danger">Logout</button>
       </div>
     </aside>
 
-    <!-- Checkout Modal -->
-    <div id="modalBackdrop" class="backdrop"></div>
-    <div id="checkoutModal" class="modal">
-      <div class="glass modal-card">
-        <div class="modal-head">
-          <div>
-            <div style="font-weight:800;">Checkout</div>
-            <div class="muted" style="font-size:12px;">Review invoice + place order</div>
-          </div>
-          <button id="btnCloseCheckout" class="btn ghost">Close</button>
+    <!-- MAIN -->
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <div class="muted" id="pageSubtitle">Overview and recent activity.</div>
         </div>
-
-        <div class="modal-grid">
-          <div>
-            <div class="mini-title">Customer</div>
-            <div class="muted" style="font-size:13px;">(Demo) Enter your Customer ID.</div>
-
-            <div style="margin-top:10px;">
-              <label>Customer ID</label>
-              <input id="customerId" placeholder="e.g. 1001">
-            </div>
-
-            <button id="btnPlaceOrder" class="btn primary full" style="margin-top:12px;">
-              Place Order
-            </button>
-
-            <div id="shopAlert" class="alert"></div>
-          </div>
-
-          <div>
-            <div class="mini-title">Invoice Preview</div>
-            <div id="invoicePreview" class="invoice mono"></div>
-          </div>
+        <div class="top-actions">
+          <div class="pill">Branch: <b>All</b></div>
+          <button id="btnCartOpen" class="btn primary">Cart <span id="cartCount" class="badge">0</span></button>
         </div>
       </div>
-    </div>
+
+      <!-- PAGES -->
+
+      <!-- DASHBOARD -->
+      <section data-view="dashboard">
+        <div class="grid4">
+          <div class="card pad stat">
+            <div class="label">Sales Today</div>
+            <div class="value" id="salesToday">$0.00</div>
+            <div class="sub">Net of returns.</div>
+          </div>
+          <div class="card pad stat">
+            <div class="label">Sales Orders Today</div>
+            <div class="value" id="ordersToday">0</div>
+            <div class="sub">Number of sales orders.</div>
+          </div>
+          <div class="card pad stat">
+            <div class="label">Return Orders Today</div>
+            <div class="value" id="returnsToday">0</div>
+            <div class="sub">Number of returns.</div>
+          </div>
+          <div class="card pad stat">
+            <div class="label">Active Branches</div>
+            <div class="value">1</div>
+            <div class="sub">Branches marked active.</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;" class="card pad">
+          <div style="font-weight:800;">Recent Orders</div>
+          <div class="muted" style="font-size:12px;margin-top:4px;">Last 10 orders.</div>
+          <div style="margin-top:10px; overflow:auto;">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Date</th><th>Customer</th><th>Total</th></tr>
+              </thead>
+              <tbody id="recentOrdersBody">
+                <tr><td colspan="4" class="muted">No orders yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRODUCTS -->
+      <section data-view="products" class="hidden">
+        <div class="card pad">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <input id="search" placeholder="Search by name / category / ID (e.g., Milk, Dairy, 101)" style="flex:1; min-width:240px;">
+            <select id="category" style="width:220px;">
+              <option value="">All categories</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="products-grid" id="productsGrid"></div>
+      </section>
+
+      <!-- CUSTOMERS -->
+      <section data-view="customers" class="hidden">
+        <div class="card pad">
+          <div style="font-weight:800;">Customers (demo)</div>
+          <div class="muted" style="font-size:12px;margin-top:4px;">
+            In your C++ this is SLL. Here we show a simple table.
+          </div>
+          <div style="margin-top:10px; overflow:auto;">
+            <table>
+              <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+              <tbody id="customersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ORDERS -->
+      <section data-view="orders" class="hidden">
+        <div class="card pad">
+          <div style="font-weight:800;">Orders</div>
+          <div class="muted" style="font-size:12px;margin-top:4px;">
+            In your C++ this is DLL (OrderHistory). Here we list placed orders.
+          </div>
+          <div style="margin-top:10px; overflow:auto;">
+            <table>
+              <thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Total</th></tr></thead>
+              <tbody id="ordersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- DELIVERY -->
+      <section data-view="delivery" class="hidden">
+        <div class="card pad">
+          <div style="font-weight:800;">Delivery Queue</div>
+          <div class="muted" style="font-size:12px;margin-top:4px;">
+            In your C++ this is a Queue. Here we show pending deliveries.
+          </div>
+
+          <div style="margin-top:10px;" id="deliveryList" class="muted">No pending deliveries.</div>
+
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button id="btnCompleteDelivery" class="btn">Complete next delivery</button>
+            <button id="btnClearDeliveries" class="btn danger">Clear all</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section data-view="settings" class="hidden">
+        <div class="card pad">
+          <div style="font-weight:800;">Settings</div>
+          <div class="muted" style="font-size:12px;margin-top:4px;">
+            Put your project info, DS explanation, or export JSON button here.
+          </div>
+
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button id="btnExportJSON" class="btn primary">Export Data JSON</button>
+          </div>
+
+          <div class="muted" style="font-size:12px; margin-top:10px;">
+            Export includes products, customers, orders, delivery queue (demo).
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- CART DRAWER -->
+    <div id="backdrop" class="backdrop"></div>
+    <aside id="drawer" class="drawer card">
+      <div class="drawer-head">
+        <div>
+          <div style="font-weight:800;">Cart</div>
+          <div class="muted" style="font-size:12px;">Add/remove items then checkout</div>
+        </div>
+        <button id="btnCartClose" class="btn">Close</button>
+      </div>
+
+      <div id="cartBody" class="drawer-body">
+        <div class="muted">Your cart is empty.</div>
+      </div>
+
+      <div class="drawer-foot">
+        <div class="row">
+          <div class="muted">Subtotal</div>
+          <div style="font-weight:800;" id="subtotal">$0.00</div>
+        </div>
+        <div class="row">
+          <div style="font-weight:800;">Total</div>
+          <div style="font-weight:900;" id="total">$0.00</div>
+        </div>
+
+        <label>Customer ID (demo)</label>
+        <input id="customerId" placeholder="e.g., 1001" />
+
+        <button id="btnCheckout" class="btn primary full">Checkout</button>
+        <button id="btnClearCart" class="btn danger full">Clear Cart</button>
+
+        <div id="shopAlert" class="alert"></div>
+      </div>
+    </aside>
+
   </section>
 
 <script type="module">
@@ -721,10 +587,9 @@
     signOut
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-  // ============================
-  // 1) PASTE YOUR FIREBASE CONFIG HERE
-  // Firebase Console -> Project settings -> Your apps -> Web app config
-  // ============================
+  // ======================================================
+  // PASTE YOUR FIREBASE CONFIG HERE (Project settings -> Web)
+  // ======================================================
   const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -735,127 +600,128 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  const $ = (s) => document.querySelector(s);
+  const $ = (s)=>document.querySelector(s);
+  const $$ = (s)=>Array.from(document.querySelectorAll(s));
+  const money = (n)=>`$${n.toFixed(2)}`;
 
   // Views
   const authView = $("#authView");
-  const shopView = $("#shopView");
-  const setView = (logged) => {
-    authView.classList.toggle("hidden", logged);
-    shopView.classList.toggle("hidden", !logged);
-  };
+  const appView  = $("#appView");
 
-  // Auth UI
-  const tabs = document.querySelectorAll(".tab");
-  const paneLogin = $("#paneLogin");
-  const paneSignup = $("#paneSignup");
+  function setAppVisible(isLoggedIn){
+    authView.classList.toggle("hidden", isLoggedIn);
+    appView.classList.toggle("hidden", !isLoggedIn);
+  }
+
+  // AUTH UI
   const authAlert = $("#authAlert");
-  const showAuthAlert = (m) => { authAlert.style.display="block"; authAlert.textContent=m; };
-  const clearAuthAlert = () => { authAlert.style.display="none"; authAlert.textContent=""; };
+  const showAuthAlert = (m)=>{ authAlert.style.display="block"; authAlert.textContent=m; };
+  const clearAuthAlert= ()=>{ authAlert.style.display="none"; authAlert.textContent=""; };
 
-  tabs.forEach(t => t.addEventListener("click", () => {
-    tabs.forEach(x => x.classList.remove("active"));
-    t.classList.add("active");
-    const which = t.dataset.tab;
-    paneLogin.classList.toggle("active", which==="login");
-    paneSignup.classList.toggle("active", which==="signup");
-    clearAuthAlert();
-  }));
+  $$(".tab").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      $$(".tab").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const which = btn.dataset.tab;
+      $("#paneLogin").classList.toggle("active", which==="login");
+      $("#paneSignup").classList.toggle("active", which==="signup");
+      clearAuthAlert();
+    });
+  });
 
-  $("#btnLogin").addEventListener("click", async () => {
+  $("#btnLogin").addEventListener("click", async ()=>{
     clearAuthAlert();
     const email = $("#loginEmail").value.trim();
     const pass  = $("#loginPass").value;
     if(!email || !pass) return showAuthAlert("Enter email and password.");
-    try { await signInWithEmailAndPassword(auth, email, pass); }
+    try{ await signInWithEmailAndPassword(auth, email, pass); }
     catch(e){ showAuthAlert(e.message); }
   });
 
-  $("#btnSignup").addEventListener("click", async () => {
+  $("#btnSignup").addEventListener("click", async ()=>{
     clearAuthAlert();
     const email = $("#signupEmail").value.trim();
     const pass  = $("#signupPass").value;
     if(!email || !pass) return showAuthAlert("Enter email and password.");
     if(pass.length < 6) return showAuthAlert("Password must be at least 6 characters.");
-    try { await createUserWithEmailAndPassword(auth, email, pass); }
+    try{ await createUserWithEmailAndPassword(auth, email, pass); }
     catch(e){ showAuthAlert(e.message); }
   });
 
-  $("#btnForgot").addEventListener("click", async () => {
+  $("#btnForgot").addEventListener("click", async ()=>{
     clearAuthAlert();
     const email = $("#loginEmail").value.trim();
     if(!email) return showAuthAlert("Type your email in the login field first.");
-    try { await sendPasswordResetEmail(auth, email); showAuthAlert("Password reset email sent."); }
+    try{ await sendPasswordResetEmail(auth, email); showAuthAlert("Password reset email sent."); }
     catch(e){ showAuthAlert(e.message); }
   });
 
-  // Shop UI refs
-  const userPill = $("#userPill");
+  // Sign out
   $("#btnSignOut").addEventListener("click", async ()=>{ await signOut(auth); });
 
-  const search = $("#search");
-  const category = $("#category");
-  const productsGrid = $("#productsGrid");
-
-  const drawerBackdrop = $("#drawerBackdrop");
-  const cartDrawer = $("#cartDrawer");
-  const modalBackdrop = $("#modalBackdrop");
-  const checkoutModal = $("#checkoutModal");
-
-  const openDrawer = () => { cartDrawer.style.transform="translateX(0)"; drawerBackdrop.style.opacity="1"; drawerBackdrop.style.pointerEvents="auto"; };
-  const closeDrawer= () => { cartDrawer.style.transform="translateX(102%)"; drawerBackdrop.style.opacity="0"; drawerBackdrop.style.pointerEvents="none"; };
-  const openModal  = () => { checkoutModal.style.opacity="1"; checkoutModal.style.pointerEvents="auto"; checkoutModal.style.transform="translate(-50%,-50%) scale(1)"; modalBackdrop.style.opacity="1"; modalBackdrop.style.pointerEvents="auto"; };
-  const closeModal = () => { checkoutModal.style.opacity="0"; checkoutModal.style.pointerEvents="none"; checkoutModal.style.transform="translate(-50%,-50%) scale(.98)"; modalBackdrop.style.opacity="0"; modalBackdrop.style.pointerEvents="none"; };
-
-  $("#btnCart").addEventListener("click", ()=>{ renderCart(); openDrawer(); });
-  $("#btnCloseCart").addEventListener("click", closeDrawer);
-  drawerBackdrop.addEventListener("click", closeDrawer);
-
-  $("#btnCloseCheckout").addEventListener("click", closeModal);
-  modalBackdrop.addEventListener("click", closeModal);
-
-  const cartBadge = $("#cartBadge");
-  const cartList = $("#cartList");
-  const subtotalEl = $("#subtotal");
-  const totalEl = $("#total");
-  const shopAlert = $("#shopAlert");
-  const invoicePreview = $("#invoicePreview");
-  const customerId = $("#customerId");
-
-  const showShopAlert = (m) => { shopAlert.style.display="block"; shopAlert.textContent=m; };
-  const clearShopAlert= () => { shopAlert.style.display="none"; shopAlert.textContent=""; };
-
-  // Demo state (you can later load from Firestore)
+  // ===== Demo Data (you can later swap to Firestore) =====
   const state = {
     products: [
-      { ID: 101, Name: "Milk",  Category: "Dairy",   Price: 5.50, Stock: 20 },
-      { ID: 102, Name: "Bread", Category: "Bakery",  Price: 3.00, Stock: 30 },
-      { ID: 103, Name: "Eggs",  Category: "Dairy",   Price: 7.00, Stock: 50 },
-      { ID: 201, Name: "Apple", Category: "Produce", Price: 0.80, Stock: 100 },
-      { ID: 202, Name: "Banana",Category: "Produce", Price: 0.60, Stock: 120 },
-      { ID: 301, Name: "Yogurt",Category: "Dairy",   Price: 2.25, Stock: 40 },
+      { ID:101, Name:"Milk",   Category:"Dairy",   Price:5.50, Stock:20 },
+      { ID:102, Name:"Bread",  Category:"Bakery",  Price:3.00, Stock:30 },
+      { ID:103, Name:"Eggs",   Category:"Dairy",   Price:7.00, Stock:50 },
+      { ID:201, Name:"Apple",  Category:"Produce", Price:0.80, Stock:100 },
+      { ID:202, Name:"Banana", Category:"Produce", Price:0.60, Stock:120 },
+      { ID:301, Name:"Yogurt", Category:"Dairy",   Price:2.25, Stock:40 }
     ],
-    cart: new Map(),
-    orders: [],
-    deliveryQueue: []
+    customers: [
+      { ID:1001, Name:"Demo Customer", Email:"demo@trolley.com", Phone:"+20..." },
+      { ID:1002, Name:"Second Customer", Email:"second@trolley.com", Phone:"+20..." }
+    ],
+    cart: new Map(),      // productID -> {ID, Name, Price, qty}
+    orders: [],           // {orderID, date, customerID, total, lines[]}
+    deliveryQueue: []     // {orderID, label}
   };
   let orderCounter = 1000;
-  const money = (n)=>`$${n.toFixed(2)}`;
 
-  // Sidebar boxes
-  const ordersBox = $("#ordersBox");
-  const deliveryBox = $("#deliveryBox");
+  // ===== Sidebar routing (pages) =====
+  const pageTitle = $("#pageTitle");
+  const pageSubtitle = $("#pageSubtitle");
 
-  function getCategories(){
-    return Array.from(new Set(state.products.map(p=>p.Category))).sort();
+  const pageMeta = {
+    dashboard: { title:"Dashboard", subtitle:"Overview and recent activity." },
+    products:  { title:"Products",  subtitle:"Browse groceries and add to cart." },
+    customers: { title:"Customers", subtitle:"Customer list (demo table)." },
+    orders:    { title:"Orders",    subtitle:"Your order history." },
+    delivery:  { title:"Delivery",  subtitle:"Queue of pending deliveries." },
+    settings:  { title:"Settings",  subtitle:"Export JSON and project info." }
+  };
+
+  function showPage(page){
+    // update nav active
+    $$("#nav a").forEach(a => a.classList.toggle("active", a.dataset.page === page));
+    // show/hide sections
+    $$("section[data-view]").forEach(sec => sec.classList.toggle("hidden", sec.dataset.view !== page));
+    // titles
+    const m = pageMeta[page] || pageMeta.dashboard;
+    pageTitle.textContent = m.title;
+    pageSubtitle.textContent = m.subtitle;
   }
+
+  function currentHashPage(){
+    const p = (location.hash || "#dashboard").replace("#","");
+    return pageMeta[p] ? p : "dashboard";
+  }
+
+  window.addEventListener("hashchange", ()=> showPage(currentHashPage()));
+
+  // ===== Products rendering =====
+  const productsGrid = $("#productsGrid");
+  const search = $("#search");
+  const category = $("#category");
+
   function renderCategories(){
-    const cats = getCategories();
+    const cats = Array.from(new Set(state.products.map(p=>p.Category))).sort();
     category.innerHTML = `<option value="">All categories</option>` + cats.map(c=>`<option value="${c}">${c}</option>`).join("");
   }
 
   function renderProducts(){
-    const q = search.value.trim().toLowerCase();
+    const q = (search.value || "").trim().toLowerCase();
     const cat = category.value;
 
     const filtered = state.products.filter(p=>{
@@ -865,24 +731,17 @@
     });
 
     productsGrid.innerHTML = filtered.map(p=>{
-      const out = p.Stock<=0;
+      const out = p.Stock <= 0;
       return `
-        <div class="product">
-          <div class="product-top">
-            <div>
-              <div class="pname">${p.Name}</div>
-              <div class="pmeta">${p.Category} • ID ${p.ID}</div>
-              <div class="price">${money(p.Price)}</div>
-            </div>
-            <div class="pill">${out ? "Out of stock" : `Stock: ${p.Stock}`}</div>
-          </div>
+        <div class="card p-item">
+          <div class="p-name">${p.Name}</div>
+          <div class="p-meta">${p.Category} • ID ${p.ID} • Stock: ${p.Stock}</div>
+          <div class="p-price">${money(p.Price)}</div>
 
-          <div class="thumb"></div>
-
-          <div class="product-bottom">
+          <div class="p-actions">
             <div class="stepper">
               <button class="btn ghost" data-dec="${p.ID}">−</button>
-              <input data-qty="${p.ID}" value="1" inputmode="numeric">
+              <input data-qty="${p.ID}" value="1" />
               <button class="btn ghost" data-inc="${p.ID}">+</button>
             </div>
             <button class="btn primary" data-add="${p.ID}" ${out?"disabled":""}>Add</button>
@@ -891,6 +750,7 @@
       `;
     }).join("");
 
+    // steppers
     productsGrid.querySelectorAll("[data-inc]").forEach(b=>{
       b.addEventListener("click", ()=>{
         const id = Number(b.dataset.inc);
@@ -914,8 +774,39 @@
     });
   }
 
+  search?.addEventListener("input", renderProducts);
+  category?.addEventListener("change", renderProducts);
+
+  // ===== Cart Drawer =====
+  const backdrop = $("#backdrop");
+  const drawer = $("#drawer");
+  const cartBody = $("#cartBody");
+  const cartCount = $("#cartCount");
+  const subtotalEl = $("#subtotal");
+  const totalEl = $("#total");
+  const customerIdEl = $("#customerId");
+  const shopAlert = $("#shopAlert");
+
+  const showShopAlert = (m)=>{ shopAlert.style.display="block"; shopAlert.textContent=m; };
+  const clearShopAlert= ()=>{ shopAlert.style.display="none"; shopAlert.textContent=""; };
+
+  function openDrawer(){
+    drawer.style.transform = "translateX(0)";
+    backdrop.style.opacity = "1";
+    backdrop.style.pointerEvents = "auto";
+  }
+  function closeDrawer(){
+    drawer.style.transform = "translateX(110%)";
+    backdrop.style.opacity = "0";
+    backdrop.style.pointerEvents = "none";
+  }
+
+  $("#btnCartOpen").addEventListener("click", ()=>{ renderCart(); openDrawer(); });
+  $("#btnCartClose").addEventListener("click", closeDrawer);
+  backdrop.addEventListener("click", closeDrawer);
+
   function cartTotals(){
-    let subtotal=0, count=0;
+    let subtotal = 0, count = 0;
     for(const it of state.cart.values()){
       subtotal += it.Price * it.qty;
       count += it.qty;
@@ -926,27 +817,27 @@
   function renderCart(){
     const items = Array.from(state.cart.values());
     const { subtotal, total, count } = cartTotals();
-    cartBadge.textContent = String(count);
+    cartCount.textContent = String(count);
 
-    if(items.length===0){
-      cartList.innerHTML = `<div class="muted">Your cart is empty.</div>`;
+    if(items.length === 0){
+      cartBody.innerHTML = `<div class="muted">Your cart is empty.</div>`;
     }else{
-      cartList.innerHTML = items.map(it=>{
+      cartBody.innerHTML = items.map(it=>{
         const line = it.Price * it.qty;
         return `
-          <div class="cart-item">
-            <div class="between">
+          <div class="card cart-item">
+            <div class="row">
               <div>
-                <div class="name">${it.Name}</div>
-                <div class="sub">${money(it.Price)} • ID ${it.ID}</div>
+                <div style="font-weight:800;">${it.Name}</div>
+                <div class="cart-sub">${money(it.Price)} • ID ${it.ID}</div>
               </div>
-              <div style="font-weight:800;">${money(line)}</div>
+              <div style="font-weight:900;">${money(line)}</div>
             </div>
-            <div class="between" style="margin-top:10px;">
+            <div class="row" style="margin-top:10px;">
               <div class="pill">Qty: ${it.qty}</div>
-              <div class="row" style="gap:8px;">
-                <button class="btn ghost" data-minus="${it.ID}">−</button>
-                <button class="btn ghost" data-plus="${it.ID}">+</button>
+              <div style="display:flex; gap:8px; margin-left:auto;">
+                <button class="btn" data-minus="${it.ID}">−</button>
+                <button class="btn" data-plus="${it.ID}">+</button>
                 <button class="btn danger" data-remove="${it.ID}">Remove</button>
               </div>
             </div>
@@ -954,52 +845,15 @@
         `;
       }).join("");
 
-      cartList.querySelectorAll("[data-plus]").forEach(btn => btn.addEventListener("click", ()=> addToCart(Number(btn.dataset.plus),1)));
-      cartList.querySelectorAll("[data-minus]").forEach(btn=> btn.addEventListener("click", ()=> removeQty(Number(btn.dataset.minus),1)));
-      cartList.querySelectorAll("[data-remove]").forEach(btn=> btn.addEventListener("click", ()=> removeItem(Number(btn.dataset.remove))));
+      cartBody.querySelectorAll("[data-plus]").forEach(b=> b.addEventListener("click", ()=> addToCart(Number(b.dataset.plus), 1)));
+      cartBody.querySelectorAll("[data-minus]").forEach(b=> b.addEventListener("click", ()=> removeQty(Number(b.dataset.minus), 1)));
+      cartBody.querySelectorAll("[data-remove]").forEach(b=> b.addEventListener("click", ()=> removeItem(Number(b.dataset.remove))));
     }
 
     subtotalEl.textContent = money(subtotal);
     totalEl.textContent = money(total);
   }
 
-  function renderOrdersAndDelivery(){
-    if(state.orders.length===0){
-      ordersBox.innerHTML = `<div class="muted">No orders yet.</div>`;
-    }else{
-      const last = state.orders[state.orders.length-1];
-      ordersBox.innerHTML = `
-        <div><b>Last Order:</b> #${last.orderID}</div>
-        <div class="muted">Items: ${last.lines.length} • Total: ${money(last.total)}</div>
-        <div class="muted">Customer ID: ${last.customerID}</div>
-      `;
-    }
-
-    if(state.deliveryQueue.length===0){
-      deliveryBox.innerHTML = `<div class="muted">No pending deliveries.</div>`;
-    }else{
-      deliveryBox.innerHTML = state.deliveryQueue.map((d,i)=>`<div>• ${d.label} <span class="muted">(pos ${i+1})</span></div>`).join("");
-    }
-  }
-
-  function renderInvoicePreview(){
-    const { subtotal, total } = cartTotals();
-    const lines = Array.from(state.cart.values()).map(it=>{
-      const line = it.Price * it.qty;
-      return `${it.Name.padEnd(14)} x${String(it.qty).padEnd(2)}  ${money(line)}`;
-    });
-
-    invoicePreview.textContent =
-`INVOICE PREVIEW
----------------------------
-${lines.join("\n")}
-
-Subtotal: ${money(subtotal)}
-Total:    ${money(total)}
-`;
-  }
-
-  // Stock-aware cart ops
   function addToCart(productID, qty){
     clearShopAlert();
     const p = state.products.find(x=>x.ID===productID);
@@ -1007,8 +861,8 @@ Total:    ${money(total)}
     if(p.Stock < qty) return showShopAlert(`Insufficient stock for ${p.Name}. Available: ${p.Stock}`);
     p.Stock -= qty;
 
-    const existing = state.cart.get(productID);
-    if(existing) existing.qty += qty;
+    const it = state.cart.get(productID);
+    if(it) it.qty += qty;
     else state.cart.set(productID, { ID:p.ID, Name:p.Name, Price:p.Price, qty });
 
     renderProducts();
@@ -1055,52 +909,1200 @@ Total:    ${money(total)}
 
   $("#btnClearCart").addEventListener("click", clearCart);
 
-  $("#btnCheckout").addEventListener("click", ()=>{
-    if(state.cart.size===0) return;
-    renderInvoicePreview();
-    openModal();
+  // ===== Checkout -> creates an order + enqueue delivery =====
+  function renderOrdersTables(){
+    // Dashboard recent
+    const recentBody = $("#recentOrdersBody");
+    if(state.orders.length === 0){
+      recentBody.innerHTML = `<tr><td colspan="4" class="muted">No orders yet.</td></tr>`;
+    } else {
+      const last10 = state.orders.slice(-10).reverse();
+      recentBody.innerHTML = last10.map(o=>`
+        <tr>
+          <td>${o.orderID}</td>
+          <td>${o.date}</td>
+          <td>${o.customerID}</td>
+          <td>${money(o.total)}</td>
+        </tr>
+      `).join("");
+    }
+
+    // Orders page
+    const ordersBody = $("#ordersBody");
+    if(state.orders.length === 0){
+      ordersBody.innerHTML = `<tr><td colspan="4" class="muted">No orders yet.</td></tr>`;
+    } else {
+      ordersBody.innerHTML = state.orders.slice().reverse().map(o=>`
+        <tr>
+          <td>${o.orderID}</td>
+          <td>${o.date}</td>
+          <td>${o.customerID}</td>
+          <td>${money(o.total)}</td>
+        </tr>
+      `).join("");
+    }
+
+    // Dashboard stats
+    const totalSales = state.orders.reduce((s,o)=>s+o.total,0);
+    $("#salesToday").textContent = money(totalSales);
+    $("#ordersToday").textContent = String(state.orders.length);
+  }
+
+  function renderCustomers(){
+    const body = $("#customersBody");
+    body.innerHTML = state.customers.map(c=>`
+      <tr>
+        <td>${c.ID}</td>
+        <td>${c.Name}</td>
+        <td>${c.Email}</td>
+        <td>${c.Phone}</td>
+      </tr>
+    `).join("");
+  }
+
+  function renderDelivery(){
+    const box = $("#deliveryList");
+    if(state.deliveryQueue.length === 0){
+      box.classList.add("muted");
+      box.innerHTML = `No pending deliveries.`;
+    } else {
+      box.classList.remove("muted");
+      box.innerHTML = state.deliveryQueue.map((d,i)=>`
+        <div style="padding:8px 0; border-bottom:1px solid var(--line);">
+          <b>${d.label}</b> <span class="muted">(position ${i+1})</span>
+        </div>
+      `).join("");
+    }
+  }
+
+  $("#btnCompleteDelivery").addEventListener("click", ()=>{
+    state.deliveryQueue.shift();
+    renderDelivery();
   });
 
-  $("#btnPlaceOrder").addEventListener("click", ()=>{
-    clearShopAlert();
-    if(state.cart.size===0) return showShopAlert("Cart is empty.");
-    const cid = customerId.value.trim();
-    if(!cid) return showShopAlert("Please enter a Customer ID (demo).");
+  $("#btnClearDeliveries").addEventListener("click", ()=>{
+    state.deliveryQueue = [];
+    renderDelivery();
+  });
 
-    const orderID = ++orderCounter;
+  $("#btnCheckout").addEventListener("click", ()=>{
+    clearShopAlert();
+    if(state.cart.size === 0) return showShopAlert("Cart is empty.");
+
+    const cid = customerIdEl.value.trim();
+    if(!cid) return showShopAlert("Enter Customer ID (demo).");
+
     const lines = Array.from(state.cart.values()).map(it=>({
-      name: it.Name, unit: it.Price, qty: it.qty, lineTotal: it.Price*it.qty
+      productId: it.ID, name: it.Name, unitPrice: it.Price, qty: it.qty,
+      lineTotal: it.Price * it.qty
     }));
     const total = lines.reduce((s,l)=>s+l.lineTotal,0);
+    const orderID = ++orderCounter;
 
-    state.orders.push({ orderID, customerID: cid, lines, total });
+    const date = new Date().toISOString().slice(0,10);
+
+    state.orders.push({ orderID, date, customerID: cid, total, lines });
     state.deliveryQueue.push({ orderID, label: `Order ${orderID}` });
 
     state.cart.clear();
-    closeModal();
-    closeDrawer();
-    renderProducts();
+    customerIdEl.value = "";
+
     renderCart();
-    renderOrdersAndDelivery();
+    renderOrdersTables();
+    renderDelivery();
+    closeDrawer();
   });
 
-  search.addEventListener("input", renderProducts);
-  category.addEventListener("change", renderProducts);
+  // ===== Export JSON (Settings) =====
+  $("#btnExportJSON").addEventListener("click", ()=>{
+    const payload = {
+      version: "1.0",
+      generatedAt: new Date().toISOString(),
+      products: state.products,
+      customers: state.customers,
+      orders: state.orders,
+      deliveryQueue: state.deliveryQueue
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "trolley_export.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
 
-  // Auth state -> switch views
+  // ===== Auth state =====
   onAuthStateChanged(auth, (user)=>{
     if(user){
-      userPill.textContent = user.email || "Signed in";
-      setView(true);
+      $("#userEmail").textContent = user.email || "(no email)";
+      setAppVisible(true);
+
+      // init app
       renderCategories();
       renderProducts();
-      renderCart();
-      renderOrdersAndDelivery();
+      renderCustomers();
+      renderOrdersTables();
+      renderDelivery();
+      showPage(currentHashPage());
     }else{
-      setView(false);
+      setAppVisible(false);
     }
   });
 </script>
+</body>
+</html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Trolley Dashboard</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#F6F8FC;
+      --panel:#FFFFFF;
+      --text:#0F172A;
+      --muted:#64748B;
+      --line:#E6EAF2;
+
+      --brand:#2563EB;       /* blue */
+      --brand2:#06B6D4;      /* cyan */
+      --good:#16A34A;
+      --warn:#F59E0B;
+      --bad:#EF4444;
+
+      --radius:16px;
+      --shadow: 0 18px 40px rgba(15, 23, 42, .08);
+      --shadow2: 0 10px 22px rgba(15, 23, 42, .06);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1000px 600px at 20% 0%, rgba(37,99,235,.10), transparent 55%),
+                  radial-gradient(900px 600px at 85% 10%, rgba(6,182,212,.10), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+
+    a{color:inherit; text-decoration:none}
+    .hidden{display:none!important}
+
+    /* Buttons */
+    .btn{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition: transform .06s ease, box-shadow .2s ease, border-color .2s ease;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, .04);
+    }
+    .btn:hover{border-color:#D7DDEA; box-shadow: 0 10px 18px rgba(15, 23, 42, .06)}
+    .btn:active{transform:scale(.99)}
+    .btn.primary{
+      border-color: transparent;
+      color:#fff;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      box-shadow: 0 14px 26px rgba(37,99,235,.20);
+    }
+    .btn.ghost{background: transparent}
+    .btn.danger{
+      background:#fff;
+      border-color:#F1C7C7;
+      color: var(--bad);
+    }
+    .btn.full{width:100%}
+
+    /* Inputs */
+    input, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      outline:none;
+      background:#fff;
+      color:var(--text);
+    }
+    input:focus, select:focus{border-color: rgba(37,99,235,.45); box-shadow: 0 0 0 4px rgba(37,99,235,.08)}
+    label{font-size:12px;color:var(--muted)}
+
+    /* Cards */
+    .card{
+      background: var(--panel);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow2);
+    }
+    .card.pad{padding:16px}
+    .muted{color:var(--muted)}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      color:var(--muted);
+      background:#fff;
+      font-size:12px;
+    }
+    .badge{
+      min-width:22px;height:22px;
+      border-radius:999px;
+      padding:0 8px;
+      display:inline-flex;align-items:center;justify-content:center;
+      background:#EEF2FF;
+      border:1px solid #E0E7FF;
+      color:#3730A3;
+      font-size:12px;
+      font-weight:600;
+    }
+
+    /* AUTH */
+    .auth-wrap{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:18px;
+    }
+    .auth-shell{
+      width:min(980px, 96vw);
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      overflow:hidden;
+      border-radius: 22px;
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      background:#fff;
+    }
+    .auth-left{padding:18px; border-right:1px solid var(--line)}
+    .auth-right{padding:18px; background: linear-gradient(135deg, rgba(37,99,235,.06), rgba(6,182,212,.06))}
+    .logo{
+      width:34px;height:34px;border-radius:12px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+    }
+    .tabs{display:flex; gap:10px; margin-top:14px}
+    .tab{
+      flex:1;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--muted);
+      cursor:pointer;
+      font-weight:600;
+    }
+    .tab.active{
+      color: var(--text);
+      border-color: rgba(37,99,235,.35);
+      background: rgba(37,99,235,.06);
+    }
+    .pane{display:none; gap:10px; margin-top:12px}
+    .pane.active{display:grid}
+    .alert{
+      display:none;
+      margin-top:12px;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid rgba(239,68,68,.35);
+      background: rgba(239,68,68,.07);
+      color:#7F1D1D;
+      white-space:pre-wrap;
+    }
+
+    /* APP LAYOUT */
+    .app{
+      display:grid;
+      grid-template-columns: 260px 1fr;
+      min-height:100vh;
+    }
+    .sidebar{
+      position:sticky;
+      top:0;
+      height:100vh;
+      padding:14px;
+      border-right:1px solid var(--line);
+      background: rgba(255,255,255,.70);
+      backdrop-filter: blur(10px);
+    }
+    .side-top{
+      display:flex;align-items:center;gap:10px;
+      padding:10px;
+      border-radius:16px;
+      background:#fff;
+      border:1px solid var(--line);
+      box-shadow: var(--shadow2);
+    }
+    .side-top .title{font-weight:800}
+    .side-top .sub{font-size:12px;color:var(--muted); margin-top:2px}
+
+    .nav{
+      margin-top:14px;
+      display:grid;
+      gap:6px;
+    }
+    .nav a{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      color: var(--muted);
+      border:1px solid transparent;
+    }
+    .nav a.active{
+      background: rgba(37,99,235,.08);
+      border-color: rgba(37,99,235,.18);
+      color: var(--text);
+      font-weight:700;
+    }
+    .nav a:hover{background: rgba(15,23,42,.04)}
+    .side-bottom{
+      position:absolute;
+      left:14px; right:14px; bottom:14px;
+      display:grid;
+      gap:10px;
+    }
+
+    .main{
+      padding:18px;
+    }
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      margin-bottom:16px;
+    }
+    .topbar h1{margin:0;font-size:22px}
+    .top-actions{display:flex;gap:10px;align-items:center}
+    .grid4{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:12px;
+    }
+    .stat .label{font-size:12px;color:var(--muted)}
+    .stat .value{font-size:22px;font-weight:800;margin-top:6px}
+    .stat .sub{font-size:12px;color:var(--muted);margin-top:6px}
+
+    /* Tables */
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px 10px; border-bottom:1px solid var(--line); text-align:left; font-size:13px}
+    th{color:var(--muted); font-weight:700; font-size:12px; letter-spacing:.03em; text-transform:uppercase}
+    tr:hover td{background: rgba(15,23,42,.02)}
+
+    /* Products grid */
+    .products-grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+    .p-item{padding:14px}
+    .p-name{font-weight:800}
+    .p-meta{font-size:12px;color:var(--muted); margin-top:6px}
+    .p-price{font-size:18px;font-weight:800;margin-top:10px}
+    .p-actions{margin-top:12px; display:flex; gap:10px; align-items:center; justify-content:space-between}
+    .stepper{display:flex; gap:6px; align-items:center}
+    .stepper button{padding:10px 12px}
+    .stepper input{width:70px; text-align:center}
+
+    /* Drawer (Cart) */
+    .backdrop{
+      position:fixed; inset:0;
+      background: rgba(15,23,42,.42);
+      opacity:0; pointer-events:none;
+      transition: opacity .18s ease;
+      z-index: 50;
+    }
+    .drawer{
+      position:fixed;
+      right:18px;
+      top:18px;
+      width: 420px;
+      max-width: calc(100vw - 36px);
+      height: calc(100vh - 36px);
+      transform: translateX(110%);
+      transition: transform .2s ease;
+      z-index: 60;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+    .drawer-head{
+      padding:14px;
+      border-bottom:1px solid var(--line);
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+    }
+    .drawer-body{padding:14px; overflow:auto; display:grid; gap:10px; flex:1}
+    .drawer-foot{padding:14px; border-top:1px solid var(--line); display:grid; gap:10px}
+    .cart-item{padding:12px}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .cart-sub{font-size:12px;color:var(--muted); margin-top:4px}
+
+    /* Responsive */
+    @media (max-width: 1100px){
+      .grid4{grid-template-columns: repeat(2, minmax(0,1fr))}
+      .products-grid{grid-template-columns: repeat(2, minmax(0,1fr))}
+    }
+    @media (max-width: 860px){
+      .app{grid-template-columns: 1fr}
+      .sidebar{position:relative;height:auto}
+      .side-bottom{position:relative;left:auto;right:auto;bottom:auto}
+      .auth-shell{grid-template-columns: 1fr}
+      .auth-left{border-right:none;border-bottom:1px solid var(--line)}
+    }
+    @media (max-width: 560px){
+      .products-grid{grid-template-columns: 1fr}
+      .grid4{grid-template-columns: 1fr}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AUTH VIEW -->
+  <section id="authView" class="auth-wrap">
+    <div class="auth-shell">
+      <div class="auth-left">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div class="logo"></div>
+          <div>
+            <div style="font-weight:800;">Trolley</div>
+            <div class="muted" style="font-size:12px;">Customer shopping dashboard</div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" data-tab="login">Log in</button>
+          <button class="tab" data-tab="signup">Sign up</button>
+        </div>
+
+        <div id="paneLogin" class="pane active">
+          <label>Email</label>
+          <input id="loginEmail" type="email" placeholder="you@email.com" />
+          <label>Password</label>
+          <input id="loginPass" type="password" placeholder="••••••••" />
+          <button id="btnLogin" class="btn primary full">Log in</button>
+          <button id="btnForgot" class="btn ghost full">Forgot password</button>
+        </div>
+
+        <div id="paneSignup" class="pane">
+          <label>Email</label>
+          <input id="signupEmail" type="email" placeholder="you@email.com" />
+          <label>Password</label>
+          <input id="signupPass" type="password" placeholder="Min 6 chars" />
+          <button id="btnSignup" class="btn primary full">Create account</button>
+          <div class="muted" style="font-size:12px;line-height:1.4;">
+            Enable Firebase Authentication → Email/Password.
+          </div>
+        </div>
+
+        <div id="authAlert" class="alert"></div>
+      </div>
+
+      <div class="auth-right">
+        <div class="card pad">
+          <div class="pill"><span class="badge">UI</span> Sidebar pages like your screenshot</div>
+          <h2 style="margin:12px 0 6px 0;">Clean dashboard layout</h2>
+          <p class="muted" style="margin:0;line-height:1.6;">
+            Dashboard cards, products page, cart drawer, orders table, delivery queue,
+            and settings — all in one single file.
+          </p>
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+            <span class="pill">Dashboard</span>
+            <span class="pill">Products</span>
+            <span class="pill">Customers</span>
+            <span class="pill">Orders</span>
+            <span class="pill">Delivery</span>
+            <span class="pill">Settings</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APP VIEW -->
+  <section id="appView" class="app hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="side-top">
+        <div class="logo"></div>
+        <div>
+          <div class="title">Trolley</div>
+          <div class="sub">Customer App</div>
+        </div>
+      </div>
+
+      <nav class="nav" id="nav">
+        <a href="#dashboard" data-page="dashboard" class="active">🏠 Dashboard</a>
+        <a href="#products"  data-page="products">🛒 Products</a>
+        <a href="#customers" data-page="customers">👤 Customers</a>
+        <a href="#orders"    data-page="orders">🧾 Orders</a>
+        <a href="#delivery"  data-page="delivery">🚚 Delivery</a>
+        <a href="#settings"  data-page="settings">⚙️ Settings</a>
+      </nav>
+
+      <div class="side-bottom">
+        <div class="card pad">
+          <div class="muted" style="font-size:12px;">Signed in as</div>
+          <div id="userEmail" style="font-weight:700; margin-top:6px;">—</div>
+        </div>
+        <button id="btnSignOut" class="btn danger">Logout</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <div class="muted" id="pageSubtitle">Overview and recent activity.</div>
+        </div>
+        <div class="top-actions">
+          <div class="pill">Branch: <b>All</b></div>
+          <button id="btnCartOpen" class="btn primary">Cart <span id="cartCount" class="badge">0</span></button>
+        </div>
+      </div>
+
+      <!-- PAGES -->
+
+      <!-- DASHBOARD -->
+      <section data-view="dashboard">
+        <div class="grid4">
+          <div class="card pad stat">
+            <div class="label">Sales Today</div>
+            <div class="value" id="salesToday">$0.00</div>
+            <div class="sub">Net of returns.</div>
+          </div>
+          <div class="card pad stat">
+            <div class="label">Sales Orders Today</div>
+            <div class="value" id="ordersToday">0</div>
+            <div class="sub">Number of sales orders.</div>
+          </div>
+          <div class="card pad stat">
+            <div class="label">Return Orders Today</div>
+            <div class="value" id="returnsToday">0</div>
+            <div class="sub">Number of returns.</div>
+          </div>
+          <div class="card pad stat">
+            <div class="label">Active Branches</div>
+            <div class="value">1</div>
+            <div class="sub">Branches marked active.</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;" class="card pad">
+          <div style="font-weight:800;">Recent Orders</div>
+          <div class="muted" style="font-size:12px;margin-top:4px;">Last 10 orders.</div>
+          <div style="margin-top:10px; overflow:auto;">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Date</th><th>Customer</th><th>Total</th></tr>
+              </thead>
+              <tbody id="recentOrdersBody">
+                <tr><td colspan="4" class="muted">No orders yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRODUCTS -->
+      <section data-view="products" class="hidden">
+        <div class="card pad">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <input id="search" placeholder="Search by name / category / ID (e.g., Milk, Dairy, 101)" style="flex:1; min-width:240px;">
+            <select id="category" style="width:220px;">
+              <option value="">All categories</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="products-grid" id="productsGrid"></div>
+      </section>
+
+      <!-- CUSTOMERS -->
+      <section data-view="customers" class="hidden">
+        <div class="card pad">
+          <div style="font-weight:800;">Customers (demo)</div>
+          <div class="muted" style="font-size:12px;margin-top:4px;">
+            In your C++ this is SLL. Here we show a simple table.
+          </div>
+          <div style="margin-top:10px; overflow:auto;">
+            <table>
+              <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+              <tbody id="customersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ORDERS -->
+      <section data-view="orders" class="hidden">
+        <div class="card pad">
+          <div style="font-weight:800;">Orders</div>
+          <div class="muted" style="font-size:12px;margin-top:4px;">
+            In your C++ this is DLL (OrderHistory). Here we list placed orders.
+          </div>
+          <div style="margin-top:10px; overflow:auto;">
+            <table>
+              <thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Total</th></tr></thead>
+              <tbody id="ordersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- DELIVERY -->
+      <section data-view="delivery" class="hidden">
+        <div class="card pad">
+          <div style="font-weight:800;">Delivery Queue</div>
+          <div class="muted" style="font-size:12px;margin-top:4px;">
+            In your C++ this is a Queue. Here we show pending deliveries.
+          </div>
+
+          <div style="margin-top:10px;" id="deliveryList" class="muted">No pending deliveries.</div>
+
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button id="btnCompleteDelivery" class="btn">Complete next delivery</button>
+            <button id="btnClearDeliveries" class="btn danger">Clear all</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section data-view="settings" class="hidden">
+        <div class="card pad">
+          <div style="font-weight:800;">Settings</div>
+          <div class="muted" style="font-size:12px;margin-top:4px;">
+            Put your project info, DS explanation, or export JSON button here.
+          </div>
+
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button id="btnExportJSON" class="btn primary">Export Data JSON</button>
+          </div>
+
+          <div class="muted" style="font-size:12px; margin-top:10px;">
+            Export includes products, customers, orders, delivery queue (demo).
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- CART DRAWER -->
+    <div id="backdrop" class="backdrop"></div>
+    <aside id="drawer" class="drawer card">
+      <div class="drawer-head">
+        <div>
+          <div style="font-weight:800;">Cart</div>
+          <div class="muted" style="font-size:12px;">Add/remove items then checkout</div>
+        </div>
+        <button id="btnCartClose" class="btn">Close</button>
+      </div>
+
+      <div id="cartBody" class="drawer-body">
+        <div class="muted">Your cart is empty.</div>
+      </div>
+
+      <div class="drawer-foot">
+        <div class="row">
+          <div class="muted">Subtotal</div>
+          <div style="font-weight:800;" id="subtotal">$0.00</div>
+        </div>
+        <div class="row">
+          <div style="font-weight:800;">Total</div>
+          <div style="font-weight:900;" id="total">$0.00</div>
+        </div>
+
+        <label>Customer ID (demo)</label>
+        <input id="customerId" placeholder="e.g., 1001" />
+
+        <button id="btnCheckout" class="btn primary full">Checkout</button>
+        <button id="btnClearCart" class="btn danger full">Clear Cart</button>
+
+        <div id="shopAlert" class="alert"></div>
+      </div>
+    </aside>
+
+  </section>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+  // ======================================================
+  // PASTE YOUR FIREBASE CONFIG HERE (Project settings -> Web)
+  // ======================================================
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const $ = (s)=>document.querySelector(s);
+  const $$ = (s)=>Array.from(document.querySelectorAll(s));
+  const money = (n)=>`$${n.toFixed(2)}`;
+
+  // Views
+  const authView = $("#authView");
+  const appView  = $("#appView");
+
+  function setAppVisible(isLoggedIn){
+    authView.classList.toggle("hidden", isLoggedIn);
+    appView.classList.toggle("hidden", !isLoggedIn);
+  }
+
+  // AUTH UI
+  const authAlert = $("#authAlert");
+  const showAuthAlert = (m)=>{ authAlert.style.display="block"; authAlert.textContent=m; };
+  const clearAuthAlert= ()=>{ authAlert.style.display="none"; authAlert.textContent=""; };
+
+  $$(".tab").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      $$(".tab").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const which = btn.dataset.tab;
+      $("#paneLogin").classList.toggle("active", which==="login");
+      $("#paneSignup").classList.toggle("active", which==="signup");
+      clearAuthAlert();
+    });
+  });
+
+  $("#btnLogin").addEventListener("click", async ()=>{
+    clearAuthAlert();
+    const email = $("#loginEmail").value.trim();
+    const pass  = $("#loginPass").value;
+    if(!email || !pass) return showAuthAlert("Enter email and password.");
+    try{ await signInWithEmailAndPassword(auth, email, pass); }
+    catch(e){ showAuthAlert(e.message); }
+  });
+
+  $("#btnSignup").addEventListener("click", async ()=>{
+    clearAuthAlert();
+    const email = $("#signupEmail").value.trim();
+    const pass  = $("#signupPass").value;
+    if(!email || !pass) return showAuthAlert("Enter email and password.");
+    if(pass.length < 6) return showAuthAlert("Password must be at least 6 characters.");
+    try{ await createUserWithEmailAndPassword(auth, email, pass); }
+    catch(e){ showAuthAlert(e.message); }
+  });
+
+  $("#btnForgot").addEventListener("click", async ()=>{
+    clearAuthAlert();
+    const email = $("#loginEmail").value.trim();
+    if(!email) return showAuthAlert("Type your email in the login field first.");
+    try{ await sendPasswordResetEmail(auth, email); showAuthAlert("Password reset email sent."); }
+    catch(e){ showAuthAlert(e.message); }
+  });
+
+  // Sign out
+  $("#btnSignOut").addEventListener("click", async ()=>{ await signOut(auth); });
+
+  // ===== Demo Data (you can later swap to Firestore) =====
+  const state = {
+    products: [
+      { ID:101, Name:"Milk",   Category:"Dairy",   Price:5.50, Stock:20 },
+      { ID:102, Name:"Bread",  Category:"Bakery",  Price:3.00, Stock:30 },
+      { ID:103, Name:"Eggs",   Category:"Dairy",   Price:7.00, Stock:50 },
+      { ID:201, Name:"Apple",  Category:"Produce", Price:0.80, Stock:100 },
+      { ID:202, Name:"Banana", Category:"Produce", Price:0.60, Stock:120 },
+      { ID:301, Name:"Yogurt", Category:"Dairy",   Price:2.25, Stock:40 }
+    ],
+    customers: [
+      { ID:1001, Name:"Demo Customer", Email:"demo@trolley.com", Phone:"+20..." },
+      { ID:1002, Name:"Second Customer", Email:"second@trolley.com", Phone:"+20..." }
+    ],
+    cart: new Map(),      // productID -> {ID, Name, Price, qty}
+    orders: [],           // {orderID, date, customerID, total, lines[]}
+    deliveryQueue: []     // {orderID, label}
+  };
+  let orderCounter = 1000;
+
+  // ===== Sidebar routing (pages) =====
+  const pageTitle = $("#pageTitle");
+  const pageSubtitle = $("#pageSubtitle");
+
+  const pageMeta = {
+    dashboard: { title:"Dashboard", subtitle:"Overview and recent activity." },
+    products:  { title:"Products",  subtitle:"Browse groceries and add to cart." },
+    customers: { title:"Customers", subtitle:"Customer list (demo table)." },
+    orders:    { title:"Orders",    subtitle:"Your order history." },
+    delivery:  { title:"Delivery",  subtitle:"Queue of pending deliveries." },
+    settings:  { title:"Settings",  subtitle:"Export JSON and project info." }
+  };
+
+  function showPage(page){
+    // update nav active
+    $$("#nav a").forEach(a => a.classList.toggle("active", a.dataset.page === page));
+    // show/hide sections
+    $$("section[data-view]").forEach(sec => sec.classList.toggle("hidden", sec.dataset.view !== page));
+    // titles
+    const m = pageMeta[page] || pageMeta.dashboard;
+    pageTitle.textContent = m.title;
+    pageSubtitle.textContent = m.subtitle;
+  }
+
+  function currentHashPage(){
+    const p = (location.hash || "#dashboard").replace("#","");
+    return pageMeta[p] ? p : "dashboard";
+  }
+
+  window.addEventListener("hashchange", ()=> showPage(currentHashPage()));
+
+  // ===== Products rendering =====
+  const productsGrid = $("#productsGrid");
+  const search = $("#search");
+  const category = $("#category");
+
+  function renderCategories(){
+    const cats = Array.from(new Set(state.products.map(p=>p.Category))).sort();
+    category.innerHTML = `<option value="">All categories</option>` + cats.map(c=>`<option value="${c}">${c}</option>`).join("");
+  }
+
+  function renderProducts(){
+    const q = (search.value || "").trim().toLowerCase();
+    const cat = category.value;
+
+    const filtered = state.products.filter(p=>{
+      if(cat && p.Category !== cat) return false;
+      if(!q) return true;
+      return String(p.ID).includes(q) || p.Name.toLowerCase().includes(q) || p.Category.toLowerCase().includes(q);
+    });
+
+    productsGrid.innerHTML = filtered.map(p=>{
+      const out = p.Stock <= 0;
+      return `
+        <div class="card p-item">
+          <div class="p-name">${p.Name}</div>
+          <div class="p-meta">${p.Category} • ID ${p.ID} • Stock: ${p.Stock}</div>
+          <div class="p-price">${money(p.Price)}</div>
+
+          <div class="p-actions">
+            <div class="stepper">
+              <button class="btn ghost" data-dec="${p.ID}">−</button>
+              <input data-qty="${p.ID}" value="1" />
+              <button class="btn ghost" data-inc="${p.ID}">+</button>
+            </div>
+            <button class="btn primary" data-add="${p.ID}" ${out?"disabled":""}>Add</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    // steppers
+    productsGrid.querySelectorAll("[data-inc]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const id = Number(b.dataset.inc);
+        const inp = productsGrid.querySelector(`[data-qty="${id}"]`);
+        inp.value = String(Math.min(99, (Number(inp.value)||1)+1));
+      });
+    });
+    productsGrid.querySelectorAll("[data-dec]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const id = Number(b.dataset.dec);
+        const inp = productsGrid.querySelector(`[data-qty="${id}"]`);
+        inp.value = String(Math.max(1, (Number(inp.value)||1)-1));
+      });
+    });
+    productsGrid.querySelectorAll("[data-add]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const id = Number(b.dataset.add);
+        const qty = Number(productsGrid.querySelector(`[data-qty="${id}"]`).value) || 1;
+        addToCart(id, qty);
+      });
+    });
+  }
+
+  search?.addEventListener("input", renderProducts);
+  category?.addEventListener("change", renderProducts);
+
+  // ===== Cart Drawer =====
+  const backdrop = $("#backdrop");
+  const drawer = $("#drawer");
+  const cartBody = $("#cartBody");
+  const cartCount = $("#cartCount");
+  const subtotalEl = $("#subtotal");
+  const totalEl = $("#total");
+  const customerIdEl = $("#customerId");
+  const shopAlert = $("#shopAlert");
+
+  const showShopAlert = (m)=>{ shopAlert.style.display="block"; shopAlert.textContent=m; };
+  const clearShopAlert= ()=>{ shopAlert.style.display="none"; shopAlert.textContent=""; };
+
+  function openDrawer(){
+    drawer.style.transform = "translateX(0)";
+    backdrop.style.opacity = "1";
+    backdrop.style.pointerEvents = "auto";
+  }
+  function closeDrawer(){
+    drawer.style.transform = "translateX(110%)";
+    backdrop.style.opacity = "0";
+    backdrop.style.pointerEvents = "none";
+  }
+
+  $("#btnCartOpen").addEventListener("click", ()=>{ renderCart(); openDrawer(); });
+  $("#btnCartClose").addEventListener("click", closeDrawer);
+  backdrop.addEventListener("click", closeDrawer);
+
+  function cartTotals(){
+    let subtotal = 0, count = 0;
+    for(const it of state.cart.values()){
+      subtotal += it.Price * it.qty;
+      count += it.qty;
+    }
+    return { subtotal, total: subtotal, count };
+  }
+
+  function renderCart(){
+    const items = Array.from(state.cart.values());
+    const { subtotal, total, count } = cartTotals();
+    cartCount.textContent = String(count);
+
+    if(items.length === 0){
+      cartBody.innerHTML = `<div class="muted">Your cart is empty.</div>`;
+    }else{
+      cartBody.innerHTML = items.map(it=>{
+        const line = it.Price * it.qty;
+        return `
+          <div class="card cart-item">
+            <div class="row">
+              <div>
+                <div style="font-weight:800;">${it.Name}</div>
+                <div class="cart-sub">${money(it.Price)} • ID ${it.ID}</div>
+              </div>
+              <div style="font-weight:900;">${money(line)}</div>
+            </div>
+            <div class="row" style="margin-top:10px;">
+              <div class="pill">Qty: ${it.qty}</div>
+              <div style="display:flex; gap:8px; margin-left:auto;">
+                <button class="btn" data-minus="${it.ID}">−</button>
+                <button class="btn" data-plus="${it.ID}">+</button>
+                <button class="btn danger" data-remove="${it.ID}">Remove</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      cartBody.querySelectorAll("[data-plus]").forEach(b=> b.addEventListener("click", ()=> addToCart(Number(b.dataset.plus), 1)));
+      cartBody.querySelectorAll("[data-minus]").forEach(b=> b.addEventListener("click", ()=> removeQty(Number(b.dataset.minus), 1)));
+      cartBody.querySelectorAll("[data-remove]").forEach(b=> b.addEventListener("click", ()=> removeItem(Number(b.dataset.remove))));
+    }
+
+    subtotalEl.textContent = money(subtotal);
+    totalEl.textContent = money(total);
+  }
+
+  function addToCart(productID, qty){
+    clearShopAlert();
+    const p = state.products.find(x=>x.ID===productID);
+    if(!p || qty<=0) return;
+    if(p.Stock < qty) return showShopAlert(`Insufficient stock for ${p.Name}. Available: ${p.Stock}`);
+    p.Stock -= qty;
+
+    const it = state.cart.get(productID);
+    if(it) it.qty += qty;
+    else state.cart.set(productID, { ID:p.ID, Name:p.Name, Price:p.Price, qty });
+
+    renderProducts();
+    renderCart();
+  }
+
+  function removeQty(productID, qty){
+    clearShopAlert();
+    const p = state.products.find(x=>x.ID===productID);
+    const it = state.cart.get(productID);
+    if(!p || !it) return;
+
+    const dec = Math.min(qty, it.qty);
+    it.qty -= dec;
+    p.Stock += dec;
+    if(it.qty<=0) state.cart.delete(productID);
+
+    renderProducts();
+    renderCart();
+  }
+
+  function removeItem(productID){
+    clearShopAlert();
+    const p = state.products.find(x=>x.ID===productID);
+    const it = state.cart.get(productID);
+    if(!p || !it) return;
+
+    p.Stock += it.qty;
+    state.cart.delete(productID);
+
+    renderProducts();
+    renderCart();
+  }
+
+  function clearCart(){
+    for(const it of state.cart.values()){
+      const p = state.products.find(x=>x.ID===it.ID);
+      if(p) p.Stock += it.qty;
+    }
+    state.cart.clear();
+    renderProducts();
+    renderCart();
+  }
+
+  $("#btnClearCart").addEventListener("click", clearCart);
+
+  // ===== Checkout -> creates an order + enqueue delivery =====
+  function renderOrdersTables(){
+    // Dashboard recent
+    const recentBody = $("#recentOrdersBody");
+    if(state.orders.length === 0){
+      recentBody.innerHTML = `<tr><td colspan="4" class="muted">No orders yet.</td></tr>`;
+    } else {
+      const last10 = state.orders.slice(-10).reverse();
+      recentBody.innerHTML = last10.map(o=>`
+        <tr>
+          <td>${o.orderID}</td>
+          <td>${o.date}</td>
+          <td>${o.customerID}</td>
+          <td>${money(o.total)}</td>
+        </tr>
+      `).join("");
+    }
+
+    // Orders page
+    const ordersBody = $("#ordersBody");
+    if(state.orders.length === 0){
+      ordersBody.innerHTML = `<tr><td colspan="4" class="muted">No orders yet.</td></tr>`;
+    } else {
+      ordersBody.innerHTML = state.orders.slice().reverse().map(o=>`
+        <tr>
+          <td>${o.orderID}</td>
+          <td>${o.date}</td>
+          <td>${o.customerID}</td>
+          <td>${money(o.total)}</td>
+        </tr>
+      `).join("");
+    }
+
+    // Dashboard stats
+    const totalSales = state.orders.reduce((s,o)=>s+o.total,0);
+    $("#salesToday").textContent = money(totalSales);
+    $("#ordersToday").textContent = String(state.orders.length);
+  }
+
+  function renderCustomers(){
+    const body = $("#customersBody");
+    body.innerHTML = state.customers.map(c=>`
+      <tr>
+        <td>${c.ID}</td>
+        <td>${c.Name}</td>
+        <td>${c.Email}</td>
+        <td>${c.Phone}</td>
+      </tr>
+    `).join("");
+  }
+
+  function renderDelivery(){
+    const box = $("#deliveryList");
+    if(state.deliveryQueue.length === 0){
+      box.classList.add("muted");
+      box.innerHTML = `No pending deliveries.`;
+    } else {
+      box.classList.remove("muted");
+      box.innerHTML = state.deliveryQueue.map((d,i)=>`
+        <div style="padding:8px 0; border-bottom:1px solid var(--line);">
+          <b>${d.label}</b> <span class="muted">(position ${i+1})</span>
+        </div>
+      `).join("");
+    }
+  }
+
+  $("#btnCompleteDelivery").addEventListener("click", ()=>{
+    state.deliveryQueue.shift();
+    renderDelivery();
+  });
+
+  $("#btnClearDeliveries").addEventListener("click", ()=>{
+    state.deliveryQueue = [];
+    renderDelivery();
+  });
+
+  $("#btnCheckout").addEventListener("click", ()=>{
+    clearShopAlert();
+    if(state.cart.size === 0) return showShopAlert("Cart is empty.");
+
+    const cid = customerIdEl.value.trim();
+    if(!cid) return showShopAlert("Enter Customer ID (demo).");
+
+    const lines = Array.from(state.cart.values()).map(it=>({
+      productId: it.ID, name: it.Name, unitPrice: it.Price, qty: it.qty,
+      lineTotal: it.Price * it.qty
+    }));
+    const total = lines.reduce((s,l)=>s+l.lineTotal,0);
+    const orderID = ++orderCounter;
+
+    const date = new Date().toISOString().slice(0,10);
+
+    state.orders.push({ orderID, date, customerID: cid, total, lines });
+    state.deliveryQueue.push({ orderID, label: `Order ${orderID}` });
+
+    state.cart.clear();
+    customerIdEl.value = "";
+
+    renderCart();
+    renderOrdersTables();
+    renderDelivery();
+    closeDrawer();
+  });
+
+  // ===== Export JSON (Settings) =====
+  $("#btnExportJSON").addEventListener("click", ()=>{
+    const payload = {
+      version: "1.0",
+      generatedAt: new Date().toISOString(),
+      products: state.products,
+      customers: state.customers,
+      orders: state.orders,
+      deliveryQueue: state.deliveryQueue
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "trolley_export.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
+
+  // ===== Auth state =====
+  onAuthStateChanged(auth, (user)=>{
+    if(user){
+      $("#userEmail").textContent = user.email || "(no email)";
+      setAppVisible(true);
+
+      // init app
+      renderCategories();
+      renderProducts();
+      renderCustomers();
+      renderOrdersTables();
+      renderDelivery();
+      showPage(currentHashPage());
+    }else{
+      setAppVisible(false);
+    }
+  });
+</script>
 </body>
 </html>
