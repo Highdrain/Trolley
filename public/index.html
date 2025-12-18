@@ -1,1 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shop • Grocery</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-dot"></div>
+      <div>
+        <div class="brand-title">Grocery</div>
+        <div class="brand-sub">Browse • Cart • Checkout • Track</div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="pill" id="userPill">Signed in</div>
+      <button class="btn ghost" id="btnSignOut">Sign out</button>
+      <button class="btn primary" id="btnCart">
+        Cart <span class="badge" id="cartBadge">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel">
+      <div class="panel-head">
+        <h2>Discover</h2>
+        <p class="muted">Search by name, category, or ID.</p>
+      </div>
+
+      <div class="controls">
+        <input id="search" placeholder="Search (Milk, Dairy, 101)..." />
+        <select id="category">
+          <option value="">All categories</option>
+        </select>
+      </div>
+
+      <div class="category-chips" id="categoryChips"></div>
+
+      <div class="panel-divider"></div>
+
+      <div class="mini">
+        <h3>My Orders</h3>
+        <div class="mini-box" id="ordersBox">
+          <div class="muted">No orders yet.</div>
+        </div>
+
+        <h3 style="margin-top:14px;">Delivery Tracking</h3>
+        <div class="mini-box" id="deliveryBox">
+          <div class="muted">No pending deliveries.</div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="content">
+      <div class="content-head">
+        <h1>Shop</h1>
+        <p class="muted">Pick items, adjust quantities, then checkout.</p>
+      </div>
+
+      <div class="grid" id="productsGrid"></div>
+    </section>
+  </main>
+
+  <!-- CART DRAWER -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="drawer" id="cartDrawer">
+    <div class="drawer-head">
+      <h2>Your Cart</h2>
+      <button class="btn ghost" id="btnCloseCart">Close</button>
+    </div>
+
+    <div class="drawer-list" id="cartList"></div>
+
+    <div class="drawer-footer">
+      <div class="row-between">
+        <span class="muted">Subtotal</span>
+        <strong id="subtotal">$0.00</strong>
+      </div>
+      <div class="row-between total">
+        <span>Total</span>
+        <strong id="total">$0.00</strong>
+      </div>
+
+      <button class="btn primary full" id="btnCheckout">Proceed to Checkout</button>
+      <button class="btn danger full" id="btnClearCart">Clear cart</button>
+    </div>
+  </aside>
+
+  <!-- CHECKOUT MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal" id="checkoutModal">
+    <div class="modal-head">
+      <h2>Checkout</h2>
+      <button class="btn ghost" id="btnCloseCheckout">Close</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="two-col">
+        <div>
+          <h3>Customer</h3>
+          <p class="muted" id="customerHint">
+            (Demo) You can later map this to your Customer SLL.
+          </p>
+          <div class="field">
+            <label>Customer ID</label>
+            <input id="customerId" placeholder="e.g. 1001" />
+          </div>
+        </div>
+
+        <div>
+          <h3>Summary</h3>
+          <div class="invoice" id="invoicePreview"></div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn primary" id="btnPlaceOrder">Place Order</button>
+      </div>
+
+      <div class="alert" id="shopAlert" style="display:none"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
 
