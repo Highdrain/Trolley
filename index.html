@@ -1,0 +1,753 @@
+// merged_trolley.cpp
+// Single-file merge of: ProductCatalog (BST), CustomerManager (SLL),
+// Order (simple class), OrderHistory (DLL), CartStack (Stack), DeliveryQueue (Queue)
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <set>
+#include <cctype>
+#include <algorithm>
+#include <cmath>
+
+using namespace std;
+
+/* -------------------------
+   Helper functions
+   ------------------------- */
+void clearScreen() {
+    // Simple screen clear: prints newlines (portable)
+    for (int i = 0; i < 40; ++i) cout << "\n";
+}
+
+void waitForEnter() {
+    cout << "\nPress Enter to continue...";
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+/* -------------------------
+   Product (BST)
+   ------------------------- */
+struct Product {
+    int ID;
+    string Name;
+    string Category;
+    double Price;
+    int Stock;
+
+    Product(int id = 0, string name = "", string cat = "",
+            double price = 0.0, int stock = 0) :
+        ID(id), Name(name), Category(cat), Price(price), Stock(stock) {}
+
+    void show() const {
+        cout << "\n-----------------------------------\n";
+        cout << "PRODUCT DETAILS:\n";
+        cout << "ID: " << ID << endl;
+        cout << "Name: " << Name << endl;
+        cout << "Category: " << Category << endl;
+        cout << "Price: $" << Price << endl;
+        cout << "Stock: " << Stock << endl;
+        cout << "-----------------------------------\n";
+    }
+};
+
+struct TreeNode {
+    Product data;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(const Product& p) : data(p), left(nullptr), right(nullptr) {}
+};
+
+class ProductCatalog {
+private:
+    TreeNode* root;
+    int count;
+
+    static string toLower(const string& s) {
+        string out = s;
+        transform(out.begin(), out.end(), out.begin(), [](unsigned char c){ return tolower(c); });
+        return out;
+    }
+
+    void collectCategories(TreeNode* node, set<string>& categories) {
+        if (!node) return;
+        categories.insert(node->data.Category);
+        collectCategories(node->left, categories);
+        collectCategories(node->right, categories);
+    }
+
+    void showCategoryProducts(TreeNode* node, const string& category, bool& found) {
+        if (!node) return;
+        showCategoryProducts(node->left, category, found);
+        if (node->data.Category == category) {
+            node->data.show();
+            found = true;
+        }
+        showCategoryProducts(node->right, category, found);
+    }
+
+    TreeNode* addToTree(TreeNode* node, const Product& p) {
+        if (!node) return new TreeNode(p);
+        if (p.ID < node->data.ID) node->left = addToTree(node->left, p);
+        else node->right = addToTree(node->right, p);
+        return node;
+    }
+
+    TreeNode* findMin(TreeNode* node) {
+        if (!node) return nullptr;
+        while (node->left) node = node->left;
+        return node;
+    }
+
+    TreeNode* removeFromTree(TreeNode* node, int id) {
+        if (!node) return node;
+        if (id < node->data.ID) node->left = removeFromTree(node->left, id);
+        else if (id > node->data.ID) node->right = removeFromTree(node->right, id);
+        else {
+            if (!node->left) {
+                TreeNode* temp = node->right;
+                delete node;
+                return temp;
+            } else if (!node->right) {
+                TreeNode* temp = node->left;
+                delete node;
+                return temp;
+            } else {
+                TreeNode* temp = findMin(node->right);
+                node->data = temp->data;
+                node->right = removeFromTree(node->right, temp->data.ID);
+            }
+        }
+        return node;
+    }
+
+    Product* findProductNode(TreeNode* node, int id) {
+        TreeNode* current = node;
+        while (current) {
+            if (id == current->data.ID) return &(current->data);
+            else if (id < current->data.ID) current = current->left;
+            else current = current->right;
+        }
+        return nullptr;
+    }
+
+    void showTree(TreeNode* node) const {
+        if (!node) return;
+        showTree(node->left);
+        node->data.show();
+        showTree(node->right);
+    }
+
+    void inOrderSearch(TreeNode* node, const string& keyLower, vector<Product>& out) {
+        if (!node) return;
+        inOrderSearch(node->left, keyLower, out);
+        string nameL = toLower(node->data.Name);
+        string catL = toLower(node->data.Category);
+        string idS = to_string(node->data.ID);
+        if (nameL.find(keyLower) != string::npos ||
+            catL.find(keyLower) != string::npos ||
+            idS.find(keyLower) != string::npos) {
+            out.push_back(node->data);
+        }
+        inOrderSearch(node->right, keyLower, out);
+    }
+
+    void destroy(TreeNode* node) {
+        if (!node) return;
+        destroy(node->left);
+        destroy(node->right);
+        delete node;
+    }
+
+public:
+    ProductCatalog() : root(nullptr), count(0) {
+        cout << "\n=== PRODUCT CATALOG (BST) STARTED ===\n";
+    }
+
+    ~ProductCatalog() {
+        destroy(root);
+    }
+
+    void addProductInteractive() {
+        Product p;
+        cout << "\n--- Enter Product Details ---\n";
+        cout << "ID: "; cin >> p.ID;
+        cout << "Name: "; cin.ignore(); getline(cin, p.Name);
+        cout << "Category: "; getline(cin, p.Category);
+        cout << "Price: $"; cin >> p.Price;
+        cout << "Stock: "; cin >> p.Stock;
+
+        if (findProduct(p.ID) != nullptr) {
+            cout << "Error! Product ID " << p.ID << " already exists.\n";
+            return;
+        }
+        root = addToTree(root, p);
+        count++;
+        cout << "Product added successfully!\n";
+    }
+
+    void addProductDirect(const Product& p) {
+        if (findProduct(p.ID) != nullptr) return;
+        root = addToTree(root, p);
+        ++count;
+    }
+
+    void removeProductInteractive() {
+        if (!root) { cout << "Catalog is empty!\n"; return; }
+        int id; cout << "Enter Product ID to remove: "; cin >> id;
+        if (!findProduct(id)) { cout << "Product with ID " << id << " not found!\n"; return; }
+        root = removeFromTree(root, id);
+        --count;
+        cout << "Product removed successfully!\n";
+    }
+
+    Product* findProduct(int id) {
+        return findProductNode(root, id);
+    }
+
+    void showAll() const {
+        if (!root) { cout << "No products in catalog!\n"; return; }
+        cout << "\n=== ALL PRODUCTS (" << count << ") ===\n";
+        showTree(root);
+        cout << "===============================\n";
+    }
+
+    set<string> getAllCategories() {
+        set<string> cats;
+        collectCategories(root, cats);
+        return cats;
+    }
+
+    void showByCategoryInteractive() {
+        if (!root) { cout << "Catalog is empty!\n"; return; }
+        set<string> cats = getAllCategories();
+        if (cats.empty()) { cout << "No categories found!\n"; return; }
+        cout << "\n=== AVAILABLE CATEGORIES ===\n";
+        vector<string> cl;
+        int idx = 1;
+        for (auto &c : cats) { cout << idx << ". " << c << "\n"; cl.push_back(c); ++idx; }
+        cout << idx << ". Show ALL products\n";
+        cout << "Choose category number: ";
+        int choice; cin >> choice;
+        if (choice < 1 || choice > idx) { cout << "Invalid choice!\n"; return; }
+        if (choice == idx) { showAll(); return; }
+
+        bool found = false;
+        cout << "\n=== PRODUCTS IN CATEGORY: " << cl[choice-1] << " ===\n";
+        showCategoryProducts(root, cl[choice-1], found);
+        if (!found) cout << "No products found in this category.\n";
+    }
+
+    void searchByKeywordInteractive() {
+        cout << "\nEnter search keyword (name/category/id): ";
+        string kw; cin.ignore(); getline(cin, kw);
+        string keyLower = toLower(kw);
+        vector<Product> results;
+        inOrderSearch(root, keyLower, results);
+        if (results.empty()) {
+            cout << "No products found matching \"" << kw << "\".\n";
+            return;
+        }
+        cout << "\nSEARCH RESULTS:\n";
+        for (auto &p : results) {
+            p.show();
+        }
+    }
+
+};
+
+/* -------------------------
+   Customer Manager (SLL)
+   ------------------------- */
+struct Customer {
+    int ID;
+    string Name;
+    string Email;
+    string Phone;
+    string Address;
+
+    Customer(int id = 0, string name = "", string email = "", string phone = "", string address = "") :
+        ID(id), Name(name), Email(email), Phone(phone), Address(address) {}
+
+    void display() const {
+        cout << "\n═══════════════════════════════════\n";
+        cout << "          CUSTOMER DETAILS\n";
+        cout << "═══════════════════════════════════\n";
+        cout << "   ID:      " << ID << endl;
+        cout << "   Name:    " << Name << endl;
+        cout << "   Email:   " << Email << endl;
+        cout << "   Phone:   " << Phone << endl;
+        cout << "   Address: " << Address << endl;
+        cout << "═══════════════════════════════════\n";
+    }
+};
+
+struct CustNode {
+    Customer data;
+    CustNode* next;
+    CustNode(const Customer& c) : data(c), next(nullptr) {}
+};
+
+class CustomerManager {
+private:
+    CustNode* head;
+    CustNode* tail;
+    int customerCount;
+    int nextID;
+
+public:
+    CustomerManager() : head(nullptr), tail(nullptr), customerCount(0), nextID(1001) {
+        cout << "═══════════════════════════════════════════════════\n";
+        cout << "    WELCOME TO CUSTOMER MANAGEMENT SYSTEM\n";
+        cout << "═══════════════════════════════════════════════════\n";
+    }
+
+    ~CustomerManager() {
+        clearAllCustomers();
+    }
+
+    void addNewCustomerInteractive() {
+        Customer c;
+        c.ID = nextID++;
+        cout << "\n═══════════════════════════════════\n";
+        cout << "       ENTER CUSTOMER DETAILS\n";
+        cout << "═══════════════════════════════════\n";
+        cout << "Enter Name: "; cin.ignore(); getline(cin, c.Name);
+        cout << "Enter Email: "; getline(cin, c.Email);
+        cout << "Enter Phone: "; getline(cin, c.Phone);
+        cout << "Enter Address: "; getline(cin, c.Address);
+
+        CustNode* nn = new CustNode(c);
+        if (!head) head = tail = nn;
+        else { tail->next = nn; tail = nn; }
+        ++customerCount;
+        cout << "\n✅ Customer added successfully! ID: " << c.ID << "\n";
+    }
+
+    void displayAllCustomers() {
+        if (!head) { cout << "\n📭 No customers to display!\n"; return; }
+        cout << "\n═══════════════════════════════════════════════════\n";
+        cout << "              ALL CUSTOMERS (" << customerCount << ")\n";
+        cout << "═══════════════════════════════════════════════════\n";
+        CustNode* cur = head; int cnt = 1;
+        while (cur) {
+            cout << "\n【" << cnt++ << "】 ";
+            cout << "ID: " << cur->data.ID << " | ";
+            cout << "Name: " << cur->data.Name << " | ";
+            cout << "Phone: " << cur->data.Phone;
+            cur = cur->next;
+        }
+        cout << "\n═══════════════════════════════════════════════════\n";
+    }
+
+    Customer* findCustomer(int id) {
+        CustNode* cur = head;
+        while (cur) {
+            if (cur->data.ID == id) return &(cur->data);
+            cur = cur->next;
+        }
+        return nullptr;
+    }
+
+    void removeCustomerInteractive() {
+        if (!head) { cout << "\n📭 Customer list is empty!\n"; return; }
+        displayAllCustomers();
+        int id; cout << "\nEnter Customer ID to remove: "; cin >> id;
+        if (head->data.ID == id) {
+            CustNode* temp = head;
+            head = head->next;
+            cout << "\n✅ Customer removed: " << temp->data.Name << "\n";
+            delete temp;
+            --customerCount;
+            if (!head) tail = nullptr;
+            return;
+        }
+        CustNode* cur = head; CustNode* prev = nullptr;
+        while (cur && cur->data.ID != id) { prev = cur; cur = cur->next; }
+        if (!cur) { cout << "\n❌ Customer with ID " << id << " not found!\n"; return; }
+        prev->next = cur->next;
+        if (cur == tail) tail = prev;
+        cout << "\n✅ Customer removed: " << cur->data.Name << "\n";
+        delete cur;
+        --customerCount;
+    }
+
+    void displayCustomerDetailsInteractive() {
+        if (!head) { cout << "\n📭 Customer list is empty!\n"; return; }
+        int id; cout << "\nEnter Customer ID to view details: "; cin >> id;
+        Customer* c = findCustomer(id);
+        if (!c) { cout << "\n❌ Customer with ID " << id << " not found!\n"; return; }
+        cin.ignore();
+        c->display();
+    }
+
+    void displayStatistics() {
+        cout << "\n═══════════════════════════════════\n";
+        cout << "          SYSTEM STATISTICS\n";
+        cout << "═══════════════════════════════════\n";
+        cout << "   Total Customers: " << customerCount << endl;
+        cout << "   Next Customer ID: " << nextID << endl;
+        cout << "═══════════════════════════════════\n";
+    }
+
+    void clearAllCustomers() {
+        CustNode* cur = head;
+        while (cur) {
+            CustNode* tmp = cur;
+            cur = cur->next;
+            delete tmp;
+        }
+        head = tail = nullptr;
+        customerCount = 0;
+    }
+};
+
+/* -------------------------
+   Order class & OrderHistory (DLL)
+   ------------------------- */
+struct Order {
+    int orderID;
+    int customerID;
+    vector<string> itemNames;
+    vector<double> itemUnitPrices;
+    vector<int> itemQty;
+    double totalCost;
+
+    Order(int oid = 0, int cid = 0) : orderID(oid), customerID(cid), totalCost(0.0) {}
+
+    void addLine(const string& name, double unitPrice, int qty) {
+        itemNames.push_back(name);
+        itemUnitPrices.push_back(unitPrice);
+        itemQty.push_back(qty);
+        totalCost += unitPrice * qty;
+    }
+
+    void showInvoice() const {
+        cout << "\n===== INVOICE (Order ID: " << orderID << ") =====\n";
+        cout << "Customer ID: " << customerID << "\n";
+        double sum = 0.0;
+        for (size_t i = 0; i < itemNames.size(); ++i) {
+            double line = itemUnitPrices[i] * itemQty[i];
+            cout << i+1 << ". " << itemNames[i]
+                 << " | Qty: " << itemQty[i]
+                 << " | Unit: $" << itemUnitPrices[i]
+                 << " | Line Total: $" << line << "\n";
+            sum += line;
+        }
+        cout << "Recorded Total: $" << totalCost << "\n";
+        if (fabs(sum - totalCost) > 0.001) {
+            cout << "(Note: computed sum differs by $" << fabs(sum - totalCost) << ")\n";
+        }
+        cout << "=================================\n";
+    }
+};
+
+class OrderHistory {
+private:
+    struct Node {
+        Order* data;
+        Node* next;
+        Node* prev;
+        Node(Order* o) : data(o), next(nullptr), prev(nullptr) {}
+    };
+    Node* head;
+    Node* tail;
+
+public:
+    OrderHistory() : head(nullptr), tail(nullptr) {}
+
+    ~OrderHistory() {
+        Node* cur = head;
+        while (cur) {
+            Node* tmp = cur;
+            cur = cur->next;
+            delete tmp->data;
+            delete tmp;
+        }
+    }
+
+    bool isEmpty() const { return head == nullptr; }
+
+    void addOrder(Order* o) {
+        Node* nn = new Node(o);
+        if (isEmpty()) { head = tail = nn; return; }
+        tail->next = nn; nn->prev = tail; tail = nn;
+    }
+
+    Order* getLastOrder() const { return tail ? tail->data : nullptr; }
+
+    void showLastOrder() {
+        clearScreen();
+        cout << "LAST ORDER\n";
+        cout << "==========\n";
+        if (isEmpty()) { cout << "No previous orders found.\n"; waitForEnter(); return; }
+        Order* last = getLastOrder();
+        if (!last) { cout << "No previous orders found.\n"; waitForEnter(); return; }
+        last->showInvoice();
+        waitForEnter();
+    }
+};
+
+/* -------------------------
+   CartStack (STACK)
+   ------------------------- */
+class CartNode {
+public:
+    string itemName;
+    double price;
+    int qty;
+    CartNode* next;
+    CartNode(const string& n, double p, int q) : itemName(n), price(p), qty(q), next(nullptr) {}
+};
+
+class CartStack {
+private:
+    CartNode* top;
+
+public:
+    CartStack() : top(nullptr) {}
+
+    bool isEmpty() const { return top == nullptr; }
+
+    void pushItem(const string& name, double price, int qty = 1) {
+        CartNode* nn = new CartNode(name, price, qty);
+        nn->next = top;
+        top = nn;
+        cout << "Added to cart: " << name << " ($" << price << ") x" << qty << "\n";
+    }
+
+    void popItem() {
+        if (isEmpty()) { cout << "Cart is empty. Nothing to remove.\n"; return; }
+        CartNode* del = top;
+        cout << "Removed: " << top->itemName << endl;
+        top = top->next;
+        delete del;
+    }
+
+    void displayCart() const {
+        if (isEmpty()) { cout << "Cart is empty.\n"; return; }
+        CartNode* temp = top;
+        cout << "\nItems in cart (LIFO):\n";
+        while (temp) {
+            cout << "- " << temp->itemName << " ($" << temp->price << ") x" << temp->qty << "\n";
+            temp = temp->next;
+        }
+    }
+
+    bool empty() const { return isEmpty(); }
+
+    // Build an Order from the cart (consumes the stack)
+    Order* checkout(int orderID, int customerID) {
+        Order* o = new Order(orderID, customerID);
+        // Since stack is LIFO, we'll collect into a temporary vector then reverse to present in insertion order
+        vector<CartNode*> nodes;
+        while (top) {
+            nodes.push_back(top);
+            top = top->next;
+        }
+        // Nodes now hold pointers but ownership still with heap; we will create order lines and then delete nodes
+        for (auto it = nodes.rbegin(); it != nodes.rend(); ++it) {
+            CartNode* n = *it;
+            o->addLine(n->itemName, n->price, n->qty);
+        }
+        // delete nodes
+        for (CartNode* n : nodes) delete n;
+        return o;
+    }
+
+    // clear without checkout
+    void clear() {
+        while (top) {
+            CartNode* tmp = top; top = top->next; delete tmp;
+        }
+    }
+};
+
+/* -------------------------
+   DeliveryQueue (QUEUE)
+   ------------------------- */
+class DeliveryNode {
+public:
+    string orderName;
+    int orderID;
+    DeliveryNode* next;
+    DeliveryNode(const string& name = "", int id = 0) : orderName(name), orderID(id), next(nullptr) {}
+};
+
+class DeliveryQueue {
+private:
+    DeliveryNode* front;
+    DeliveryNode* rear;
+
+public:
+    DeliveryQueue() : front(nullptr), rear(nullptr) {}
+
+    bool isEmpty() const { return front == nullptr && rear == nullptr; }
+
+    void enqueueDelivery(const string& orderName, int orderID) {
+        DeliveryNode* nn = new DeliveryNode(orderName, orderID);
+        if (isEmpty()) { front = rear = nn; }
+        else { rear->next = nn; rear = nn; }
+        cout << "Order \"" << orderName << "\" (ID " << orderID << ") added to delivery queue.\n";
+    }
+
+    void dequeueDelivery() {
+        if (isEmpty()) { cout << "No deliveries in queue.\n"; return; }
+        DeliveryNode* del = front;
+        cout << "Delivery completed: " << front->orderName << " (ID " << front->orderID << ")\n";
+        if (front == rear) { front = rear = nullptr; }
+        else front = front->next;
+        delete del;
+    }
+
+    void showPendingDeliveries() const {
+        if (isEmpty()) { cout << "No pending deliveries.\n"; return; }
+        DeliveryNode* temp = front;
+        cout << "Pending deliveries:\n";
+        while (temp) {
+            cout << "- " << temp->orderName << " (ID " << temp->orderID << ")\n";
+            temp = temp->next;
+        }
+    }
+
+    void clear() {
+        while (!isEmpty()) dequeueDelivery();
+    }
+};
+
+/* -------------------------
+   Unified main & menus
+   ------------------------- */
+void productsMenu(ProductCatalog& catalog) {
+    int choice = 0;
+    while (choice != 6) {
+        cout << "\n====== PRODUCTS MENU ======\n";
+        cout << "1. Add Product\n2. Remove Product\n3. Search Product (by ID)\n4. Search by keyword\n5. Show products by category\n6. Show all / Back\n";
+        cout << "Enter choice: "; cin >> choice;
+        switch (choice) {
+            case 1: catalog.addProductInteractive(); break;
+            case 2: catalog.removeProductInteractive(); break;
+            case 3: {
+                cout << "Enter Product ID to search: "; int id; cin >> id;
+                Product* p = catalog.findProduct(id);
+                if (p) p->show(); else cout << "Product not found.\n";
+                break;
+            }
+            case 4: catalog.searchByKeywordInteractive(); break;
+            case 5: catalog.showByCategoryInteractive(); break;
+            case 6: catalog.showAll(); break;
+            default: cout << "Wrong choice! Try again.\n";
+        }
+    }
+}
+
+void customersMenu(CustomerManager& mgr) {
+    int choice = 0;
+    while (choice != 6) {
+        cout << "\n═══════════════════════════════════\n";
+        cout << "            CUSTOMERS MENU\n";
+        cout << "1. Add New Customer\n2. Remove Customer\n3. Search Customer (view details)\n4. View All Customers\n5. Display Statistics\n6. Back\n";
+        cout << "Enter your choice: "; cin >> choice;
+        switch (choice) {
+            case 1: mgr.addNewCustomerInteractive(); break;
+            case 2: mgr.removeCustomerInteractive(); break;
+            case 3: mgr.displayCustomerDetailsInteractive(); break;
+            case 4: mgr.displayAllCustomers(); break;
+            case 5: mgr.displayStatistics(); break;
+            case 6: break;
+            default: cout << "Invalid choice!\n";
+        }
+    }
+}
+
+int main() {
+    ProductCatalog catalog;
+    CustomerManager customers;
+    OrderHistory orders;
+    CartStack cart;
+    DeliveryQueue deliveries;
+
+    // Preload some products (optional)
+    catalog.addProductDirect(Product(101, "Milk", "Dairy", 5.50, 20));
+    catalog.addProductDirect(Product(102, "Bread", "Bakery", 3.00, 30));
+    catalog.addProductDirect(Product(103, "Eggs", "Dairy", 7.00, 50));
+    catalog.addProductDirect(Product(201, "Apple", "Produce", 0.8, 100));
+
+    int orderCounter = 1000;
+    int topChoice = 0;
+
+    while (topChoice != 9) {
+        cout << "\n====== MAIN MENU ======\n";
+        cout << "1. Products\n2. Customers\n3. View Cart\n4. Add Product to Cart\n5. Remove top item from Cart\n6. Checkout / Place Order\n7. View Last Order\n8. Delivery Queue\n9. Exit\n";
+        cout << "Enter choice: "; cin >> topChoice;
+        switch (topChoice) {
+            case 1: productsMenu(catalog); break;
+            case 2: customersMenu(customers); break;
+            case 3: {
+                cin.ignore();
+                cart.displayCart();
+                waitForEnter();
+                break;
+            }
+            case 4: {
+                cout << "Enter Product ID to add to cart: "; int pid; cin >> pid;
+                Product* p = catalog.findProduct(pid);
+                if (!p) { cout << "Product not found!\n"; break; }
+                cout << "Enter quantity: "; int q; cin >> q;
+                if (q <= 0) { cout << "Invalid quantity.\n"; break; }
+                if (p->Stock < q) { cout << "Insufficient stock. Available: " << p->Stock << "\n"; break; }
+                // Deduct stock
+                p->Stock -= q;
+                cart.pushItem(p->Name, p->Price, q);
+                break;
+            }
+            case 5: {
+                cart.popItem();
+                break;
+            }
+            case 6: {
+                // Checkout: need a customer ID
+                cout << "Enter Customer ID for this order: "; int cid; cin >> cid;
+                Customer* c = customers.findCustomer(cid);
+                if (!c) { cout << "Customer not found! Please add customer first.\n"; break; }
+                if (cart.empty()) { cout << "Cart empty! Add items before checkout.\n"; break; }
+                int oid = ++orderCounter;
+                Order* o = cart.checkout(oid, cid);
+                orders.addOrder(o);
+                // Enqueue for delivery with simple name
+                deliveries.enqueueDelivery("Order " + to_string(oid), oid);
+                cout << "\nOrder placed successfully. Order ID: " << oid << "\n";
+                o->showInvoice();
+                waitForEnter();
+                break;
+            }
+            case 7:
+                orders.showLastOrder();
+                break;
+            case 8: {
+                int dc = 0;
+                while (dc != 4) {
+                    cout << "\n--- DELIVERY QUEUE MENU ---\n";
+                    cout << "1. Show pending deliveries\n2. Complete next delivery\n3. Clear all deliveries\n4. Back\n";
+                    cout << "Enter choice: "; cin >> dc;
+                    switch (dc) {
+                        case 1: deliveries.showPendingDeliveries(); break;
+                        case 2: deliveries.dequeueDelivery(); break;
+                        case 3: deliveries.clear(); break;
+                        case 4: break;
+                        default: cout << "Invalid choice.\n";
+                    }
+                }
+                break;
+            }
+            case 9:
+                cout << "\n=== PROGRAM ENDED ===\n";
+                break;
+            default:
+                cout << "Wrong choice! Try again.\n";
+        }
+    }
+
+    // cleanup (destructors will run)
+    return 0;
+}
