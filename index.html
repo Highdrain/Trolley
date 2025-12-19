@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Trolley Dashboard</title>
+  <title>Trolley — Owner Console</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,21 +11,21 @@
 
   <style>
     :root{
-      --bg:#F6F8FC;
-      --panel:#FFFFFF;
-      --text:#0F172A;
-      --muted:#64748B;
-      --line:#E6EAF2;
+      --bg:#0B0B0C;
+      --panel:#111113;
+      --panel2:#0F0F10;
+      --text:#F5F5F5;
+      --muted:#A3A3A3;
+      --line:#232327;
 
-      --brand:#2563EB;
-      --brand2:#06B6D4;
-      --good:#16A34A;
+      --accent:#FFFFFF;
+      --good:#22C55E;
       --warn:#F59E0B;
       --bad:#EF4444;
 
       --radius:16px;
-      --shadow: 0 18px 40px rgba(15, 23, 42, .08);
-      --shadow2: 0 10px 22px rgba(15, 23, 42, .06);
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --shadow2: 0 10px 22px rgba(0,0,0,.35);
     }
 
     *{box-sizing:border-box}
@@ -33,62 +33,75 @@
     body{
       margin:0;
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: radial-gradient(1000px 600px at 20% 0%, rgba(37,99,235,.10), transparent 55%),
-                  radial-gradient(900px 600px at 85% 10%, rgba(6,182,212,.10), transparent 55%),
-                  var(--bg);
+      background:
+        radial-gradient(900px 600px at 20% 0%, rgba(255,255,255,.10), transparent 55%),
+        radial-gradient(900px 600px at 80% 10%, rgba(255,255,255,.06), transparent 55%),
+        var(--bg);
       color:var(--text);
       overflow-x:hidden;
     }
 
     a{color:inherit; text-decoration:none}
-
-    /* IMPORTANT: when hidden, remove from layout completely */
     .hidden{display:none !important;}
+
+    /* Subtle grain */
+    .grain{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.06;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+      mix-blend-mode:overlay;
+    }
 
     /* Buttons */
     .btn{
       border:1px solid var(--line);
-      background:#fff;
+      background: rgba(255,255,255,.04);
       color:var(--text);
       padding:10px 12px;
       border-radius:12px;
       cursor:pointer;
-      transition: transform .06s ease, box-shadow .2s ease, border-color .2s ease;
-      box-shadow: 0 1px 0 rgba(15, 23, 42, .04);
+      transition: transform .06s ease, border-color .2s ease, background .2s ease, opacity .2s ease;
       user-select:none;
     }
-    .btn:hover{border-color:#D7DDEA; box-shadow: 0 10px 18px rgba(15, 23, 42, .06)}
+    .btn:hover{border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.07)}
     .btn:active{transform:scale(.99)}
     .btn.primary{
+      background: var(--accent);
+      color:#0A0A0A;
       border-color: transparent;
-      color:#fff;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow: 0 14px 26px rgba(37,99,235,.20);
+      font-weight:800;
+    }
+    .btn.danger{
+      background: rgba(239,68,68,.10);
+      border-color: rgba(239,68,68,.35);
+      color: #FCA5A5;
     }
     .btn.ghost{background: transparent}
-    .btn.danger{
-      background:#fff;
-      border-color:#F1C7C7;
-      color: var(--bad);
-    }
+    .btn:disabled{opacity:.55; cursor:not-allowed}
     .btn.full{width:100%}
 
     /* Inputs */
-    input, select{
+    input, select, textarea{
       width:100%;
       padding:12px 12px;
       border-radius:12px;
       border:1px solid var(--line);
       outline:none;
-      background:#fff;
+      background: rgba(255,255,255,.03);
       color:var(--text);
     }
-    input:focus, select:focus{border-color: rgba(37,99,235,.45); box-shadow: 0 0 0 4px rgba(37,99,235,.08)}
+    textarea{min-height:90px; resize:vertical}
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(255,255,255,.35);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.06)
+    }
     label{font-size:12px;color:var(--muted)}
+    .hint{font-size:12px;color:var(--muted); line-height:1.45}
 
     /* Cards */
     .card{
-      background: var(--panel);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
       border:1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow2);
@@ -97,11 +110,11 @@
     .muted{color:var(--muted)}
     .pill{
       display:inline-flex;align-items:center;gap:8px;
-      padding:8px 10px;
+      padding:7px 10px;
       border:1px solid var(--line);
       border-radius:999px;
       color:var(--muted);
-      background:#fff;
+      background: rgba(255,255,255,.03);
       font-size:12px;
     }
     .badge{
@@ -109,12 +122,38 @@
       border-radius:999px;
       padding:0 8px;
       display:inline-flex;align-items:center;justify-content:center;
-      background:#EEF2FF;
-      border:1px solid #E0E7FF;
-      color:#3730A3;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      color:#fff;
       font-size:12px;
-      font-weight:600;
+      font-weight:700;
     }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: min(420px, calc(100vw - 36px));
+      display:grid;
+      gap:10px;
+      z-index: 999;
+    }
+    .toast .t{
+      padding:12px 12px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      display:flex;gap:10px;align-items:flex-start;
+    }
+    .dot{width:10px;height:10px;border-radius:999px;margin-top:4px;background:#fff}
+    .dot.good{background: var(--good)}
+    .dot.bad{background: var(--bad)}
+    .dot.warn{background: var(--warn)}
+    .t .title{font-weight:800}
+    .t .msg{font-size:12px;color:var(--muted); margin-top:2px; white-space:pre-wrap}
 
     /* AUTH */
     #authView{
@@ -131,13 +170,20 @@
       border-radius: 22px;
       border:1px solid var(--line);
       box-shadow: var(--shadow);
-      background:#fff;
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
     }
     .auth-left{padding:18px; border-right:1px solid var(--line)}
-    .auth-right{padding:18px; background: linear-gradient(135deg, rgba(37,99,235,.06), rgba(6,182,212,.06))}
+    .auth-right{
+      padding:18px;
+      background:
+        radial-gradient(600px 400px at 20% 10%, rgba(255,255,255,.08), transparent 60%),
+        radial-gradient(600px 400px at 85% 10%, rgba(255,255,255,.05), transparent 60%);
+    }
     .logo{
       width:34px;height:34px;border-radius:12px;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      background: linear-gradient(135deg, rgba(255,255,255,.90), rgba(255,255,255,.25));
+      border:1px solid rgba(255,255,255,.18);
     }
     .tabs{display:flex; gap:10px; margin-top:14px}
     .tab{
@@ -145,15 +191,15 @@
       padding:10px 12px;
       border-radius:12px;
       border:1px solid var(--line);
-      background:#fff;
+      background: rgba(255,255,255,.03);
       color:var(--muted);
       cursor:pointer;
-      font-weight:600;
+      font-weight:800;
     }
     .tab.active{
       color: var(--text);
-      border-color: rgba(37,99,235,.35);
-      background: rgba(37,99,235,.06);
+      border-color: rgba(255,255,255,.20);
+      background: rgba(255,255,255,.06);
     }
     .pane{display:none; gap:10px; margin-top:12px}
     .pane.active{display:grid}
@@ -163,18 +209,16 @@
       padding:10px;
       border-radius:12px;
       border:1px solid rgba(239,68,68,.35);
-      background: rgba(239,68,68,.07);
-      color:#7F1D1D;
+      background: rgba(239,68,68,.09);
+      color:#FCA5A5;
       white-space:pre-wrap;
     }
 
     /* APP LAYOUT */
-    #appView{
-      min-height:100vh;
-    }
+    #appView{min-height:100vh}
     .app{
       display:grid;
-      grid-template-columns: 260px 1fr;
+      grid-template-columns: 270px 1fr;
       min-height:100vh;
     }
     .sidebar{
@@ -183,18 +227,18 @@
       height:100vh;
       padding:14px;
       border-right:1px solid var(--line);
-      background: rgba(255,255,255,.70);
+      background: rgba(0,0,0,.22);
       backdrop-filter: blur(10px);
     }
     .side-top{
       display:flex;align-items:center;gap:10px;
       padding:10px;
       border-radius:16px;
-      background:#fff;
+      background: rgba(255,255,255,.04);
       border:1px solid var(--line);
       box-shadow: var(--shadow2);
     }
-    .side-top .title{font-weight:800}
+    .side-top .title{font-weight:900}
     .side-top .sub{font-size:12px;color:var(--muted); margin-top:2px}
 
     .nav{
@@ -210,12 +254,12 @@
       border:1px solid transparent;
     }
     .nav a.active{
-      background: rgba(37,99,235,.08);
-      border-color: rgba(37,99,235,.18);
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.14);
       color: var(--text);
-      font-weight:700;
+      font-weight:900;
     }
-    .nav a:hover{background: rgba(15,23,42,.04)}
+    .nav a:hover{background: rgba(255,255,255,.05)}
     .side-bottom{
       position:absolute;
       left:14px; right:14px; bottom:14px;
@@ -223,125 +267,48 @@
       gap:10px;
     }
 
-    .main{
-      padding:18px;
-    }
+    .main{padding:18px}
     .topbar{
       display:flex;align-items:center;justify-content:space-between;gap:12px;
       margin-bottom:16px;
     }
-    .topbar h1{margin:0;font-size:22px}
-    .top-actions{display:flex;gap:10px;align-items:center}
-
-    .grid4{
+    .topbar h1{margin:0;font-size:22px; font-weight:900}
+    .top-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .kpi{
       display:grid;
       grid-template-columns: repeat(4, minmax(0,1fr));
       gap:12px;
     }
     .stat .label{font-size:12px;color:var(--muted)}
-    .stat .value{font-size:22px;font-weight:800;margin-top:6px}
+    .stat .value{font-size:22px;font-weight:900;margin-top:6px}
     .stat .sub{font-size:12px;color:var(--muted);margin-top:6px}
 
-    /* Tables */
     table{width:100%;border-collapse:collapse}
     th,td{padding:12px 10px; border-bottom:1px solid var(--line); text-align:left; font-size:13px}
-    th{color:var(--muted); font-weight:700; font-size:12px; letter-spacing:.03em; text-transform:uppercase}
-    tr:hover td{background: rgba(15,23,42,.02)}
+    th{color:var(--muted); font-weight:800; font-size:12px; letter-spacing:.03em; text-transform:uppercase}
+    tr:hover td{background: rgba(255,255,255,.02)}
 
-    /* Products grid */
-    .products-grid{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap:12px;
-      margin-top:12px;
-    }
-    .p-item{padding:14px; overflow:hidden}
-    .p-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px;}
-    .p-name{font-weight:800}
-    .p-meta{font-size:12px;color:var(--muted); margin-top:6px}
-    .p-price{font-size:18px;font-weight:800;margin-top:10px}
-    .p-actions{margin-top:12px; display:flex; gap:10px; align-items:center; justify-content:space-between}
-    .stepper{display:flex; gap:6px; align-items:center}
-    .stepper button{padding:10px 12px}
-    .stepper input{width:70px; text-align:center}
+    .grid2{display:grid;grid-template-columns: 1fr 1fr; gap:12px}
+    .grid3{display:grid;grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .spacer{height:12px}
 
-    /* Product “image” */
-    .thumb{
-      height: 120px;
+    .imgPrev{
+      width:100%;
+      border:1px solid var(--line);
       border-radius: 14px;
-      border:1px solid var(--line);
-      margin-top:12px;
-      background:
-        radial-gradient(70px 70px at 25% 30%, rgba(37,99,235,.22), transparent 60%),
-        radial-gradient(80px 80px at 75% 55%, rgba(6,182,212,.18), transparent 65%),
-        linear-gradient(180deg, #FFFFFF, #F3F6FF);
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      padding:12px;
-      position:relative;
       overflow:hidden;
-    }
-    .thumb:before{
-      content:"";
-      position:absolute;
-      inset:-40px -40px auto auto;
-      width:140px;height:140px;
-      background: radial-gradient(circle, rgba(37,99,235,.18), transparent 60%);
-      transform: rotate(10deg);
-    }
-    .thumb .emoji{
-      position:relative;
-      font-size: 28px;
-    }
-    .thumb .tag{
-      position:relative;
-      font-size: 12px;
-      padding:6px 10px;
-      border-radius: 999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.03);
+      aspect-ratio: 16/9;
+      display:grid;
+      place-items:center;
       color: var(--muted);
-      font-weight:600;
     }
+    .imgPrev img{width:100%;height:100%;object-fit:cover;display:block}
 
-    /* Drawer (Cart) */
-    .backdrop{
-      position:fixed; inset:0;
-      background: rgba(15,23,42,.42);
-      opacity:0; pointer-events:none;
-      transition: opacity .18s ease;
-      z-index: 50;
-    }
-    .drawer{
-      position:fixed;
-      right:18px;
-      top:18px;
-      width: 420px;
-      max-width: calc(100vw - 36px);
-      height: calc(100vh - 36px);
-      transform: translateX(110%);
-      transition: transform .2s ease;
-      z-index: 60;
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-    }
-    .drawer-head{
-      padding:14px;
-      border-bottom:1px solid var(--line);
-      display:flex;justify-content:space-between;align-items:center;gap:10px;
-    }
-    .drawer-body{padding:14px; overflow:auto; display:grid; gap:10px; flex:1}
-    .drawer-foot{padding:14px; border-top:1px solid var(--line); display:grid; gap:10px}
-    .cart-item{padding:12px}
-    .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
-    .cart-sub{font-size:12px;color:var(--muted); margin-top:4px}
-
-    /* Responsive */
     @media (max-width: 1100px){
-      .grid4{grid-template-columns: repeat(2, minmax(0,1fr))}
-      .products-grid{grid-template-columns: repeat(2, minmax(0,1fr))}
+      .kpi{grid-template-columns: repeat(2, minmax(0,1fr))}
+      .grid3{grid-template-columns: 1fr 1fr}
     }
     @media (max-width: 860px){
       .app{grid-template-columns: 1fr}
@@ -349,15 +316,15 @@
       .side-bottom{position:relative;left:auto;right:auto;bottom:auto}
       .auth-shell{grid-template-columns: 1fr}
       .auth-left{border-right:none;border-bottom:1px solid var(--line)}
-    }
-    @media (max-width: 560px){
-      .products-grid{grid-template-columns: 1fr}
-      .grid4{grid-template-columns: 1fr}
+      .grid2{grid-template-columns: 1fr}
+      .grid3{grid-template-columns: 1fr}
     }
   </style>
 </head>
 
 <body>
+  <div class="grain"></div>
+  <div id="toasts" class="toast"></div>
 
   <!-- AUTH VIEW -->
   <section id="authView">
@@ -366,8 +333,8 @@
         <div style="display:flex;gap:10px;align-items:center;">
           <div class="logo"></div>
           <div>
-            <div style="font-weight:800;">Trolley</div>
-            <div class="muted" style="font-size:12px;">Login to start shopping</div>
+            <div style="font-weight:900;">Trolley</div>
+            <div class="muted" style="font-size:12px;">Owner Console</div>
           </div>
         </div>
 
@@ -378,7 +345,7 @@
 
         <div id="paneLogin" class="pane active">
           <label>Email</label>
-          <input id="loginEmail" type="email" placeholder="you@email.com" />
+          <input id="loginEmail" type="email" placeholder="owner@email.com" />
           <label>Password</label>
           <input id="loginPass" type="password" placeholder="••••••••" />
           <button id="btnLogin" class="btn primary full">Log in</button>
@@ -387,13 +354,11 @@
 
         <div id="paneSignup" class="pane">
           <label>Email</label>
-          <input id="signupEmail" type="email" placeholder="you@email.com" />
+          <input id="signupEmail" type="email" placeholder="owner@email.com" />
           <label>Password</label>
           <input id="signupPass" type="password" placeholder="Min 6 chars" />
           <button id="btnSignup" class="btn primary full">Create account</button>
-          <div class="muted" style="font-size:12px;line-height:1.4;">
-            Enable Firebase Authentication → Email/Password.
-          </div>
+          <div class="hint">Use your real email. You’ll use it to manage your store.</div>
         </div>
 
         <div id="authAlert" class="alert"></div>
@@ -401,11 +366,15 @@
 
       <div class="auth-right">
         <div class="card pad">
-          <div class="pill"><span class="badge">New</span> Product cards now have images</div>
-          <h2 style="margin:12px 0 6px 0;">Modern grocery dashboard</h2>
+          <div class="pill"><span class="badge">Owner</span> Multi-store dashboard</div>
+          <h2 style="margin:12px 0 6px 0; font-weight:900;">Black & White. Clean. Fast.</h2>
           <p class="muted" style="margin:0;line-height:1.6;">
-            Sidebar navigation + pages + cart drawer. Single file only.
+            Create your store, add products with images, create deals & coupons, and track orders.
           </p>
+          <div class="spacer"></div>
+          <div class="hint">
+            Tip: you can deploy this separately from the customer website.
+          </div>
         </div>
       </div>
     </div>
@@ -414,29 +383,38 @@
   <!-- APP VIEW -->
   <section id="appView" class="hidden">
     <div class="app">
+
       <aside class="sidebar">
         <div class="side-top">
           <div class="logo"></div>
-          <div>
-            <div class="title">Trolley</div>
-            <div class="sub">Customer App</div>
+          <div style="min-width:0">
+            <div class="title">Owner Console</div>
+            <div class="sub" id="storeChip">No store selected</div>
           </div>
         </div>
 
+        <div class="spacer"></div>
+
+        <div class="card pad">
+          <div class="muted" style="font-size:12px;">Signed in as</div>
+          <div id="userEmail" style="font-weight:800; margin-top:6px; overflow:hidden; text-overflow:ellipsis;">—</div>
+          <div class="spacer"></div>
+          <label>Your stores</label>
+          <select id="storeSelect"></select>
+          <div class="spacer"></div>
+          <button id="btnNewStore" class="btn full">+ Create new store</button>
+        </div>
+
         <nav class="nav" id="nav">
-          <a href="#dashboard" data-page="dashboard" class="active">🏠 Dashboard</a>
-          <a href="#products"  data-page="products">🛒 Products</a>
-          <a href="#customers" data-page="customers">👤 Customers</a>
-          <a href="#orders"    data-page="orders">🧾 Orders</a>
-          <a href="#delivery"  data-page="delivery">🚚 Delivery</a>
-          <a href="#settings"  data-page="settings">⚙️ Settings</a>
+          <a href="#overview" data-page="overview" class="active">⬛ Overview</a>
+          <a href="#products" data-page="products">⬛ Products</a>
+          <a href="#bundles" data-page="bundles">⬛ Bundles</a>
+          <a href="#coupons" data-page="coupons">⬛ Coupons</a>
+          <a href="#orders" data-page="orders">⬛ Orders</a>
+          <a href="#settings" data-page="settings">⬛ Settings</a>
         </nav>
 
         <div class="side-bottom">
-          <div class="card pad">
-            <div class="muted" style="font-size:12px;">Signed in as</div>
-            <div id="userEmail" style="font-weight:700; margin-top:6px;">—</div>
-          </div>
           <button id="btnSignOut" class="btn danger">Logout</button>
         </div>
       </aside>
@@ -444,200 +422,472 @@
       <main class="main">
         <div class="topbar">
           <div>
-            <h1 id="pageTitle">Dashboard</h1>
-            <div class="muted" id="pageSubtitle">Overview and recent activity.</div>
+            <h1 id="pageTitle">Overview</h1>
+            <div class="muted" id="pageSubtitle">Analytics and recent orders.</div>
           </div>
           <div class="top-actions">
-            <div class="pill">Branch: <b>All</b></div>
-            <button id="btnCartOpen" class="btn primary">Cart <span id="cartCount" class="badge">0</span></button>
+            <div class="pill">Mode: <b>Owner</b></div>
+            <div class="pill">DB: <b>Realtime</b></div>
           </div>
         </div>
 
-        <section data-view="dashboard">
-          <div class="grid4">
+        <!-- OVERVIEW -->
+        <section data-view="overview">
+          <div class="kpi">
             <div class="card pad stat">
-              <div class="label">Sales Today</div>
-              <div class="value" id="salesToday">$0.00</div>
-              <div class="sub">Net of returns.</div>
+              <div class="label">Total Revenue</div>
+              <div class="value" id="kpiRevenue">$0.00</div>
+              <div class="sub">From all orders.</div>
             </div>
             <div class="card pad stat">
-              <div class="label">Sales Orders Today</div>
-              <div class="value" id="ordersToday">0</div>
-              <div class="sub">Number of sales orders.</div>
+              <div class="label">Total Orders</div>
+              <div class="value" id="kpiOrders">0</div>
+              <div class="sub">Placed orders.</div>
             </div>
             <div class="card pad stat">
-              <div class="label">Return Orders Today</div>
-              <div class="value" id="returnsToday">0</div>
-              <div class="sub">Number of returns.</div>
+              <div class="label">Active Products</div>
+              <div class="value" id="kpiProducts">0</div>
+              <div class="sub">Visible in store.</div>
             </div>
             <div class="card pad stat">
-              <div class="label">Active Branches</div>
-              <div class="value">1</div>
-              <div class="sub">Branches marked active.</div>
+              <div class="label">Top Seller</div>
+              <div class="value" id="kpiTop">—</div>
+              <div class="sub">Most sold item.</div>
             </div>
           </div>
 
-          <div style="margin-top:12px;" class="card pad">
-            <div style="font-weight:800;">Recent Orders</div>
-            <div class="muted" style="font-size:12px;margin-top:4px;">Last 10 orders.</div>
+          <div class="spacer"></div>
+
+          <div class="card pad">
+            <div style="font-weight:900;">Recent Orders</div>
+            <div class="muted" style="font-size:12px;margin-top:4px;">Last 10 orders in this store.</div>
             <div style="margin-top:10px; overflow:auto;">
               <table>
-                <thead>
-                  <tr><th>ID</th><th>Date</th><th>Customer</th><th>Total</th></tr>
-                </thead>
+                <thead><tr><th>Order</th><th>Date</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead>
                 <tbody id="recentOrdersBody">
-                  <tr><td colspan="4" class="muted">No orders yet.</td></tr>
+                  <tr><td colspan="5" class="muted">No orders yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="spacer"></div>
+
+          <div class="card pad">
+            <div style="font-weight:900;">Top Sold Products</div>
+            <div class="muted" style="font-size:12px;margin-top:4px;">Computed from orders.</div>
+            <div style="margin-top:10px; overflow:auto;">
+              <table>
+                <thead><tr><th>Product</th><th>Sold Qty</th></tr></thead>
+                <tbody id="topSoldBody">
+                  <tr><td colspan="2" class="muted">No data yet.</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </section>
 
+        <!-- PRODUCTS -->
         <section data-view="products" class="hidden">
-          <div class="card pad">
-            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-              <input id="search" placeholder="Search by name / category / ID (e.g., Milk, Dairy, 101)" style="flex:1; min-width:240px;">
-              <select id="category" style="width:220px;">
-                <option value="">All categories</option>
-              </select>
+          <div class="grid2">
+            <div class="card pad">
+              <div style="font-weight:900;">Add / Edit Product</div>
+              <div class="hint">Upload an image (Storage) or paste an image URL.</div>
+              <div class="spacer"></div>
+
+              <input id="prodId" class="hidden" />
+
+              <label>Name</label>
+              <input id="prodName" placeholder="Milk" />
+
+              <div class="spacer"></div>
+
+              <div class="grid2">
+                <div>
+                  <label>Category</label>
+                  <input id="prodCategory" placeholder="Dairy" />
+                </div>
+                <div>
+                  <label>Stock</label>
+                  <input id="prodStock" type="number" min="0" placeholder="20" />
+                </div>
+              </div>
+
+              <div class="spacer"></div>
+
+              <div class="grid2">
+                <div>
+                  <label>Price</label>
+                  <input id="prodPrice" type="number" min="0" step="0.01" placeholder="5.50" />
+                </div>
+                <div>
+                  <label>Active</label>
+                  <select id="prodActive">
+                    <option value="true">Yes (visible)</option>
+                    <option value="false">No (hidden)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="spacer"></div>
+
+              <label>Image URL (optional)</label>
+              <input id="prodImageUrl" placeholder="https://..." />
+
+              <div class="spacer"></div>
+
+              <label>Or upload image file (recommended)</label>
+              <input id="prodImageFile" type="file" accept="image/*" />
+
+              <div class="spacer"></div>
+
+              <div class="row">
+                <button id="btnSaveProduct" class="btn primary">Save product</button>
+                <button id="btnResetProduct" class="btn">Reset</button>
+                <button id="btnDeleteProduct" class="btn danger hidden">Delete</button>
+              </div>
+
+              <div class="spacer"></div>
+              <div class="hint">
+                Notes:
+                <br>• Stock and price are numbers.
+                <br>• If you upload a file, it overrides the Image URL.
+              </div>
+            </div>
+
+            <div class="card pad">
+              <div style="font-weight:900;">Preview</div>
+              <div class="muted" style="font-size:12px;margin-top:4px;">How customers will see it.</div>
+              <div class="spacer"></div>
+              <div class="imgPrev" id="prodPreview">No image</div>
+              <div class="spacer"></div>
+              <div class="pill">Name: <b id="pvName">—</b></div>
+              <div class="spacer"></div>
+              <div class="pill">Price: <b id="pvPrice">—</b></div>
+              <div class="spacer"></div>
+              <div class="pill">Stock: <b id="pvStock">—</b></div>
+              <div class="spacer"></div>
+              <div class="pill">Category: <b id="pvCat">—</b></div>
             </div>
           </div>
 
-          <div class="products-grid" id="productsGrid"></div>
-        </section>
+          <div class="spacer"></div>
 
-        <section data-view="customers" class="hidden">
           <div class="card pad">
-            <div style="font-weight:800;">Customers (demo)</div>
+            <div class="row" style="justify-content:space-between;">
+              <div>
+                <div style="font-weight:900;">Products</div>
+                <div class="muted" style="font-size:12px;margin-top:4px;">Click a row to edit.</div>
+              </div>
+              <div class="row">
+                <input id="prodSearch" placeholder="Search products..." style="width:260px;" />
+                <button id="btnReloadProducts" class="btn">Reload</button>
+              </div>
+            </div>
             <div style="margin-top:10px; overflow:auto;">
               <table>
-                <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
-                <tbody id="customersBody"></tbody>
+                <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Active</th></tr></thead>
+                <tbody id="productsBody">
+                  <tr><td colspan="5" class="muted">No products yet.</td></tr>
+                </tbody>
               </table>
             </div>
           </div>
         </section>
 
+        <!-- BUNDLES -->
+        <section data-view="bundles" class="hidden">
+          <div class="grid2">
+            <div class="card pad">
+              <div style="font-weight:900;">Create Bundle / Deal</div>
+              <div class="hint">Pick products + quantities, set bundle price.</div>
+              <div class="spacer"></div>
+
+              <input id="bundleId" class="hidden" />
+
+              <label>Title</label>
+              <input id="bundleTitle" placeholder="Breakfast Deal" />
+
+              <div class="spacer"></div>
+
+              <div class="grid2">
+                <div>
+                  <label>Bundle Price</label>
+                  <input id="bundlePrice" type="number" min="0" step="0.01" placeholder="9.99" />
+                </div>
+                <div>
+                  <label>Active</label>
+                  <select id="bundleActive">
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="spacer"></div>
+
+              <label>Image URL (optional)</label>
+              <input id="bundleImageUrl" placeholder="https://..." />
+
+              <div class="spacer"></div>
+
+              <div class="card pad" style="background: rgba(255,255,255,.03); box-shadow:none;">
+                <div style="font-weight:800;">Add items</div>
+                <div class="spacer"></div>
+                <div class="grid2">
+                  <div>
+                    <label>Product</label>
+                    <select id="bundlePickProduct"></select>
+                  </div>
+                  <div>
+                    <label>Qty</label>
+                    <input id="bundlePickQty" type="number" min="1" value="1" />
+                  </div>
+                </div>
+                <div class="spacer"></div>
+                <button id="btnAddBundleItem" class="btn full">Add item</button>
+              </div>
+
+              <div class="spacer"></div>
+
+              <div class="card pad" style="background: rgba(255,255,255,.03); box-shadow:none;">
+                <div style="font-weight:800;">Bundle items</div>
+                <div class="muted" style="font-size:12px;margin-top:4px;">You can remove items.</div>
+                <div class="spacer"></div>
+                <div id="bundleItemsList" class="hint">No items added.</div>
+              </div>
+
+              <div class="spacer"></div>
+              <div class="row">
+                <button id="btnSaveBundle" class="btn primary">Save bundle</button>
+                <button id="btnResetBundle" class="btn">Reset</button>
+                <button id="btnDeleteBundle" class="btn danger hidden">Delete</button>
+              </div>
+            </div>
+
+            <div class="card pad">
+              <div style="font-weight:900;">Bundles</div>
+              <div class="muted" style="font-size:12px;margin-top:4px;">Click a row to edit.</div>
+              <div class="spacer"></div>
+              <div style="overflow:auto;">
+                <table>
+                  <thead><tr><th>Title</th><th>Price</th><th>Active</th><th>Items</th></tr></thead>
+                  <tbody id="bundlesBody">
+                    <tr><td colspan="4" class="muted">No bundles yet.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- COUPONS -->
+        <section data-view="coupons" class="hidden">
+          <div class="grid2">
+            <div class="card pad">
+              <div style="font-weight:900;">Create Coupon</div>
+              <div class="hint">Customers can apply this at checkout.</div>
+              <div class="spacer"></div>
+
+              <label>Code (uppercase)</label>
+              <input id="couponCode" placeholder="SAVE10" />
+
+              <div class="spacer"></div>
+
+              <div class="grid3">
+                <div>
+                  <label>Type</label>
+                  <select id="couponType">
+                    <option value="percent">Percent</option>
+                    <option value="fixed">Fixed</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Value</label>
+                  <input id="couponValue" type="number" min="0" step="0.01" placeholder="10" />
+                </div>
+                <div>
+                  <label>Active</label>
+                  <select id="couponActive">
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="spacer"></div>
+
+              <button id="btnSaveCoupon" class="btn primary full">Save coupon</button>
+              <div class="spacer"></div>
+              <div class="hint">Saving again with same code will overwrite it.</div>
+            </div>
+
+            <div class="card pad">
+              <div style="font-weight:900;">Coupons</div>
+              <div class="muted" style="font-size:12px;margin-top:4px;">Manage store discount codes.</div>
+              <div class="spacer"></div>
+              <div style="overflow:auto;">
+                <table>
+                  <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Active</th></tr></thead>
+                  <tbody id="couponsBody">
+                    <tr><td colspan="4" class="muted">No coupons yet.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ORDERS -->
         <section data-view="orders" class="hidden">
           <div class="card pad">
-            <div style="font-weight:800;">Orders</div>
-            <div style="margin-top:10px; overflow:auto;">
+            <div class="row" style="justify-content:space-between;">
+              <div>
+                <div style="font-weight:900;">Orders</div>
+                <div class="muted" style="font-size:12px;margin-top:4px;">All orders for this store.</div>
+              </div>
+              <button id="btnReloadOrders" class="btn">Reload</button>
+            </div>
+            <div class="spacer"></div>
+            <div style="overflow:auto;">
               <table>
-                <thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Total</th></tr></thead>
-                <tbody id="ordersBody"></tbody>
+                <thead><tr><th>Order</th><th>Date</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead>
+                <tbody id="ordersBody">
+                  <tr><td colspan="5" class="muted">No orders yet.</td></tr>
+                </tbody>
               </table>
             </div>
           </div>
         </section>
 
-        <section data-view="delivery" class="hidden">
-          <div class="card pad">
-            <div style="font-weight:800;">Delivery Queue</div>
-            <div style="margin-top:10px;" id="deliveryList" class="muted">No pending deliveries.</div>
-
-            <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
-              <button id="btnCompleteDelivery" class="btn">Complete next delivery</button>
-              <button id="btnClearDeliveries" class="btn danger">Clear all</button>
-            </div>
-          </div>
-        </section>
-
+        <!-- SETTINGS -->
         <section data-view="settings" class="hidden">
           <div class="card pad">
-            <div style="font-weight:800;">Settings</div>
-            <div class="muted" style="font-size:12px;margin-top:6px;">
-              Export includes products, customers, orders, delivery queue (demo).
+            <div style="font-weight:900;">Store Settings</div>
+            <div class="hint">Rename store, toggle public visibility, export JSON.</div>
+            <div class="spacer"></div>
+
+            <div class="grid2">
+              <div>
+                <label>Store name</label>
+                <input id="setStoreName" placeholder="My Store" />
+              </div>
+              <div>
+                <label>Slug (for customer URL)</label>
+                <input id="setStoreSlug" placeholder="my-store" />
+              </div>
             </div>
 
-            <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
-              <button id="btnExportJSON" class="btn primary">Export Data JSON</button>
+            <div class="spacer"></div>
+
+            <div class="grid2">
+              <div>
+                <label>Public store</label>
+                <select id="setStorePublic">
+                  <option value="true">Yes (customers can see)</option>
+                  <option value="false">No (private)</option>
+                </select>
+              </div>
+              <div>
+                <label>Currency</label>
+                <input id="setStoreCurrency" placeholder="USD" />
+              </div>
             </div>
+
+            <div class="spacer"></div>
+
+            <div class="row">
+              <button id="btnSaveStoreSettings" class="btn primary">Save settings</button>
+              <button id="btnExportStoreJSON" class="btn">Export store JSON</button>
+            </div>
+
+            <div class="spacer"></div>
+            <div class="hint">
+              Customer app can use the store slug to load this store.
+            </div>
+          </div>
+
+          <div class="spacer"></div>
+
+          <div class="card pad">
+            <div style="font-weight:900;">Danger zone</div>
+            <div class="hint">Not implemented: deleting a store (too risky).</div>
           </div>
         </section>
+
       </main>
-
-      <!-- CART DRAWER -->
-      <div id="backdrop" class="backdrop"></div>
-      <aside id="drawer" class="drawer card">
-        <div class="drawer-head">
-          <div>
-            <div style="font-weight:800;">Cart</div>
-            <div class="muted" style="font-size:12px;">Add/remove items then checkout</div>
-          </div>
-          <button id="btnCartClose" class="btn">Close</button>
-        </div>
-
-        <div id="cartBody" class="drawer-body">
-          <div class="muted">Your cart is empty.</div>
-        </div>
-
-        <div class="drawer-foot">
-          <div class="row">
-            <div class="muted">Subtotal</div>
-            <div style="font-weight:800;" id="subtotal">$0.00</div>
-          </div>
-          <div class="row">
-            <div style="font-weight:800;">Total</div>
-            <div style="font-weight:900;" id="total">$0.00</div>
-          </div>
-
-          <label>Customer ID (demo)</label>
-          <input id="customerId" placeholder="e.g., 1001" />
-
-          <button id="btnCheckout" class="btn primary full">Checkout</button>
-          <button id="btnClearCart" class="btn danger full">Clear Cart</button>
-
-          <div id="shopAlert" class="alert"></div>
-        </div>
-      </aside>
-
     </div>
   </section>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
   import {
-    getAuth,
-    onAuthStateChanged,
+    getAuth, onAuthStateChanged,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     sendPasswordResetEmail,
     signOut
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
+  import {
+    getDatabase, ref, get, set, update, push, remove
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+  import {
+    getStorage, ref as sRef, uploadBytes, getDownloadURL
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+
   // ======================================================
-  // PASTE YOUR FIREBASE CONFIG HERE (Project settings -> Web)
+  // YOUR FIREBASE CONFIG (from your code)
   // ======================================================
-const firebaseConfig = {
-  apiKey: "AIzaSyCDQod1xzLOqAFgRDN50ohwLGWBtBwFVLc",
-  authDomain: "trolley-89d31.firebaseapp.com",
-  databaseURL: "https://trolley-89d31-default-rtdb.firebaseio.com",
-  projectId: "trolley-89d31",
-  storageBucket: "trolley-89d31.firebasestorage.app",
-  messagingSenderId: "129434473018",
-  appId: "1:129434473018:web:ae6b35d2d55526a7cedb03",
-  measurementId: "G-81TRQL41K5"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyCDQod1xzLOqAFgRDN50ohwLGWBtBwFVLc",
+    authDomain: "trolley-89d31.firebaseapp.com",
+    databaseURL: "https://trolley-89d31-default-rtdb.firebaseio.com",
+    projectId: "trolley-89d31",
+    storageBucket: "trolley-89d31.firebasestorage.app",
+    messagingSenderId: "129434473018",
+    appId: "1:129434473018:web:ae6b35d2d55526a7cedb03",
+    measurementId: "G-81TRQL41K5"
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getDatabase(app);
+  const storage = getStorage(app);
 
   const $ = (s)=>document.querySelector(s);
   const $$ = (s)=>Array.from(document.querySelectorAll(s));
-  const money = (n)=>`$${n.toFixed(2)}`;
+  const money = (n)=>`$${Number(n||0).toFixed(2)}`;
 
-  // Views
+  // ---------- Toasts ----------
+  function toast(type, title, msg){
+    const wrap = $("#toasts");
+    const el = document.createElement("div");
+    el.className = "t";
+    const dotClass = type === "good" ? "good" : type === "bad" ? "bad" : "warn";
+    el.innerHTML = `
+      <div class="dot ${dotClass}"></div>
+      <div>
+        <div class="title">${title}</div>
+        <div class="msg">${msg || ""}</div>
+      </div>
+    `;
+    wrap.appendChild(el);
+    setTimeout(()=>{ el.style.opacity="0"; el.style.transform="translateY(8px)"; }, 3200);
+    setTimeout(()=>{ el.remove(); }, 3800);
+  }
+
+  // ---------- Views ----------
   const authView = $("#authView");
   const appView  = $("#appView");
-
   function setAppVisible(isLoggedIn){
     authView.classList.toggle("hidden", isLoggedIn);
     appView.classList.toggle("hidden", !isLoggedIn);
-    // Prevent the "auth page peeks when scrolling"
     document.body.style.overflowY = isLoggedIn ? "auto" : "hidden";
   }
 
-  // AUTH
+  // ---------- Auth UI ----------
   const authAlert = $("#authAlert");
   const showAuthAlert = (m)=>{ authAlert.style.display="block"; authAlert.textContent=m; };
   const clearAuthAlert= ()=>{ authAlert.style.display="none"; authAlert.textContent=""; };
@@ -658,8 +908,12 @@ const firebaseConfig = {
     const email = $("#loginEmail").value.trim();
     const pass  = $("#loginPass").value;
     if(!email || !pass) return showAuthAlert("Enter email and password.");
-    try{ await signInWithEmailAndPassword(auth, email, pass); }
-    catch(e){ showAuthAlert(e.message); }
+    try{
+      await signInWithEmailAndPassword(auth, email, pass);
+      toast("good","Welcome","Logged in successfully.");
+    }catch(e){
+      showAuthAlert(e.message);
+    }
   });
 
   $("#btnSignup").addEventListener("click", async ()=>{
@@ -668,404 +922,854 @@ const firebaseConfig = {
     const pass  = $("#signupPass").value;
     if(!email || !pass) return showAuthAlert("Enter email and password.");
     if(pass.length < 6) return showAuthAlert("Password must be at least 6 characters.");
-    try{ await createUserWithEmailAndPassword(auth, email, pass); }
-    catch(e){ showAuthAlert(e.message); }
+    try{
+      await createUserWithEmailAndPassword(auth, email, pass);
+      toast("good","Account created","You can now create your store.");
+    }catch(e){
+      showAuthAlert(e.message);
+    }
   });
 
   $("#btnForgot").addEventListener("click", async ()=>{
     clearAuthAlert();
     const email = $("#loginEmail").value.trim();
     if(!email) return showAuthAlert("Type your email in the login field first.");
-    try{ await sendPasswordResetEmail(auth, email); showAuthAlert("Password reset email sent."); }
-    catch(e){ showAuthAlert(e.message); }
+    try{
+      await sendPasswordResetEmail(auth, email);
+      showAuthAlert("Password reset email sent.");
+    }catch(e){
+      showAuthAlert(e.message);
+    }
   });
 
-  $("#btnSignOut").addEventListener("click", async ()=>{ await signOut(auth); });
+  $("#btnSignOut").addEventListener("click", async ()=>{
+    await signOut(auth);
+    toast("warn","Signed out","You are logged out.");
+  });
 
-  // Demo Data + category icons (for “images”)
-  const catEmoji = {
-    Dairy: "🥛",
-    Bakery: "🥖",
-    Produce: "🍎",
-    Snacks: "🍪",
-    Drinks: "🥤",
-    Meat: "🍗",
-    Frozen: "🧊",
-    Default: "🛒"
-  };
-
-  const state = {
-    products: [
-      { ID:101, Name:"Milk",   Category:"Dairy",   Price:5.50, Stock:20 },
-      { ID:102, Name:"Bread",  Category:"Bakery",  Price:3.00, Stock:30 },
-      { ID:103, Name:"Eggs",   Category:"Dairy",   Price:7.00, Stock:50 },
-      { ID:201, Name:"Apple",  Category:"Produce", Price:0.80, Stock:100 },
-      { ID:202, Name:"Banana", Category:"Produce", Price:0.60, Stock:120 },
-      { ID:301, Name:"Yogurt", Category:"Dairy",   Price:2.25, Stock:40 }
-    ],
-    customers: [
-      { ID:1001, Name:"Demo Customer", Email:"demo@trolley.com", Phone:"+20..." },
-      { ID:1002, Name:"Second Customer", Email:"second@trolley.com", Phone:"+20..." }
-    ],
-    cart: new Map(),
-    orders: [],
-    deliveryQueue: []
-  };
-  let orderCounter = 1000;
-
-  // Sidebar routing
+  // ---------- Routing ----------
   const pageTitle = $("#pageTitle");
   const pageSubtitle = $("#pageSubtitle");
-
   const pageMeta = {
-    dashboard: { title:"Dashboard", subtitle:"Overview and recent activity." },
-    products:  { title:"Products",  subtitle:"Browse groceries and add to cart." },
-    customers: { title:"Customers", subtitle:"Customer list (demo table)." },
-    orders:    { title:"Orders",    subtitle:"Your order history." },
-    delivery:  { title:"Delivery",  subtitle:"Queue of pending deliveries." },
-    settings:  { title:"Settings",  subtitle:"Export JSON and project info." }
+    overview: { title:"Overview", subtitle:"Analytics and recent orders." },
+    products: { title:"Products", subtitle:"Add, edit, and manage your catalog." },
+    bundles:  { title:"Bundles", subtitle:"Create deals using your products." },
+    coupons:  { title:"Coupons", subtitle:"Discount codes for your store." },
+    orders:   { title:"Orders", subtitle:"View customer orders." },
+    settings: { title:"Settings", subtitle:"Store settings and export." }
   };
 
   function showPage(page){
     $$("#nav a").forEach(a => a.classList.toggle("active", a.dataset.page === page));
     $$("section[data-view]").forEach(sec => sec.classList.toggle("hidden", sec.dataset.view !== page));
-    const m = pageMeta[page] || pageMeta.dashboard;
+    const m = pageMeta[page] || pageMeta.overview;
     pageTitle.textContent = m.title;
     pageSubtitle.textContent = m.subtitle;
   }
-
   function currentHashPage(){
-    const p = (location.hash || "#dashboard").replace("#","");
-    return pageMeta[p] ? p : "dashboard";
+    const p = (location.hash || "#overview").replace("#","");
+    return pageMeta[p] ? p : "overview";
   }
   window.addEventListener("hashchange", ()=> showPage(currentHashPage()));
 
-  // Products rendering
-  const productsGrid = $("#productsGrid");
-  const search = $("#search");
-  const category = $("#category");
+  // ---------- State ----------
+  let currentUser = null;
+  let currentStoreId = null;
+  let storesIndex = []; // {storeId, name, slug}
+  let productsCache = {}; // productId -> product
+  let bundlesCache = {};
+  let ordersCache = {};
+  let bundleDraftItems = {}; // productId -> qty
 
-  function renderCategories(){
-    const cats = Array.from(new Set(state.products.map(p=>p.Category))).sort();
-    category.innerHTML = `<option value="">All categories</option>` + cats.map(c=>`<option value="${c}">${c}</option>`).join("");
+  // ---------- Helpers ----------
+  const normSlug = (s)=> (s||"")
+    .trim().toLowerCase()
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/(^-|-$)/g,'');
+
+  function requireStore(){
+    if(!currentStoreId){
+      toast("warn","No store selected","Create or select a store first.");
+      throw new Error("No store selected");
+    }
   }
 
-  function renderProducts(){
-    const q = (search.value || "").trim().toLowerCase();
-    const cat = category.value;
+  function setBusy(btn, busy){
+    if(!btn) return;
+    btn.disabled = !!busy;
+    btn.dataset._old = btn.dataset._old || btn.textContent;
+    btn.textContent = busy ? "Working..." : btn.dataset._old;
+  }
 
-    const filtered = state.products.filter(p=>{
-      if(cat && p.Category !== cat) return false;
-      if(!q) return true;
-      return String(p.ID).includes(q) || p.Name.toLowerCase().includes(q) || p.Category.toLowerCase().includes(q);
+  // ---------- Store selection ----------
+  const storeSelect = $("#storeSelect");
+  const storeChip = $("#storeChip");
+
+  async function loadMyStores(){
+    // ownerStores/{uid}/{storeId} = true
+    const snap = await get(ref(db, `ownerStores/${currentUser.uid}`));
+    const val = snap.exists() ? snap.val() : {};
+    const storeIds = Object.keys(val || {});
+    storesIndex = [];
+
+    for(const sid of storeIds){
+      const metaSnap = await get(ref(db, `stores/${sid}/meta`));
+      if(metaSnap.exists()){
+        const m = metaSnap.val();
+        storesIndex.push({ storeId: sid, name: m.name || sid, slug: m.slug || "" });
+      }
+    }
+
+    if(storesIndex.length === 0){
+      storeSelect.innerHTML = `<option value="">No stores yet</option>`;
+      currentStoreId = null;
+      storeChip.textContent = "No store selected";
+      return;
+    }
+
+    storeSelect.innerHTML = storesIndex
+      .map(s => `<option value="${s.storeId}">${s.name}</option>`)
+      .join("");
+
+    // keep current selection if valid
+    if(!currentStoreId || !storesIndex.some(s=>s.storeId===currentStoreId)){
+      currentStoreId = storesIndex[0].storeId;
+    }
+    storeSelect.value = currentStoreId;
+    await onStoreChanged();
+  }
+
+  storeSelect.addEventListener("change", async ()=>{
+    currentStoreId = storeSelect.value || null;
+    await onStoreChanged();
+  });
+
+  $("#btnNewStore").addEventListener("click", ()=>{
+    openCreateStoreModal();
+  });
+
+  // ---------- Simple modal (prompt-based for beginner) ----------
+  async function openCreateStoreModal(){
+    try{
+      const name = prompt("Store name? (example: Oudies Mart)")?.trim();
+      if(!name) return;
+      const slugInput = prompt("Store slug? (example: oudies-mart)")?.trim() || normSlug(name);
+      const slug = normSlug(slugInput);
+      if(!slug) return toast("bad","Invalid slug","Slug cannot be empty.");
+
+      await createStore({ name, slug });
+      toast("good","Store created", `Store "${name}" created.`);
+      await loadMyStores();
+    }catch(e){
+      toast("bad","Create store failed", e.message || String(e));
+    }
+  }
+
+  async function createStore({name, slug}){
+    const now = Date.now();
+    const storeKey = push(ref(db, "stores")).key;
+
+    const updates = {};
+    updates[`stores/${storeKey}/meta`] = {
+      name, slug,
+      isPublic: true,
+      currency: "USD",
+      createdAt: now
+    };
+    updates[`stores/${storeKey}/owners/${currentUser.uid}`] = {
+      role: "owner",
+      email: currentUser.email || "",
+      createdAt: now
+    };
+    updates[`ownerStores/${currentUser.uid}/${storeKey}`] = true;
+    updates[`slugs/${slug}`] = storeKey; // customer app can resolve slug -> storeId
+
+    await update(ref(db), updates);
+    currentStoreId = storeKey;
+  }
+
+  async function onStoreChanged(){
+    if(!currentStoreId) return;
+
+    // meta
+    const metaSnap = await get(ref(db, `stores/${currentStoreId}/meta`));
+    const meta = metaSnap.exists() ? metaSnap.val() : {};
+    storeChip.textContent = meta.name ? `${meta.name}` : `Store ${currentStoreId}`;
+
+    // preload everything for tabs
+    await Promise.all([
+      loadProducts(),
+      loadBundles(),
+      loadCoupons(),
+      loadOrders(),
+      loadSettingsIntoForm()
+    ]);
+
+    renderProductsTable();
+    renderBundlesTable();
+    renderCouponsTable();
+    renderOrdersTables();
+    renderAnalytics();
+    refreshBundleProductPicker();
+  }
+
+  // ---------- Products ----------
+  const prodId = $("#prodId");
+  const prodName = $("#prodName");
+  const prodCategory = $("#prodCategory");
+  const prodStock = $("#prodStock");
+  const prodPrice = $("#prodPrice");
+  const prodActive = $("#prodActive");
+  const prodImageUrl = $("#prodImageUrl");
+  const prodImageFile = $("#prodImageFile");
+
+  const prodPreview = $("#prodPreview");
+  const pvName = $("#pvName");
+  const pvPrice = $("#pvPrice");
+  const pvStock = $("#pvStock");
+  const pvCat = $("#pvCat");
+
+  function updatePreview(){
+    pvName.textContent = prodName.value.trim() || "—";
+    pvPrice.textContent = prodPrice.value ? money(Number(prodPrice.value)) : "—";
+    pvStock.textContent = prodStock.value ? String(Number(prodStock.value)) : "—";
+    pvCat.textContent = prodCategory.value.trim() || "—";
+
+    const url = prodImageUrl.value.trim();
+    if(url){
+      prodPreview.innerHTML = `<img src="${url}" alt="preview" />`;
+    }else{
+      prodPreview.textContent = "No image";
+    }
+  }
+  [prodName, prodCategory, prodStock, prodPrice, prodImageUrl].forEach(el=> el.addEventListener("input", updatePreview));
+
+  function resetProductForm(){
+    prodId.value = "";
+    prodName.value = "";
+    prodCategory.value = "";
+    prodStock.value = "";
+    prodPrice.value = "";
+    prodActive.value = "true";
+    prodImageUrl.value = "";
+    prodImageFile.value = "";
+    $("#btnDeleteProduct").classList.add("hidden");
+    updatePreview();
+  }
+
+  $("#btnResetProduct").addEventListener("click", resetProductForm);
+
+  $("#btnSaveProduct").addEventListener("click", async ()=>{
+    const btn = $("#btnSaveProduct");
+    try{
+      requireStore();
+
+      const name = prodName.value.trim();
+      const category = prodCategory.value.trim();
+      const stock = Number(prodStock.value);
+      const price = Number(prodPrice.value);
+      const active = (prodActive.value === "true");
+      const urlInput = prodImageUrl.value.trim();
+      const file = prodImageFile.files?.[0] || null;
+
+      if(!name) return toast("bad","Missing name","Product name is required.");
+      if(!category) return toast("bad","Missing category","Category is required.");
+      if(!Number.isFinite(stock) || stock < 0) return toast("bad","Invalid stock","Stock must be 0 or more.");
+      if(!Number.isFinite(price) || price < 0) return toast("bad","Invalid price","Price must be 0 or more.");
+
+      setBusy(btn, true);
+
+      const now = Date.now();
+      let id = prodId.value || null;
+
+      // create ID if new
+      if(!id){
+        id = push(ref(db, `stores/${currentStoreId}/products`)).key;
+      }
+
+      let imageUrl = urlInput || "";
+
+      // upload file if provided
+      if(file){
+        const path = `stores/${currentStoreId}/products/${id}/${file.name}`;
+        const storageRef = sRef(storage, path);
+        await uploadBytes(storageRef, file);
+        imageUrl = await getDownloadURL(storageRef);
+      }
+
+      const payload = {
+        name,
+        category,
+        stock,
+        price,
+        imageUrl,
+        active,
+        updatedAt: now
+      };
+
+      // for new product add createdAt
+      if(!productsCache[id]?.createdAt) payload.createdAt = now;
+
+      await update(ref(db, `stores/${currentStoreId}/products/${id}`), payload);
+
+      toast("good","Saved","Product saved.");
+      await loadProducts();
+      renderProductsTable();
+      refreshBundleProductPicker();
+      resetProductForm();
+    }catch(e){
+      toast("bad","Save failed", e.message || String(e));
+    }finally{
+      setBusy($("#btnSaveProduct"), false);
+    }
+  });
+
+  $("#btnDeleteProduct").addEventListener("click", async ()=>{
+    const btn = $("#btnDeleteProduct");
+    try{
+      requireStore();
+      const id = prodId.value;
+      if(!id) return;
+      if(!confirm("Delete this product?")) return;
+
+      setBusy(btn, true);
+      await remove(ref(db, `stores/${currentStoreId}/products/${id}`));
+      toast("good","Deleted","Product deleted.");
+      await loadProducts();
+      renderProductsTable();
+      refreshBundleProductPicker();
+      resetProductForm();
+    }catch(e){
+      toast("bad","Delete failed", e.message || String(e));
+    }finally{
+      setBusy(btn, false);
+    }
+  });
+
+  $("#btnReloadProducts").addEventListener("click", async ()=>{
+    try{
+      requireStore();
+      await loadProducts();
+      renderProductsTable();
+    }catch(e){
+      toast("bad","Reload failed", e.message || String(e));
+    }
+  });
+
+  async function loadProducts(){
+    requireStore();
+    const snap = await get(ref(db, `stores/${currentStoreId}/products`));
+    productsCache = snap.exists() ? (snap.val() || {}) : {};
+  }
+
+  function renderProductsTable(){
+    const body = $("#productsBody");
+    const q = ($("#prodSearch").value || "").trim().toLowerCase();
+
+    const rows = Object.entries(productsCache)
+      .map(([id,p])=>({id, ...p}))
+      .filter(p=>{
+        if(!q) return true;
+        return (p.name||"").toLowerCase().includes(q)
+          || (p.category||"").toLowerCase().includes(q)
+          || String(p.price||"").includes(q);
+      })
+      .sort((a,b)=> (b.updatedAt||0) - (a.updatedAt||0));
+
+    if(rows.length === 0){
+      body.innerHTML = `<tr><td colspan="5" class="muted">No products found.</td></tr>`;
+      $("#kpiProducts").textContent = "0";
+      return;
+    }
+
+    body.innerHTML = rows.map(p=>`
+      <tr data-pid="${p.id}" style="cursor:pointer;">
+        <td><b>${escapeHtml(p.name||"")}</b></td>
+        <td class="muted">${escapeHtml(p.category||"")}</td>
+        <td>${money(p.price)}</td>
+        <td>${Number(p.stock||0)}</td>
+        <td>${p.active ? "Yes" : "No"}</td>
+      </tr>
+    `).join("");
+
+    // active count KPI
+    const activeCount = rows.filter(x=>x.active).length;
+    $("#kpiProducts").textContent = String(activeCount);
+
+    body.querySelectorAll("tr[data-pid]").forEach(tr=>{
+      tr.addEventListener("click", ()=>{
+        const id = tr.dataset.pid;
+        const p = productsCache[id];
+        if(!p) return;
+        prodId.value = id;
+        prodName.value = p.name || "";
+        prodCategory.value = p.category || "";
+        prodStock.value = String(p.stock ?? "");
+        prodPrice.value = String(p.price ?? "");
+        prodActive.value = p.active ? "true" : "false";
+        prodImageUrl.value = p.imageUrl || "";
+        prodImageFile.value = "";
+        $("#btnDeleteProduct").classList.remove("hidden");
+        updatePreview();
+        toast("warn","Editing product","You are editing an existing product.");
+      });
     });
+  }
 
-    productsGrid.innerHTML = filtered.map(p=>{
-      const out = p.Stock <= 0;
-      const emoji = catEmoji[p.Category] || catEmoji.Default;
+  $("#prodSearch").addEventListener("input", renderProductsTable);
+
+  // ---------- Bundles ----------
+  const bundleId = $("#bundleId");
+  const bundleTitle = $("#bundleTitle");
+  const bundlePrice = $("#bundlePrice");
+  const bundleActive = $("#bundleActive");
+  const bundleImageUrl = $("#bundleImageUrl");
+  const bundlePickProduct = $("#bundlePickProduct");
+  const bundlePickQty = $("#bundlePickQty");
+  const bundleItemsList = $("#bundleItemsList");
+
+  function resetBundleForm(){
+    bundleId.value = "";
+    bundleTitle.value = "";
+    bundlePrice.value = "";
+    bundleActive.value = "true";
+    bundleImageUrl.value = "";
+    bundleDraftItems = {};
+    $("#btnDeleteBundle").classList.add("hidden");
+    renderBundleItemsList();
+  }
+  $("#btnResetBundle").addEventListener("click", resetBundleForm);
+
+  function refreshBundleProductPicker(){
+    const products = Object.entries(productsCache).map(([id,p])=>({id, ...p}))
+      .sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+    bundlePickProduct.innerHTML = products.length
+      ? products.map(p=>`<option value="${p.id}">${escapeHtml(p.name||p.id)}</option>`).join("")
+      : `<option value="">No products yet</option>`;
+  }
+
+  $("#btnAddBundleItem").addEventListener("click", ()=>{
+    const pid = bundlePickProduct.value;
+    const qty = Math.max(1, Number(bundlePickQty.value)||1);
+    if(!pid) return toast("bad","No product","Add products first.");
+    bundleDraftItems[pid] = (bundleDraftItems[pid] || 0) + qty;
+    renderBundleItemsList();
+  });
+
+  function renderBundleItemsList(){
+    const entries = Object.entries(bundleDraftItems);
+    if(entries.length === 0){
+      bundleItemsList.innerHTML = `<span class="muted">No items added.</span>`;
+      return;
+    }
+    bundleItemsList.innerHTML = entries.map(([pid,qty])=>{
+      const p = productsCache[pid];
+      const name = p?.name || pid;
       return `
-        <div class="card p-item">
-          <div class="p-top">
-            <div>
-              <div class="p-name">${p.Name}</div>
-              <div class="p-meta">${p.Category} • ID ${p.ID} • Stock: ${p.Stock}</div>
-              <div class="p-price">${money(p.Price)}</div>
-            </div>
-            <div class="pill">${out ? "Out of stock" : "In stock"}</div>
-          </div>
-
-          <div class="thumb">
-            <div class="emoji">${emoji}</div>
-            <div class="tag">${p.Category}</div>
-          </div>
-
-          <div class="p-actions">
-            <div class="stepper">
-              <button class="btn ghost" data-dec="${p.ID}">−</button>
-              <input data-qty="${p.ID}" value="1" />
-              <button class="btn ghost" data-inc="${p.ID}">+</button>
-            </div>
-            <button class="btn primary" data-add="${p.ID}" ${out?"disabled":""}>Add</button>
-          </div>
+        <div class="row" style="justify-content:space-between; border-bottom:1px solid var(--line); padding:8px 0;">
+          <div><b>${escapeHtml(name)}</b> <span class="muted">x${qty}</span></div>
+          <button class="btn danger" data-rm="${pid}">Remove</button>
         </div>
       `;
     }).join("");
 
-    productsGrid.querySelectorAll("[data-inc]").forEach(b=>{
+    bundleItemsList.querySelectorAll("[data-rm]").forEach(b=>{
       b.addEventListener("click", ()=>{
-        const id = Number(b.dataset.inc);
-        const inp = productsGrid.querySelector(`[data-qty="${id}"]`);
-        inp.value = String(Math.min(99, (Number(inp.value)||1)+1));
-      });
-    });
-    productsGrid.querySelectorAll("[data-dec]").forEach(b=>{
-      b.addEventListener("click", ()=>{
-        const id = Number(b.dataset.dec);
-        const inp = productsGrid.querySelector(`[data-qty="${id}"]`);
-        inp.value = String(Math.max(1, (Number(inp.value)||1)-1));
-      });
-    });
-    productsGrid.querySelectorAll("[data-add]").forEach(b=>{
-      b.addEventListener("click", ()=>{
-        const id = Number(b.dataset.add);
-        const qty = Number(productsGrid.querySelector(`[data-qty="${id}"]`).value) || 1;
-        addToCart(id, qty);
+        delete bundleDraftItems[b.dataset.rm];
+        renderBundleItemsList();
       });
     });
   }
 
-  search?.addEventListener("input", renderProducts);
-  category?.addEventListener("change", renderProducts);
-
-  // Cart
-  const backdrop = $("#backdrop");
-  const drawer = $("#drawer");
-  const cartBody = $("#cartBody");
-  const cartCount = $("#cartCount");
-  const subtotalEl = $("#subtotal");
-  const totalEl = $("#total");
-  const customerIdEl = $("#customerId");
-  const shopAlert = $("#shopAlert");
-
-  const showShopAlert = (m)=>{ shopAlert.style.display="block"; shopAlert.textContent=m; };
-  const clearShopAlert= ()=>{ shopAlert.style.display="none"; shopAlert.textContent=""; };
-
-  function openDrawer(){
-    drawer.style.transform = "translateX(0)";
-    backdrop.style.opacity = "1";
-    backdrop.style.pointerEvents = "auto";
-  }
-  function closeDrawer(){
-    drawer.style.transform = "translateX(110%)";
-    backdrop.style.opacity = "0";
-    backdrop.style.pointerEvents = "none";
+  async function loadBundles(){
+    requireStore();
+    const snap = await get(ref(db, `stores/${currentStoreId}/bundles`));
+    bundlesCache = snap.exists() ? (snap.val() || {}) : {};
   }
 
-  $("#btnCartOpen").addEventListener("click", ()=>{ renderCart(); openDrawer(); });
-  $("#btnCartClose").addEventListener("click", closeDrawer);
-  backdrop.addEventListener("click", closeDrawer);
+  function renderBundlesTable(){
+    const body = $("#bundlesBody");
+    const rows = Object.entries(bundlesCache).map(([id,b])=>({id, ...b}))
+      .sort((a,b)=> (b.updatedAt||0) - (a.updatedAt||0));
 
-  function cartTotals(){
-    let subtotal = 0, count = 0;
-    for(const it of state.cart.values()){
-      subtotal += it.Price * it.qty;
-      count += it.qty;
-    }
-    return { subtotal, total: subtotal, count };
-  }
-
-  function renderCart(){
-    const items = Array.from(state.cart.values());
-    const { subtotal, total, count } = cartTotals();
-    cartCount.textContent = String(count);
-
-    if(items.length === 0){
-      cartBody.innerHTML = `<div class="muted">Your cart is empty.</div>`;
-    }else{
-      cartBody.innerHTML = items.map(it=>{
-        const line = it.Price * it.qty;
-        return `
-          <div class="card cart-item">
-            <div class="row">
-              <div>
-                <div style="font-weight:800;">${it.Name}</div>
-                <div class="cart-sub">${money(it.Price)} • ID ${it.ID}</div>
-              </div>
-              <div style="font-weight:900;">${money(line)}</div>
-            </div>
-            <div class="row" style="margin-top:10px;">
-              <div class="pill">Qty: ${it.qty}</div>
-              <div style="display:flex; gap:8px; margin-left:auto;">
-                <button class="btn" data-minus="${it.ID}">−</button>
-                <button class="btn" data-plus="${it.ID}">+</button>
-                <button class="btn danger" data-remove="${it.ID}">Remove</button>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      cartBody.querySelectorAll("[data-plus]").forEach(b=> b.addEventListener("click", ()=> addToCart(Number(b.dataset.plus), 1)));
-      cartBody.querySelectorAll("[data-minus]").forEach(b=> b.addEventListener("click", ()=> removeQty(Number(b.dataset.minus), 1)));
-      cartBody.querySelectorAll("[data-remove]").forEach(b=> b.addEventListener("click", ()=> removeItem(Number(b.dataset.remove))));
+    if(rows.length === 0){
+      body.innerHTML = `<tr><td colspan="4" class="muted">No bundles yet.</td></tr>`;
+      return;
     }
 
-    subtotalEl.textContent = money(subtotal);
-    totalEl.textContent = money(total);
+    body.innerHTML = rows.map(b=>{
+      const itemsCount = b.items ? Object.keys(b.items).length : 0;
+      return `
+        <tr data-bid="${b.id}" style="cursor:pointer;">
+          <td><b>${escapeHtml(b.title||"")}</b></td>
+          <td>${money(b.bundlePrice)}</td>
+          <td>${b.active ? "Yes" : "No"}</td>
+          <td class="muted">${itemsCount} item(s)</td>
+        </tr>
+      `;
+    }).join("");
+
+    body.querySelectorAll("tr[data-bid]").forEach(tr=>{
+      tr.addEventListener("click", ()=>{
+        const id = tr.dataset.bid;
+        const b = bundlesCache[id];
+        if(!b) return;
+
+        bundleId.value = id;
+        bundleTitle.value = b.title || "";
+        bundlePrice.value = String(b.bundlePrice ?? "");
+        bundleActive.value = b.active ? "true" : "false";
+        bundleImageUrl.value = b.imageUrl || "";
+        bundleDraftItems = {};
+        if(b.items){
+          for(const [pid,obj] of Object.entries(b.items)){
+            bundleDraftItems[pid] = Number(obj?.qty || 0);
+          }
+        }
+        $("#btnDeleteBundle").classList.remove("hidden");
+        renderBundleItemsList();
+        toast("warn","Editing bundle","You are editing an existing bundle.");
+      });
+    });
   }
 
-  function addToCart(productID, qty){
-    clearShopAlert();
-    const p = state.products.find(x=>x.ID===productID);
-    if(!p || qty<=0) return;
-    if(p.Stock < qty) return showShopAlert(`Insufficient stock for ${p.Name}. Available: ${p.Stock}`);
-    p.Stock -= qty;
+  $("#btnSaveBundle").addEventListener("click", async ()=>{
+    const btn = $("#btnSaveBundle");
+    try{
+      requireStore();
+      const title = bundleTitle.value.trim();
+      const bp = Number(bundlePrice.value);
+      const active = (bundleActive.value === "true");
+      const imageUrl = bundleImageUrl.value.trim();
 
-    const it = state.cart.get(productID);
-    if(it) it.qty += qty;
-    else state.cart.set(productID, { ID:p.ID, Name:p.Name, Price:p.Price, qty });
+      if(!title) return toast("bad","Missing title","Bundle title is required.");
+      if(!Number.isFinite(bp) || bp < 0) return toast("bad","Invalid price","Bundle price must be 0 or more.");
+      if(Object.keys(bundleDraftItems).length === 0) return toast("bad","No items","Add at least 1 item to the bundle.");
 
-    renderProducts();
-    renderCart();
-  }
+      setBusy(btn, true);
 
-  function removeQty(productID, qty){
-    clearShopAlert();
-    const p = state.products.find(x=>x.ID===productID);
-    const it = state.cart.get(productID);
-    if(!p || !it) return;
+      const now = Date.now();
+      let id = bundleId.value || null;
+      if(!id) id = push(ref(db, `stores/${currentStoreId}/bundles`)).key;
 
-    const dec = Math.min(qty, it.qty);
-    it.qty -= dec;
-    p.Stock += dec;
-    if(it.qty<=0) state.cart.delete(productID);
+      const items = {};
+      for(const [pid,qty] of Object.entries(bundleDraftItems)){
+        items[pid] = { qty: Number(qty) };
+      }
 
-    renderProducts();
-    renderCart();
-  }
+      const payload = {
+        title,
+        bundlePrice: bp,
+        imageUrl,
+        active,
+        items,
+        updatedAt: now
+      };
+      if(!bundlesCache[id]?.createdAt) payload.createdAt = now;
 
-  function removeItem(productID){
-    clearShopAlert();
-    const p = state.products.find(x=>x.ID===productID);
-    const it = state.cart.get(productID);
-    if(!p || !it) return;
+      await update(ref(db, `stores/${currentStoreId}/bundles/${id}`), payload);
 
-    p.Stock += it.qty;
-    state.cart.delete(productID);
-
-    renderProducts();
-    renderCart();
-  }
-
-  function clearCart(){
-    for(const it of state.cart.values()){
-      const p = state.products.find(x=>x.ID===it.ID);
-      if(p) p.Stock += it.qty;
+      toast("good","Saved","Bundle saved.");
+      await loadBundles();
+      renderBundlesTable();
+      resetBundleForm();
+    }catch(e){
+      toast("bad","Save failed", e.message || String(e));
+    }finally{
+      setBusy(btn, false);
     }
-    state.cart.clear();
-    renderProducts();
-    renderCart();
+  });
+
+  $("#btnDeleteBundle").addEventListener("click", async ()=>{
+    const btn = $("#btnDeleteBundle");
+    try{
+      requireStore();
+      const id = bundleId.value;
+      if(!id) return;
+      if(!confirm("Delete this bundle?")) return;
+      setBusy(btn, true);
+      await remove(ref(db, `stores/${currentStoreId}/bundles/${id}`));
+      toast("good","Deleted","Bundle deleted.");
+      await loadBundles();
+      renderBundlesTable();
+      resetBundleForm();
+    }catch(e){
+      toast("bad","Delete failed", e.message || String(e));
+    }finally{
+      setBusy(btn, false);
+    }
+  });
+
+  // ---------- Coupons ----------
+  async function loadCoupons(){
+    requireStore();
+    const snap = await get(ref(db, `stores/${currentStoreId}/coupons`));
+    const val = snap.exists() ? (snap.val() || {}) : {};
+    // normalize to cache
+    $("#couponsBody").dataset._cache = JSON.stringify(val);
+    renderCouponsTable();
   }
 
-  $("#btnClearCart").addEventListener("click", clearCart);
+  function getCouponsCache(){
+    try{ return JSON.parse($("#couponsBody").dataset._cache || "{}"); }
+    catch{ return {}; }
+  }
 
-  // Orders + Dashboard
-  function renderOrdersTables(){
-    const recentBody = $("#recentOrdersBody");
-    const ordersBody = $("#ordersBody");
+  function renderCouponsTable(){
+    const body = $("#couponsBody");
+    const coupons = getCouponsCache();
+    const rows = Object.entries(coupons).map(([code,c])=>({code, ...c}))
+      .sort((a,b)=> (a.code||"").localeCompare(b.code||""));
 
-    if(state.orders.length === 0){
-      recentBody.innerHTML = `<tr><td colspan="4" class="muted">No orders yet.</td></tr>`;
-      ordersBody.innerHTML = `<tr><td colspan="4" class="muted">No orders yet.</td></tr>`;
-    } else {
-      const last10 = state.orders.slice(-10).reverse();
-      recentBody.innerHTML = last10.map(o=>`
-        <tr><td>${o.orderID}</td><td>${o.date}</td><td>${o.customerID}</td><td>${money(o.total)}</td></tr>
-      `).join("");
-
-      ordersBody.innerHTML = state.orders.slice().reverse().map(o=>`
-        <tr><td>${o.orderID}</td><td>${o.date}</td><td>${o.customerID}</td><td>${money(o.total)}</td></tr>
-      `).join("");
+    if(rows.length === 0){
+      body.innerHTML = `<tr><td colspan="4" class="muted">No coupons yet.</td></tr>`;
+      return;
     }
 
-    const totalSales = state.orders.reduce((s,o)=>s+o.total,0);
-    $("#salesToday").textContent = money(totalSales);
-    $("#ordersToday").textContent = String(state.orders.length);
-  }
-
-  function renderCustomers(){
-    const body = $("#customersBody");
-    body.innerHTML = state.customers.map(c=>`
-      <tr><td>${c.ID}</td><td>${c.Name}</td><td>${c.Email}</td><td>${c.Phone}</td></tr>
+    body.innerHTML = rows.map(c=>`
+      <tr>
+        <td><b>${escapeHtml(c.code)}</b></td>
+        <td class="muted">${escapeHtml(c.type||"")}</td>
+        <td>${Number(c.value||0)}</td>
+        <td>${c.active ? "Yes" : "No"}</td>
+      </tr>
     `).join("");
   }
 
-  function renderDelivery(){
-    const box = $("#deliveryList");
-    if(state.deliveryQueue.length === 0){
-      box.classList.add("muted");
-      box.innerHTML = `No pending deliveries.`;
-    } else {
-      box.classList.remove("muted");
-      box.innerHTML = state.deliveryQueue.map((d,i)=>`
-        <div style="padding:8px 0; border-bottom:1px solid var(--line);">
-          <b>${d.label}</b> <span class="muted">(position ${i+1})</span>
-        </div>
-      `).join("");
+  $("#btnSaveCoupon").addEventListener("click", async ()=>{
+    const btn = $("#btnSaveCoupon");
+    try{
+      requireStore();
+      const code = ($("#couponCode").value || "").trim().toUpperCase();
+      const type = $("#couponType").value;
+      const value = Number($("#couponValue").value);
+      const active = ($("#couponActive").value === "true");
+
+      if(!code) return toast("bad","Missing code","Coupon code is required.");
+      if(!/^[A-Z0-9_-]{3,20}$/.test(code)) return toast("bad","Invalid code","Use A-Z, 0-9, _ or -. Length 3–20.");
+      if(!Number.isFinite(value) || value <= 0) return toast("bad","Invalid value","Value must be > 0.");
+      if(type === "percent" && value > 90) return toast("bad","Too high","Percent should be <= 90 (safety).");
+
+      setBusy(btn, true);
+      const payload = { type, value, active, updatedAt: Date.now() };
+      await update(ref(db, `stores/${currentStoreId}/coupons/${code}`), payload);
+      toast("good","Saved","Coupon saved.");
+      $("#couponCode").value = "";
+      $("#couponValue").value = "";
+      await loadCoupons();
+    }catch(e){
+      toast("bad","Save failed", e.message || String(e));
+    }finally{
+      setBusy(btn, false);
+    }
+  });
+
+  // ---------- Orders & Analytics ----------
+  async function loadOrders(){
+    requireStore();
+    const snap = await get(ref(db, `stores/${currentStoreId}/orders`));
+    ordersCache = snap.exists() ? (snap.val() || {}) : {};
+  }
+
+  function renderOrdersTables(){
+    const all = Object.entries(ordersCache).map(([id,o])=>({id, ...o}))
+      .sort((a,b)=> (b.createdAt||0) - (a.createdAt||0));
+
+    const ordersBody = $("#ordersBody");
+    const recentBody = $("#recentOrdersBody");
+
+    if(all.length === 0){
+      ordersBody.innerHTML = `<tr><td colspan="5" class="muted">No orders yet.</td></tr>`;
+      recentBody.innerHTML = `<tr><td colspan="5" class="muted">No orders yet.</td></tr>`;
+      return;
+    }
+
+    const recent = all.slice(0,10);
+
+    ordersBody.innerHTML = all.map(o=> orderRowHTML(o)).join("");
+    recentBody.innerHTML = recent.map(o=> orderRowHTML(o)).join("");
+  }
+
+  function orderRowHTML(o){
+    const dt = o.createdAt ? new Date(o.createdAt).toISOString().slice(0,19).replace("T"," ") : "—";
+    const cust = o.customer?.email || o.customer?.uid || "—";
+    const total = money(o.total || 0);
+    const status = o.status || "placed";
+    return `<tr>
+      <td><b>${escapeHtml(o.id)}</b></td>
+      <td class="muted">${escapeHtml(dt)}</td>
+      <td class="muted">${escapeHtml(cust)}</td>
+      <td>${total}</td>
+      <td class="muted">${escapeHtml(status)}</td>
+    </tr>`;
+  }
+
+  function renderAnalytics(){
+    // compute: revenue, orders count, top sold
+    const orders = Object.values(ordersCache || {});
+    const totalOrders = orders.length;
+    const revenue = orders.reduce((s,o)=> s + Number(o.total||0), 0);
+
+    const sold = {}; // productId -> qty
+    for(const o of orders){
+      const lines = o.lines || {};
+      // lines might be array or object; handle both
+      if(Array.isArray(lines)){
+        for(const l of lines){
+          const pid = l.productId || l.id || l.productID;
+          const qty = Number(l.qty||0);
+          if(pid) sold[pid] = (sold[pid]||0) + qty;
+        }
+      }else{
+        for(const [pid, l] of Object.entries(lines)){
+          const qty = Number(l.qty||0);
+          sold[pid] = (sold[pid]||0) + qty;
+        }
+      }
+    }
+
+    const top = Object.entries(sold).sort((a,b)=> b[1]-a[1]).slice(0,10);
+
+    $("#kpiRevenue").textContent = money(revenue);
+    $("#kpiOrders").textContent = String(totalOrders);
+
+    if(top.length){
+      const [topPid, topQty] = top[0];
+      const name = productsCache[topPid]?.name || topPid;
+      $("#kpiTop").textContent = `${name} (${topQty})`;
+      $("#topSoldBody").innerHTML = top.map(([pid,qty])=>{
+        const n = productsCache[pid]?.name || pid;
+        return `<tr><td><b>${escapeHtml(n)}</b></td><td>${qty}</td></tr>`;
+      }).join("");
+    }else{
+      $("#kpiTop").textContent = "—";
+      $("#topSoldBody").innerHTML = `<tr><td colspan="2" class="muted">No data yet.</td></tr>`;
     }
   }
 
-  $("#btnCompleteDelivery").addEventListener("click", ()=>{
-    state.deliveryQueue.shift();
-    renderDelivery();
+  $("#btnReloadOrders").addEventListener("click", async ()=>{
+    try{
+      requireStore();
+      await loadOrders();
+      renderOrdersTables();
+      renderAnalytics();
+    }catch(e){
+      toast("bad","Reload failed", e.message || String(e));
+    }
   });
 
-  $("#btnClearDeliveries").addEventListener("click", ()=>{
-    state.deliveryQueue = [];
-    renderDelivery();
+  // ---------- Settings ----------
+  async function loadSettingsIntoForm(){
+    requireStore();
+    const snap = await get(ref(db, `stores/${currentStoreId}/meta`));
+    const m = snap.exists() ? snap.val() : {};
+    $("#setStoreName").value = m.name || "";
+    $("#setStoreSlug").value = m.slug || "";
+    $("#setStorePublic").value = (m.isPublic === false) ? "false" : "true";
+    $("#setStoreCurrency").value = m.currency || "USD";
+  }
+
+  $("#btnSaveStoreSettings").addEventListener("click", async ()=>{
+    const btn = $("#btnSaveStoreSettings");
+    try{
+      requireStore();
+      const name = $("#setStoreName").value.trim();
+      const slug = normSlug($("#setStoreSlug").value.trim() || name);
+      const isPublic = ($("#setStorePublic").value === "true");
+      const currency = ($("#setStoreCurrency").value.trim() || "USD").toUpperCase();
+
+      if(!name) return toast("bad","Missing name","Store name is required.");
+      if(!slug) return toast("bad","Invalid slug","Slug cannot be empty.");
+
+      setBusy(btn, true);
+
+      // update meta + slug mapping
+      const updates = {};
+      updates[`stores/${currentStoreId}/meta/name`] = name;
+      updates[`stores/${currentStoreId}/meta/slug`] = slug;
+      updates[`stores/${currentStoreId}/meta/isPublic`] = isPublic;
+      updates[`stores/${currentStoreId}/meta/currency`] = currency;
+      updates[`stores/${currentStoreId}/meta/updatedAt`] = Date.now();
+      updates[`slugs/${slug}`] = currentStoreId;
+
+      await update(ref(db), updates);
+
+      toast("good","Saved","Store settings saved.");
+      storeChip.textContent = name;
+      await loadMyStores();
+    }catch(e){
+      toast("bad","Save failed", e.message || String(e));
+    }finally{
+      setBusy(btn, false);
+    }
   });
 
-  // Checkout
-  $("#btnCheckout").addEventListener("click", ()=>{
-    clearShopAlert();
-    if(state.cart.size === 0) return showShopAlert("Cart is empty.");
-    const cid = customerIdEl.value.trim();
-    if(!cid) return showShopAlert("Enter Customer ID (demo).");
-
-    const lines = Array.from(state.cart.values()).map(it=>({
-      productId: it.ID, name: it.Name, unitPrice: it.Price, qty: it.qty,
-      lineTotal: it.Price * it.qty
-    }));
-    const total = lines.reduce((s,l)=>s+l.lineTotal,0);
-    const orderID = ++orderCounter;
-    const date = new Date().toISOString().slice(0,10);
-
-    state.orders.push({ orderID, date, customerID: cid, total, lines });
-    state.deliveryQueue.push({ orderID, label: `Order ${orderID}` });
-
-    state.cart.clear();
-    customerIdEl.value = "";
-
-    renderCart();
-    renderOrdersTables();
-    renderDelivery();
-    closeDrawer();
+  $("#btnExportStoreJSON").addEventListener("click", async ()=>{
+    try{
+      requireStore();
+      const snap = await get(ref(db, `stores/${currentStoreId}`));
+      const payload = snap.exists() ? snap.val() : {};
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `store_${currentStoreId}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      toast("good","Exported","Store JSON exported.");
+    }catch(e){
+      toast("bad","Export failed", e.message || String(e));
+    }
   });
 
-  // Export JSON
-  $("#btnExportJSON").addEventListener("click", ()=>{
-    const payload = {
-      version: "1.0",
-      generatedAt: new Date().toISOString(),
-      products: state.products,
-      customers: state.customers,
-      orders: state.orders,
-      deliveryQueue: state.deliveryQueue
-    };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "trolley_export.json";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  });
+  // ---------- Escape ----------
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
 
-  // Auth state
-  onAuthStateChanged(auth, (user)=>{
+  // ---------- Init / Auth state ----------
+  onAuthStateChanged(auth, async (user)=>{
+    currentUser = user || null;
+
     if(user){
       $("#userEmail").textContent = user.email || "(no email)";
       setAppVisible(true);
-      renderCategories();
-      renderProducts();
-      renderCustomers();
-      renderOrdersTables();
-      renderDelivery();
       showPage(currentHashPage());
+
+      try{
+        await loadMyStores();
+        // if store selected -> load
+        if(currentStoreId){
+          await onStoreChanged();
+        }else{
+          toast("warn","No store yet","Click “Create new store”.");
+        }
+      }catch(e){
+        toast("bad","Load failed", e.message || String(e));
+      }
+
     }else{
+      // reset in-memory state
+      currentStoreId = null;
+      storesIndex = [];
+      productsCache = {};
+      bundlesCache = {};
+      ordersCache = {};
+      bundleDraftItems = {};
+      resetProductForm();
+      resetBundleForm();
       setAppVisible(false);
     }
   });
+
+  // default preview
+  updatePreview();
+  resetBundleForm();
 </script>
 </body>
 </html>
