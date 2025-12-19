@@ -7,11 +7,10 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      /* LIGHT FIRST */
       --bg:#F7F7F8;
       --panel:#FFFFFF;
       --panel2:#FAFAFB;
@@ -19,9 +18,7 @@
       --muted:#6B7280;
       --line:#E5E7EB;
 
-      --accent:#0B0B0C;      /* black */
-      --accent2:#111827;     /* near-black */
-
+      --accent:#0B0B0C;
       --good:#16A34A;
       --warn:#F59E0B;
       --bad:#EF4444;
@@ -43,64 +40,55 @@
       color:var(--text);
       overflow-x:hidden;
     }
-
-    a{color:inherit; text-decoration:none}
+    a{color:inherit;text-decoration:none}
     .hidden{display:none !important;}
 
-    /* Buttons */
     .btn{
       border:1px solid var(--line);
-      background: #fff;
+      background:#fff;
       color:var(--text);
       padding:10px 12px;
       border-radius:12px;
       cursor:pointer;
-      transition: transform .06s ease, border-color .2s ease, box-shadow .2s ease;
-      user-select:none;
+      transition:.15s;
       box-shadow: 0 1px 0 rgba(0,0,0,.03);
+      user-select:none;
     }
-    .btn:hover{border-color:#D1D5DB; box-shadow: 0 10px 18px rgba(0,0,0,.06)}
+    .btn:hover{border-color:#D1D5DB; box-shadow:0 10px 18px rgba(0,0,0,.06)}
     .btn:active{transform:scale(.99)}
     .btn.primary{
-      background: var(--accent);
+      background:var(--accent);
       color:#fff;
-      border-color: transparent;
-      font-weight:800;
-      box-shadow: 0 14px 26px rgba(0,0,0,.18);
+      border-color:transparent;
+      font-weight:900;
+      box-shadow:0 14px 26px rgba(0,0,0,.18);
     }
-    .btn.danger{
-      background: #fff;
-      border-color: rgba(239,68,68,.35);
-      color: #B91C1C;
-    }
-    .btn.ghost{background: transparent}
-    .btn:disabled{opacity:.55; cursor:not-allowed}
+    .btn.danger{border-color:rgba(239,68,68,.35); color:#B91C1C}
     .btn.full{width:100%}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
 
-    /* Inputs */
     input, select, textarea{
       width:100%;
       padding:12px 12px;
       border-radius:12px;
       border:1px solid var(--line);
       outline:none;
-      background: #fff;
+      background:#fff;
       color:var(--text);
     }
-    textarea{min-height:90px; resize:vertical}
-    input:focus, select:focus, textarea:focus{
-      border-color: rgba(17,24,39,.35);
-      box-shadow: 0 0 0 4px rgba(17,24,39,.08)
+    textarea{min-height:90px;resize:vertical}
+    input:focus,select:focus,textarea:focus{
+      border-color:rgba(17,24,39,.35);
+      box-shadow:0 0 0 4px rgba(17,24,39,.08);
     }
     label{font-size:12px;color:var(--muted)}
-    .hint{font-size:12px;color:var(--muted); line-height:1.45}
+    .hint{font-size:12px;color:var(--muted);line-height:1.5}
 
-    /* Cards */
     .card{
-      background: var(--panel);
+      background:var(--panel);
       border:1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow2);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow2);
     }
     .card.pad{padding:16px}
     .muted{color:var(--muted)}
@@ -109,8 +97,8 @@
       padding:7px 10px;
       border:1px solid var(--line);
       border-radius:999px;
+      background:#fff;
       color:var(--muted);
-      background: #fff;
       font-size:12px;
     }
     .badge{
@@ -118,57 +106,45 @@
       border-radius:999px;
       padding:0 8px;
       display:inline-flex;align-items:center;justify-content:center;
-      background: #111827;
+      background:#111827;
       border:1px solid #111827;
       color:#fff;
       font-size:12px;
-      font-weight:700;
+      font-weight:800;
     }
 
     /* Toast */
-    .toast{
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      width: min(420px, calc(100vw - 36px));
-      display:grid;
-      gap:10px;
-      z-index: 999;
-    }
-    .toast .t{
+    .toast{position:fixed;right:18px;bottom:18px;width:min(420px,calc(100vw - 36px));display:grid;gap:10px;z-index:999}
+    .t{
       padding:12px 12px;
-      border-radius: 14px;
+      border-radius:14px;
       border:1px solid var(--line);
-      background: rgba(255,255,255,.9);
+      background:rgba(255,255,255,.92);
       backdrop-filter: blur(10px);
-      box-shadow: var(--shadow);
+      box-shadow:var(--shadow);
       display:flex;gap:10px;align-items:flex-start;
+      transition:.35s;
     }
     .dot{width:10px;height:10px;border-radius:999px;margin-top:4px;background:#111827}
-    .dot.good{background: var(--good)}
-    .dot.bad{background: var(--bad)}
-    .dot.warn{background: var(--warn)}
-    .t .title{font-weight:800}
-    .t .msg{font-size:12px;color:var(--muted); margin-top:2px; white-space:pre-wrap}
+    .dot.good{background:var(--good)}
+    .dot.bad{background:var(--bad)}
+    .dot.warn{background:var(--warn)}
+    .t .title{font-weight:900}
+    .t .msg{font-size:12px;color:var(--muted);margin-top:2px;white-space:pre-wrap}
 
     /* AUTH */
-    #authView{
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      padding:18px;
-    }
+    #authView{min-height:100vh;display:grid;place-items:center;padding:18px;}
     .auth-shell{
-      width:min(980px, 96vw);
+      width:min(980px,96vw);
       display:grid;
-      grid-template-columns: 420px 1fr;
+      grid-template-columns:420px 1fr;
       overflow:hidden;
-      border-radius: 22px;
+      border-radius:22px;
       border:1px solid var(--line);
-      box-shadow: var(--shadow);
-      background: #fff;
+      box-shadow:var(--shadow);
+      background:#fff;
     }
-    .auth-left{padding:18px; border-right:1px solid var(--line)}
+    .auth-left{padding:18px;border-right:1px solid var(--line)}
     .auth-right{
       padding:18px;
       background:
@@ -178,161 +154,98 @@
     }
     .logo{
       width:34px;height:34px;border-radius:12px;
-      background: linear-gradient(135deg, rgba(0,0,0,.95), rgba(0,0,0,.45));
+      background:linear-gradient(135deg, rgba(0,0,0,.95), rgba(0,0,0,.45));
     }
-    .tabs{display:flex; gap:10px; margin-top:14px}
+    .tabs{display:flex;gap:10px;margin-top:14px}
     .tab{
       flex:1;
       padding:10px 12px;
       border-radius:12px;
       border:1px solid var(--line);
-      background: #fff;
+      background:#fff;
       color:var(--muted);
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
     }
-    .tab.active{
-      color: var(--text);
-      border-color: rgba(0,0,0,.25);
-      background: rgba(0,0,0,.04);
-    }
-    .pane{display:none; gap:10px; margin-top:12px}
+    .tab.active{color:var(--text);border-color:rgba(0,0,0,.25);background:rgba(0,0,0,.04)}
+    .pane{display:none;gap:10px;margin-top:12px}
     .pane.active{display:grid}
     .alert{
-      display:none;
-      margin-top:12px;
-      padding:10px;
-      border-radius:12px;
+      display:none;margin-top:12px;padding:10px;border-radius:12px;
       border:1px solid rgba(239,68,68,.35);
-      background: rgba(239,68,68,.07);
-      color:#7F1D1D;
-      white-space:pre-wrap;
+      background:rgba(239,68,68,.07);
+      color:#7F1D1D;white-space:pre-wrap;
     }
 
-    /* APP LAYOUT */
-    #appView{min-height:100vh}
-    .app{
-      display:grid;
-      grid-template-columns: 280px 1fr;
-      min-height:100vh;
-    }
+    /* APP */
+    .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
     .sidebar{
-      position:sticky;
-      top:0;
-      height:100vh;
-      padding:14px;
+      position:sticky;top:0;height:100vh;padding:14px;
       border-right:1px solid var(--line);
-      background: rgba(255,255,255,.8);
+      background:rgba(255,255,255,.85);
       backdrop-filter: blur(10px);
     }
     .side-top{
-      display:flex;align-items:center;gap:10px;
-      padding:10px;
-      border-radius:16px;
-      background:#fff;
-      border:1px solid var(--line);
-      box-shadow: var(--shadow2);
+      display:flex;gap:10px;align-items:center;
+      padding:10px;border-radius:16px;
+      background:#fff;border:1px solid var(--line);
+      box-shadow:var(--shadow2);
     }
     .brandMark{
       width:38px;height:38px;border-radius:12px;
       border:1px solid var(--line);
-      background: #F3F4F6;
-      display:grid; place-items:center;
-      overflow:hidden;
-      flex:0 0 auto;
+      background:#F3F4F6;
+      display:grid;place-items:center;overflow:hidden;flex:0 0 auto;
     }
     .brandMark img{width:100%;height:100%;object-fit:cover;display:block}
-    .side-top .title{font-weight:900}
-    .side-top .sub{font-size:12px;color:var(--muted); margin-top:2px}
 
-    .nav{
-      margin-top:14px;
-      display:grid;
-      gap:6px;
-    }
+    .nav{margin-top:14px;display:grid;gap:6px}
     .nav a{
       display:flex;align-items:center;gap:10px;
-      padding:10px 12px;
-      border-radius:12px;
-      color: var(--muted);
-      border:1px solid transparent;
-      font-weight:700;
+      padding:10px 12px;border-radius:12px;
+      color:var(--muted);border:1px solid transparent;font-weight:800;
     }
-    .nav a.active{
-      background: rgba(0,0,0,.05);
-      border-color: rgba(0,0,0,.10);
-      color: var(--text);
-      font-weight:900;
-    }
-    .nav a:hover{background: rgba(0,0,0,.03)}
-    .dotNav{
-      width:10px;height:10px;border-radius:999px;
-      border:1px solid rgba(0,0,0,.25);
-      background: #fff;
-    }
-    .nav a.active .dotNav{
-      background:#111827;
-      border-color:#111827;
-    }
+    .nav a.active{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.10);color:var(--text);font-weight:900}
+    .dotNav{width:10px;height:10px;border-radius:999px;border:1px solid rgba(0,0,0,.25);background:#fff}
+    .nav a.active .dotNav{background:#111827;border-color:#111827}
 
-    .side-bottom{
-      position:absolute;
-      left:14px; right:14px; bottom:14px;
-      display:grid;
-      gap:10px;
-    }
+    .side-bottom{position:absolute;left:14px;right:14px;bottom:14px;display:grid;gap:10px}
 
     .main{padding:18px}
-    .topbar{
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      margin-bottom:16px;
-    }
-    .topbar h1{margin:0;font-size:22px; font-weight:900}
-    .top-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .kpi{
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap:12px;
-    }
+    .topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}
+    .topbar h1{margin:0;font-size:22px;font-weight:900}
+
+    .kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
     .stat .label{font-size:12px;color:var(--muted)}
     .stat .value{font-size:22px;font-weight:900;margin-top:6px}
     .stat .sub{font-size:12px;color:var(--muted);margin-top:6px}
 
     table{width:100%;border-collapse:collapse}
-    th,td{padding:12px 10px; border-bottom:1px solid var(--line); text-align:left; font-size:13px}
-    th{color:var(--muted); font-weight:800; font-size:12px; letter-spacing:.03em; text-transform:uppercase}
-    tr:hover td{background: rgba(0,0,0,.02)}
+    th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
+    th{color:var(--muted);font-weight:900;font-size:12px;letter-spacing:.03em;text-transform:uppercase}
+    tr:hover td{background:rgba(0,0,0,.02)}
 
-    .grid2{display:grid;grid-template-columns: 1fr 1fr; gap:12px}
-    .grid3{display:grid;grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .spacer{height:12px}
 
     .imgPrev{
-      width:100%;
-      border:1px solid var(--line);
-      border-radius: 14px;
-      overflow:hidden;
-      background: #F3F4F6;
-      aspect-ratio: 16/9;
-      display:grid;
-      place-items:center;
-      color: var(--muted);
+      width:100%;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+      background:#F3F4F6;aspect-ratio:16/9;display:grid;place-items:center;color:var(--muted)
     }
     .imgPrev img{width:100%;height:100%;object-fit:cover;display:block}
 
-    @media (max-width: 1100px){
-      .kpi{grid-template-columns: repeat(2, minmax(0,1fr))}
-      .grid3{grid-template-columns: 1fr 1fr}
-    }
     @media (max-width: 860px){
-      .app{grid-template-columns: 1fr}
+      .app{grid-template-columns:1fr}
       .sidebar{position:relative;height:auto}
       .side-bottom{position:relative;left:auto;right:auto;bottom:auto}
-      .auth-shell{grid-template-columns: 1fr}
+      .auth-shell{grid-template-columns:1fr}
       .auth-left{border-right:none;border-bottom:1px solid var(--line)}
-      .grid2{grid-template-columns: 1fr}
-      .grid3{grid-template-columns: 1fr}
+      .grid2{grid-template-columns:1fr}
+      .kpi{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width: 560px){
+      .kpi{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -340,7 +253,7 @@
 <body>
   <div id="toasts" class="toast"></div>
 
-  <!-- AUTH VIEW -->
+  <!-- AUTH -->
   <section id="authView">
     <div class="auth-shell">
       <div class="auth-left">
@@ -363,7 +276,7 @@
           <label>Password</label>
           <input id="loginPass" type="password" placeholder="••••••••" />
           <button id="btnLogin" class="btn primary full">Log in</button>
-          <button id="btnForgot" class="btn ghost full">Forgot password</button>
+          <button id="btnForgot" class="btn full">Forgot password</button>
         </div>
 
         <div id="paneSignup" class="pane">
@@ -372,7 +285,7 @@
           <label>Password</label>
           <input id="signupPass" type="password" placeholder="Min 6 chars" />
           <button id="btnSignup" class="btn primary full">Create account</button>
-          <div class="hint">Use a real email for your store ownership.</div>
+          <div class="hint">Enable Firebase Auth → Email/Password</div>
         </div>
 
         <div id="authAlert" class="alert"></div>
@@ -380,28 +293,23 @@
 
       <div class="auth-right">
         <div class="card pad">
-          <div class="pill"><span class="badge">Owner</span> Multi-store console</div>
-          <h2 style="margin:12px 0 6px 0; font-weight:900;">Clean white UI, black accents.</h2>
-          <p class="muted" style="margin:0;line-height:1.6;">
-            Create stores, add products with images, bundles, coupons, and track orders.
-          </p>
+          <div class="pill"><span class="badge">Owner</span> Dashboard</div>
+          <h2 style="margin:12px 0 6px 0;font-weight:900;">White theme, black accents.</h2>
+          <p class="muted" style="margin:0;line-height:1.6;">Create stores and manage products with images.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- APP VIEW -->
+  <!-- APP -->
   <section id="appView" class="hidden">
     <div class="app">
-
       <aside class="sidebar">
         <div class="side-top">
-          <div class="brandMark" id="brandMark">
-            <span class="muted" style="font-weight:900;">T</span>
-          </div>
+          <div class="brandMark" id="brandMark"><span class="muted" style="font-weight:900;">T</span></div>
           <div style="min-width:0">
-            <div class="title">Owner Console</div>
-            <div class="sub" id="storeChip">No store selected</div>
+            <div style="font-weight:900;">Owner Console</div>
+            <div class="muted" id="storeChip" style="font-size:12px;">No store selected</div>
           </div>
         </div>
 
@@ -409,7 +317,7 @@
 
         <div class="card pad">
           <div class="muted" style="font-size:12px;">Signed in as</div>
-          <div id="userEmail" style="font-weight:800; margin-top:6px; overflow:hidden; text-overflow:ellipsis;">—</div>
+          <div id="userEmail" style="font-weight:800;margin-top:6px;overflow:hidden;text-overflow:ellipsis;">—</div>
           <div class="spacer"></div>
           <label>Your stores</label>
           <select id="storeSelect"></select>
@@ -420,9 +328,6 @@
         <nav class="nav" id="nav">
           <a href="#overview" data-page="overview" class="active"><span class="dotNav"></span> Overview</a>
           <a href="#products" data-page="products"><span class="dotNav"></span> Products</a>
-          <a href="#bundles" data-page="bundles"><span class="dotNav"></span> Bundles</a>
-          <a href="#coupons" data-page="coupons"><span class="dotNav"></span> Coupons</a>
-          <a href="#orders" data-page="orders"><span class="dotNav"></span> Orders</a>
           <a href="#settings" data-page="settings"><span class="dotNav"></span> Settings</a>
         </nav>
 
@@ -437,13 +342,11 @@
             <h1 id="pageTitle">Overview</h1>
             <div class="muted" id="pageSubtitle">Analytics and recent orders.</div>
           </div>
-          <div class="top-actions">
+          <div class="row">
             <div class="pill">Mode: <b>Owner</b></div>
-            <div class="pill">Theme: <b>Light</b></div>
           </div>
         </div>
 
-        <!-- OVERVIEW -->
         <section data-view="overview">
           <div class="kpi">
             <div class="card pad stat">
@@ -472,46 +375,17 @@
 
           <div class="card pad">
             <div style="font-weight:900;">Recent Orders</div>
-            <div class="muted" style="font-size:12px;margin-top:4px;">Last 10 orders in this store.</div>
-            <div style="margin-top:10px; overflow:auto;">
-              <table>
-                <thead><tr><th>Order</th><th>Date</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead>
-                <tbody id="recentOrdersBody">
-                  <tr><td colspan="5" class="muted">No orders yet.</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="spacer"></div>
-
-          <div class="card pad">
-            <div style="font-weight:900;">Top Sold Products</div>
-            <div class="muted" style="font-size:12px;margin-top:4px;">Computed from orders.</div>
-            <div style="margin-top:10px; overflow:auto;">
-              <table>
-                <thead><tr><th>Product</th><th>Sold Qty</th></tr></thead>
-                <tbody id="topSoldBody">
-                  <tr><td colspan="2" class="muted">No data yet.</td></tr>
-                </tbody>
-              </table>
-            </div>
+            <div class="muted" style="font-size:12px;margin-top:4px;">(Will appear when customer app starts placing orders.)</div>
           </div>
         </section>
 
-        <!-- PRODUCTS -->
         <section data-view="products" class="hidden">
           <div class="grid2">
             <div class="card pad">
-              <div style="font-weight:900;">Add / Edit Product</div>
-              <div class="hint">
-                Image options:
-                <br>• Upload file (recommended)
-                <br>• Or paste a <b>direct image URL</b> (must end with .jpg/.png/.webp etc)
-              </div>
-              <div class="spacer"></div>
+              <div style="font-weight:900;">Add Product</div>
+              <div class="hint">Upload image (recommended) or paste a direct image URL.</div>
 
-              <input id="prodId" class="hidden" />
+              <div class="spacer"></div>
 
               <label>Name</label>
               <input id="prodName" placeholder="Milk" />
@@ -531,19 +405,8 @@
 
               <div class="spacer"></div>
 
-              <div class="grid2">
-                <div>
-                  <label>Price</label>
-                  <input id="prodPrice" type="number" min="0" step="0.01" placeholder="5.50" />
-                </div>
-                <div>
-                  <label>Active</label>
-                  <select id="prodActive">
-                    <option value="true">Yes (visible)</option>
-                    <option value="false">No (hidden)</option>
-                  </select>
-                </div>
-              </div>
+              <label>Price</label>
+              <input id="prodPrice" type="number" min="0" step="0.01" placeholder="5.50" />
 
               <div class="spacer"></div>
 
@@ -552,301 +415,54 @@
 
               <div class="spacer"></div>
 
-              <label>Or upload image file (recommended)</label>
+              <label>Or upload image file</label>
               <input id="prodImageFile" type="file" accept="image/*" />
 
               <div class="spacer"></div>
 
-              <div class="row">
-                <button id="btnSaveProduct" class="btn primary">Save product</button>
-                <button id="btnResetProduct" class="btn">Reset</button>
-                <button id="btnDeleteProduct" class="btn danger hidden">Delete</button>
-              </div>
+              <button id="btnSaveProduct" class="btn primary full">Save Product</button>
             </div>
 
             <div class="card pad">
               <div style="font-weight:900;">Preview</div>
-              <div class="muted" style="font-size:12px;margin-top:4px;">Customers view.</div>
               <div class="spacer"></div>
               <div class="imgPrev" id="prodPreview">No image</div>
               <div class="spacer"></div>
               <div class="pill">Name: <b id="pvName">—</b></div>
               <div class="spacer"></div>
               <div class="pill">Price: <b id="pvPrice">—</b></div>
-              <div class="spacer"></div>
-              <div class="pill">Stock: <b id="pvStock">—</b></div>
-              <div class="spacer"></div>
-              <div class="pill">Category: <b id="pvCat">—</b></div>
-            </div>
-          </div>
-
-          <div class="spacer"></div>
-
-          <div class="card pad">
-            <div class="row" style="justify-content:space-between;">
-              <div>
-                <div style="font-weight:900;">Products</div>
-                <div class="muted" style="font-size:12px;margin-top:4px;">Click a row to edit.</div>
-              </div>
-              <div class="row">
-                <input id="prodSearch" placeholder="Search products..." style="width:260px;" />
-                <button id="btnReloadProducts" class="btn">Reload</button>
-              </div>
-            </div>
-            <div style="margin-top:10px; overflow:auto;">
-              <table>
-                <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Active</th></tr></thead>
-                <tbody id="productsBody">
-                  <tr><td colspan="5" class="muted">No products yet.</td></tr>
-                </tbody>
-              </table>
             </div>
           </div>
         </section>
 
-        <!-- BUNDLES -->
-        <section data-view="bundles" class="hidden">
-          <div class="grid2">
-            <div class="card pad">
-              <div style="font-weight:900;">Create Bundle / Deal</div>
-              <div class="hint">Pick products + quantities, set bundle price.</div>
-              <div class="spacer"></div>
-
-              <input id="bundleId" class="hidden" />
-
-              <label>Title</label>
-              <input id="bundleTitle" placeholder="Breakfast Deal" />
-
-              <div class="spacer"></div>
-
-              <div class="grid2">
-                <div>
-                  <label>Bundle Price</label>
-                  <input id="bundlePrice" type="number" min="0" step="0.01" placeholder="9.99" />
-                </div>
-                <div>
-                  <label>Active</label>
-                  <select id="bundleActive">
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="spacer"></div>
-
-              <label>Image URL (optional)</label>
-              <input id="bundleImageUrl" placeholder="https://.../bundle.png" />
-
-              <div class="spacer"></div>
-
-              <div class="card pad" style="background: var(--panel2); box-shadow:none;">
-                <div style="font-weight:800;">Add items</div>
-                <div class="spacer"></div>
-                <div class="grid2">
-                  <div>
-                    <label>Product</label>
-                    <select id="bundlePickProduct"></select>
-                  </div>
-                  <div>
-                    <label>Qty</label>
-                    <input id="bundlePickQty" type="number" min="1" value="1" />
-                  </div>
-                </div>
-                <div class="spacer"></div>
-                <button id="btnAddBundleItem" class="btn full">Add item</button>
-              </div>
-
-              <div class="spacer"></div>
-
-              <div class="card pad" style="background: var(--panel2); box-shadow:none;">
-                <div style="font-weight:800;">Bundle items</div>
-                <div class="muted" style="font-size:12px;margin-top:4px;">Remove items if needed.</div>
-                <div class="spacer"></div>
-                <div id="bundleItemsList" class="hint">No items added.</div>
-              </div>
-
-              <div class="spacer"></div>
-              <div class="row">
-                <button id="btnSaveBundle" class="btn primary">Save bundle</button>
-                <button id="btnResetBundle" class="btn">Reset</button>
-                <button id="btnDeleteBundle" class="btn danger hidden">Delete</button>
-              </div>
-            </div>
-
-            <div class="card pad">
-              <div style="font-weight:900;">Bundles</div>
-              <div class="muted" style="font-size:12px;margin-top:4px;">Click a row to edit.</div>
-              <div class="spacer"></div>
-              <div style="overflow:auto;">
-                <table>
-                  <thead><tr><th>Title</th><th>Price</th><th>Active</th><th>Items</th></tr></thead>
-                  <tbody id="bundlesBody">
-                    <tr><td colspan="4" class="muted">No bundles yet.</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- COUPONS -->
-        <section data-view="coupons" class="hidden">
-          <div class="grid2">
-            <div class="card pad">
-              <div style="font-weight:900;">Create Coupon</div>
-              <div class="hint">Customers can apply this at checkout.</div>
-              <div class="spacer"></div>
-
-              <label>Code (uppercase)</label>
-              <input id="couponCode" placeholder="SAVE10" />
-
-              <div class="spacer"></div>
-
-              <div class="grid3">
-                <div>
-                  <label>Type</label>
-                  <select id="couponType">
-                    <option value="percent">Percent</option>
-                    <option value="fixed">Fixed</option>
-                  </select>
-                </div>
-                <div>
-                  <label>Value</label>
-                  <input id="couponValue" type="number" min="0" step="0.01" placeholder="10" />
-                </div>
-                <div>
-                  <label>Active</label>
-                  <select id="couponActive">
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="spacer"></div>
-
-              <button id="btnSaveCoupon" class="btn primary full">Save coupon</button>
-              <div class="spacer"></div>
-              <div class="hint">Saving again with same code overwrites.</div>
-            </div>
-
-            <div class="card pad">
-              <div style="font-weight:900;">Coupons</div>
-              <div class="muted" style="font-size:12px;margin-top:4px;">Manage store discount codes.</div>
-              <div class="spacer"></div>
-              <div style="overflow:auto;">
-                <table>
-                  <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Active</th></tr></thead>
-                  <tbody id="couponsBody">
-                    <tr><td colspan="4" class="muted">No coupons yet.</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ORDERS -->
-        <section data-view="orders" class="hidden">
-          <div class="card pad">
-            <div class="row" style="justify-content:space-between;">
-              <div>
-                <div style="font-weight:900;">Orders</div>
-                <div class="muted" style="font-size:12px;margin-top:4px;">All orders for this store.</div>
-              </div>
-              <button id="btnReloadOrders" class="btn">Reload</button>
-            </div>
-            <div class="spacer"></div>
-            <div style="overflow:auto;">
-              <table>
-                <thead><tr><th>Order</th><th>Date</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead>
-                <tbody id="ordersBody">
-                  <tr><td colspan="5" class="muted">No orders yet.</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- SETTINGS -->
         <section data-view="settings" class="hidden">
           <div class="card pad">
             <div style="font-weight:900;">Store Settings</div>
-            <div class="hint">Rename store, toggle visibility, upload logo, export JSON.</div>
             <div class="spacer"></div>
 
-            <div class="grid2">
-              <div>
-                <label>Store name</label>
-                <input id="setStoreName" placeholder="My Store" />
-              </div>
-              <div>
-                <label>Slug (for customer URL)</label>
-                <input id="setStoreSlug" placeholder="my-store" />
-              </div>
-            </div>
+            <label>Logo URL (or upload file below)</label>
+            <input id="logoUrl" placeholder="https://.../logo.png" />
 
             <div class="spacer"></div>
 
-            <div class="grid2">
-              <div>
-                <label>Public store</label>
-                <select id="setStorePublic">
-                  <option value="true">Yes (customers can see)</option>
-                  <option value="false">No (private)</option>
-                </select>
-              </div>
-              <div>
-                <label>Currency</label>
-                <input id="setStoreCurrency" placeholder="USD" />
-              </div>
-            </div>
+            <label>Upload Logo File</label>
+            <input id="logoFile" type="file" accept="image/*" />
 
             <div class="spacer"></div>
 
-            <div class="card pad" style="background: var(--panel2); box-shadow:none;">
-              <div style="font-weight:900;">Market Logo</div>
-              <div class="hint">This will appear in the sidebar + customer store header later.</div>
-              <div class="spacer"></div>
-
-              <div class="grid2">
-                <div>
-                  <label>Logo URL (optional)</label>
-                  <input id="setLogoUrl" placeholder="https://.../logo.png" />
-                </div>
-                <div>
-                  <label>Or upload logo file</label>
-                  <input id="setLogoFile" type="file" accept="image/*" />
-                </div>
-              </div>
-
-              <div class="spacer"></div>
-              <div class="imgPrev" id="logoPreview">No logo</div>
-
-              <div class="spacer"></div>
-              <button id="btnSaveLogo" class="btn primary">Save logo</button>
-            </div>
+            <div class="imgPrev" id="logoPreview">No logo</div>
 
             <div class="spacer"></div>
 
-            <div class="row">
-              <button id="btnSaveStoreSettings" class="btn primary">Save settings</button>
-              <button id="btnExportStoreJSON" class="btn">Export store JSON</button>
-            </div>
-
-            <div class="spacer"></div>
-            <div class="hint">
-              Customer app can resolve the store using the slug.
-            </div>
+            <button id="btnSaveLogo" class="btn primary">Save Logo</button>
           </div>
         </section>
-
       </main>
     </div>
   </section>
 
 <script type="module">
+  // Firebase imports
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
   import {
     getAuth, onAuthStateChanged,
@@ -855,18 +471,10 @@
     sendPasswordResetEmail,
     signOut
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getDatabase, ref, get, update, push } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+  import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
-  import {
-    getDatabase, ref, get, update, push, remove
-  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-
-  import {
-    getStorage, ref as sRef, uploadBytes, getDownloadURL
-  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
-
-  // ======================================================
-  // YOUR FIREBASE CONFIG (from your code)
-  // ======================================================
+  // Config (your project)
   const firebaseConfig = {
     apiKey: "AIzaSyCDQod1xzLOqAFgRDN50ohwLGWBtBwFVLc",
     authDomain: "trolley-89d31.firebaseapp.com",
@@ -887,17 +495,16 @@
   const $$ = (s)=>Array.from(document.querySelectorAll(s));
   const money = (n)=>`$${Number(n||0).toFixed(2)}`;
 
-  // ---------- Toasts ----------
   function toast(type, title, msg){
     const wrap = $("#toasts");
     const el = document.createElement("div");
     el.className = "t";
-    const dotClass = type === "good" ? "good" : type === "bad" ? "bad" : "warn";
+    const dot = type==="good"?"good":type==="bad"?"bad":"warn";
     el.innerHTML = `
-      <div class="dot ${dotClass}"></div>
+      <div class="dot ${dot}"></div>
       <div>
         <div class="title">${escapeHtml(title)}</div>
-        <div class="msg">${escapeHtml(msg || "")}</div>
+        <div class="msg">${escapeHtml(msg||"")}</div>
       </div>
     `;
     wrap.appendChild(el);
@@ -905,46 +512,19 @@
     setTimeout(()=>{ el.remove(); }, 3800);
   }
 
-  // ---------- Safe async helpers ----------
-  function withTimeout(promise, ms, label){
-    let t;
-    const timeout = new Promise((_,rej)=>{
-      t = setTimeout(()=> rej(new Error(`${label} timed out after ${ms}ms`)), ms);
-    });
-    return Promise.race([promise, timeout]).finally(()=>clearTimeout(t));
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
   }
 
-  function setBusy(btn, busy){
-    if(!btn) return;
-    btn.disabled = !!busy;
-    if(!btn.dataset._old) btn.dataset._old = btn.textContent;
-    btn.textContent = busy ? "Working..." : btn.dataset._old;
-  }
-
-  async function testImageLoad(url){
-    // Checks if an <img> can load this URL (direct image link)
-    return await new Promise((resolve, reject)=>{
-      const img = new Image();
-      img.onload = ()=> resolve(true);
-      img.onerror = ()=> reject(new Error("Image URL could not be loaded (not a direct image or blocked)."));
-      img.src = url;
-    });
-  }
-
-  // ---------- Views ----------
-  const authView = $("#authView");
-  const appView  = $("#appView");
   function setAppVisible(isLoggedIn){
-    authView.classList.toggle("hidden", isLoggedIn);
-    appView.classList.toggle("hidden", !isLoggedIn);
+    $("#authView").classList.toggle("hidden", isLoggedIn);
+    $("#appView").classList.toggle("hidden", !isLoggedIn);
     document.body.style.overflowY = isLoggedIn ? "auto" : "hidden";
   }
 
-  // ---------- Auth UI ----------
-  const authAlert = $("#authAlert");
-  const showAuthAlert = (m)=>{ authAlert.style.display="block"; authAlert.textContent=m; };
-  const clearAuthAlert= ()=>{ authAlert.style.display="none"; authAlert.textContent=""; };
-
+  // Tabs
   $$(".tab").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       $$(".tab").forEach(b=>b.classList.remove("active"));
@@ -952,44 +532,41 @@
       const which = btn.dataset.tab;
       $("#paneLogin").classList.toggle("active", which==="login");
       $("#paneSignup").classList.toggle("active", which==="signup");
-      clearAuthAlert();
+      $("#authAlert").style.display="none";
     });
   });
 
+  // Auth actions
   $("#btnLogin").addEventListener("click", async ()=>{
-    clearAuthAlert();
     const email = $("#loginEmail").value.trim();
     const pass  = $("#loginPass").value;
     if(!email || !pass) return showAuthAlert("Enter email and password.");
     try{
       await signInWithEmailAndPassword(auth, email, pass);
-      toast("good","Welcome","Logged in successfully.");
+      toast("good","Welcome","Logged in.");
     }catch(e){
       showAuthAlert(e.message);
     }
   });
 
   $("#btnSignup").addEventListener("click", async ()=>{
-    clearAuthAlert();
     const email = $("#signupEmail").value.trim();
     const pass  = $("#signupPass").value;
     if(!email || !pass) return showAuthAlert("Enter email and password.");
-    if(pass.length < 6) return showAuthAlert("Password must be at least 6 characters.");
     try{
       await createUserWithEmailAndPassword(auth, email, pass);
-      toast("good","Account created","You can now create your store.");
+      toast("good","Account created","Now create your store.");
     }catch(e){
       showAuthAlert(e.message);
     }
   });
 
   $("#btnForgot").addEventListener("click", async ()=>{
-    clearAuthAlert();
     const email = $("#loginEmail").value.trim();
-    if(!email) return showAuthAlert("Type your email in the login field first.");
+    if(!email) return showAuthAlert("Enter your email first.");
     try{
       await sendPasswordResetEmail(auth, email);
-      showAuthAlert("Password reset email sent.");
+      showAuthAlert("Reset email sent.");
     }catch(e){
       showAuthAlert(e.message);
     }
@@ -1000,24 +577,24 @@
     toast("warn","Signed out","You are logged out.");
   });
 
-  // ---------- Routing ----------
-  const pageTitle = $("#pageTitle");
-  const pageSubtitle = $("#pageSubtitle");
+  function showAuthAlert(m){
+    const a = $("#authAlert");
+    a.style.display="block";
+    a.textContent = m;
+  }
+
+  // Routing
   const pageMeta = {
     overview: { title:"Overview", subtitle:"Analytics and recent orders." },
-    products: { title:"Products", subtitle:"Add, edit, and manage your catalog." },
-    bundles:  { title:"Bundles", subtitle:"Create deals using your products." },
-    coupons:  { title:"Coupons", subtitle:"Discount codes for your store." },
-    orders:   { title:"Orders", subtitle:"View customer orders." },
-    settings: { title:"Settings", subtitle:"Branding, visibility, export." }
+    products: { title:"Products", subtitle:"Add products to your store." },
+    settings: { title:"Settings", subtitle:"Store logo and branding." }
   };
-
   function showPage(page){
-    $$("#nav a").forEach(a => a.classList.toggle("active", a.dataset.page === page));
-    $$("section[data-view]").forEach(sec => sec.classList.toggle("hidden", sec.dataset.view !== page));
+    $$("#nav a").forEach(a=>a.classList.toggle("active", a.dataset.page === page));
+    $$("section[data-view]").forEach(s=>s.classList.toggle("hidden", s.dataset.view !== page));
     const m = pageMeta[page] || pageMeta.overview;
-    pageTitle.textContent = m.title;
-    pageSubtitle.textContent = m.subtitle;
+    $("#pageTitle").textContent = m.title;
+    $("#pageSubtitle").textContent = m.subtitle;
   }
   function currentHashPage(){
     const p = (location.hash || "#overview").replace("#","");
@@ -1025,847 +602,185 @@
   }
   window.addEventListener("hashchange", ()=> showPage(currentHashPage()));
 
-  // ---------- State ----------
+  // State
   let currentUser = null;
   let currentStoreId = null;
-  let storesIndex = []; // {storeId, name, slug}
-  let productsCache = {};
-  let bundlesCache = {};
-  let ordersCache = {};
-  let bundleDraftItems = {};
 
-  // ---------- Helpers ----------
-  const normSlug = (s)=> (s||"")
-    .trim().toLowerCase()
-    .replace(/[^a-z0-9]+/g,'-')
-    .replace(/(^-|-$)/g,'');
-
-  function requireStore(){
-    if(!currentStoreId){
-      toast("warn","No store selected","Create or select a store first.");
-      throw new Error("No store selected");
-    }
-  }
-
-  // ---------- Store selection ----------
-  const storeSelect = $("#storeSelect");
-  const storeChip = $("#storeChip");
-
+  // Store load (minimal for now)
   async function loadMyStores(){
     const snap = await get(ref(db, `ownerStores/${currentUser.uid}`));
-    const val = snap.exists() ? snap.val() : {};
-    const storeIds = Object.keys(val || {});
-    storesIndex = [];
+    const storeIds = snap.exists() ? Object.keys(snap.val()||{}) : [];
+    const sel = $("#storeSelect");
 
-    for(const sid of storeIds){
-      const metaSnap = await get(ref(db, `stores/${sid}/meta`));
-      if(metaSnap.exists()){
-        const m = metaSnap.val();
-        storesIndex.push({ storeId: sid, name: m.name || sid, slug: m.slug || "", logoUrl: m.logoUrl || "" });
-      }
-    }
-
-    if(storesIndex.length === 0){
-      storeSelect.innerHTML = `<option value="">No stores yet</option>`;
+    if(storeIds.length === 0){
+      sel.innerHTML = `<option value="">No stores yet</option>`;
       currentStoreId = null;
-      storeChip.textContent = "No store selected";
-      renderBrandMark(null);
+      $("#storeChip").textContent = "No store selected";
       return;
     }
 
-    storeSelect.innerHTML = storesIndex.map(s => `<option value="${s.storeId}">${escapeHtml(s.name)}</option>`).join("");
-
-    if(!currentStoreId || !storesIndex.some(s=>s.storeId===currentStoreId)){
-      currentStoreId = storesIndex[0].storeId;
-    }
-    storeSelect.value = currentStoreId;
-    await onStoreChanged();
+    // pick first store only for now (simple)
+    currentStoreId = storeIds[0];
+    sel.innerHTML = `<option value="${currentStoreId}">${currentStoreId}</option>`;
+    $("#storeChip").textContent = `Store: ${currentStoreId}`;
   }
 
-  storeSelect.addEventListener("change", async ()=>{
-    currentStoreId = storeSelect.value || null;
-    await onStoreChanged();
-  });
-
-  $("#btnNewStore").addEventListener("click", ()=> openCreateStoreModal());
-
-  async function openCreateStoreModal(){
+  $("#btnNewStore").addEventListener("click", async ()=>{
     try{
-      const name = prompt("Store name? (example: Oudies Mart)")?.trim();
+      const name = prompt("Store name?")?.trim();
       if(!name) return;
-      const slugInput = prompt("Store slug? (example: oudies-mart)")?.trim() || normSlug(name);
-      const slug = normSlug(slugInput);
-      if(!slug) return toast("bad","Invalid slug","Slug cannot be empty.");
 
-      await createStore({ name, slug });
-      toast("good","Store created", `Store "${name}" created.`);
+      const storeKey = push(ref(db, "stores")).key;
+      const now = Date.now();
+
+      const updates = {};
+      updates[`stores/${storeKey}/meta`] = { name, createdAt: now, logoUrl:"" };
+      updates[`ownerStores/${currentUser.uid}/${storeKey}`] = true;
+
+      await update(ref(db), updates);
+
+      toast("good","Store created", name);
       await loadMyStores();
     }catch(e){
       toast("bad","Create store failed", e.message || String(e));
     }
-  }
+  });
 
-  async function createStore({name, slug}){
-    const now = Date.now();
-    const storeKey = push(ref(db, "stores")).key;
-
-    const updates = {};
-    updates[`stores/${storeKey}/meta`] = {
-      name, slug,
-      isPublic: true,
-      currency: "USD",
-      logoUrl: "",
-      createdAt: now
-    };
-    updates[`stores/${storeKey}/owners/${currentUser.uid}`] = {
-      role: "owner",
-      email: currentUser.email || "",
-      createdAt: now
-    };
-    updates[`ownerStores/${currentUser.uid}/${storeKey}`] = true;
-    updates[`slugs/${slug}`] = storeKey;
-
-    await withTimeout(update(ref(db), updates), 12000, "Create store");
-    currentStoreId = storeKey;
-  }
-
-  async function onStoreChanged(){
-    if(!currentStoreId) return;
-
-    const metaSnap = await get(ref(db, `stores/${currentStoreId}/meta`));
-    const meta = metaSnap.exists() ? metaSnap.val() : {};
-    storeChip.textContent = meta.name ? `${meta.name}` : `Store ${currentStoreId}`;
-    renderBrandMark(meta.logoUrl || null);
-
-    await Promise.all([
-      loadProducts(),
-      loadBundles(),
-      loadCoupons(),
-      loadOrders(),
-      loadSettingsIntoForm()
-    ]);
-
-    renderProductsTable();
-    renderBundlesTable();
-    renderCouponsTable();
-    renderOrdersTables();
-    renderAnalytics();
-    refreshBundleProductPicker();
-  }
-
-  // ---------- Brand mark (logo) ----------
-  function renderBrandMark(logoUrl){
-    const box = $("#brandMark");
-    if(logoUrl){
-      box.innerHTML = `<img src="${escapeAttr(logoUrl)}" alt="logo">`;
-    }else{
-      box.innerHTML = `<span class="muted" style="font-weight:900;">T</span>`;
-    }
-  }
-
-  // ---------- Products ----------
-  const prodId = $("#prodId");
-  const prodName = $("#prodName");
-  const prodCategory = $("#prodCategory");
-  const prodStock = $("#prodStock");
-  const prodPrice = $("#prodPrice");
-  const prodActive = $("#prodActive");
-  const prodImageUrl = $("#prodImageUrl");
-  const prodImageFile = $("#prodImageFile");
-
-  const prodPreview = $("#prodPreview");
-  const pvName = $("#pvName");
-  const pvPrice = $("#pvPrice");
-  const pvStock = $("#pvStock");
-  const pvCat = $("#pvCat");
-
-  let localFilePreviewUrl = null;
-
-  function setPreviewImage(src){
-    if(!src){
-      prodPreview.textContent = "No image";
-      return;
-    }
-    prodPreview.innerHTML = `<img src="${escapeAttr(src)}" alt="preview">`;
+  // Product preview
+  let localPreview = null;
+  function setPreview(src){
+    const box = $("#prodPreview");
+    if(!src){ box.textContent="No image"; return; }
+    box.innerHTML = `<img src="${src}" alt="preview">`;
   }
 
   function updatePreview(){
-    pvName.textContent = prodName.value.trim() || "—";
-    pvPrice.textContent = prodPrice.value ? money(Number(prodPrice.value)) : "—";
-    pvStock.textContent = prodStock.value ? String(Number(prodStock.value)) : "—";
-    pvCat.textContent = prodCategory.value.trim() || "—";
-
-    // Priority: local file preview > url input
-    if(localFilePreviewUrl){
-      setPreviewImage(localFilePreviewUrl);
-      return;
-    }
-    const url = prodImageUrl.value.trim();
-    setPreviewImage(url || "");
+    $("#pvName").textContent = $("#prodName").value.trim() || "—";
+    $("#pvPrice").textContent = $("#prodPrice").value ? money(Number($("#prodPrice").value)) : "—";
+    const url = $("#prodImageUrl").value.trim();
+    if(localPreview) return setPreview(localPreview);
+    setPreview(url);
   }
+  ["prodName","prodPrice","prodImageUrl"].forEach(id=> $("#"+id).addEventListener("input", updatePreview));
 
-  [prodName, prodCategory, prodStock, prodPrice, prodImageUrl].forEach(el=> el.addEventListener("input", updatePreview));
-
-  prodImageFile.addEventListener("change", ()=>{
-    if(localFilePreviewUrl){
-      URL.revokeObjectURL(localFilePreviewUrl);
-      localFilePreviewUrl = null;
-    }
-    const f = prodImageFile.files?.[0];
-    if(f){
-      localFilePreviewUrl = URL.createObjectURL(f);
-    }
+  $("#prodImageFile").addEventListener("change", ()=>{
+    if(localPreview){ URL.revokeObjectURL(localPreview); localPreview=null; }
+    const f = $("#prodImageFile").files?.[0];
+    if(f) localPreview = URL.createObjectURL(f);
     updatePreview();
   });
 
-  function resetProductForm(){
-    prodId.value = "";
-    prodName.value = "";
-    prodCategory.value = "";
-    prodStock.value = "";
-    prodPrice.value = "";
-    prodActive.value = "true";
-    prodImageUrl.value = "";
-    prodImageFile.value = "";
-    if(localFilePreviewUrl){
-      URL.revokeObjectURL(localFilePreviewUrl);
-      localFilePreviewUrl = null;
-    }
-    $("#btnDeleteProduct").classList.add("hidden");
-    updatePreview();
-  }
-  $("#btnResetProduct").addEventListener("click", resetProductForm);
-
+  // Save product (writes to RTDB + uploads to Storage if file selected)
   $("#btnSaveProduct").addEventListener("click", async ()=>{
-    const btn = $("#btnSaveProduct");
     try{
-      requireStore();
+      if(!currentStoreId) return toast("warn","No store","Create a store first.");
 
-      const name = prodName.value.trim();
-      const category = prodCategory.value.trim();
-      const stock = Number(prodStock.value);
-      const price = Number(prodPrice.value);
-      const active = (prodActive.value === "true");
-      const urlInput = prodImageUrl.value.trim();
-      const file = prodImageFile.files?.[0] || null;
+      const name = $("#prodName").value.trim();
+      const category = $("#prodCategory").value.trim();
+      const stock = Number($("#prodStock").value);
+      const price = Number($("#prodPrice").value);
+      const urlInput = $("#prodImageUrl").value.trim();
+      const file = $("#prodImageFile").files?.[0] || null;
 
-      if(!name) return toast("bad","Missing name","Product name is required.");
-      if(!category) return toast("bad","Missing category","Category is required.");
-      if(!Number.isFinite(stock) || stock < 0) return toast("bad","Invalid stock","Stock must be 0 or more.");
-      if(!Number.isFinite(price) || price < 0) return toast("bad","Invalid price","Price must be 0 or more.");
+      if(!name || !category) return toast("bad","Missing fields","Name + category required.");
+      if(!Number.isFinite(stock) || stock < 0) return toast("bad","Invalid stock","Must be 0 or more.");
+      if(!Number.isFinite(price) || price < 0) return toast("bad","Invalid price","Must be 0 or more.");
 
-      // If URL provided (and no file), test it loads (to avoid broken images)
-      if(urlInput && !file){
-        try{
-          await withTimeout(testImageLoad(urlInput), 6000, "Image URL check");
-        }catch(e){
-          return toast("bad","Bad image URL", e.message);
-        }
-      }
+      const btn = $("#btnSaveProduct");
+      btn.disabled = true;
+      btn.textContent = "Working...";
 
-      setBusy(btn, true);
-
-      const now = Date.now();
-      let id = prodId.value || null;
-      if(!id) id = push(ref(db, `stores/${currentStoreId}/products`)).key;
-
+      const id = push(ref(db, `stores/${currentStoreId}/products`)).key;
       let imageUrl = urlInput || "";
 
-      // Upload file if provided
       if(file){
-        // NOTE: if Storage rules or bucket config are wrong, this used to hang.
-        // now it will timeout and show you the real error.
-        const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+        const safeName = file.name.replace(/[^\w.\-]+/g,"_");
         const path = `stores/${currentStoreId}/products/${id}/${safeName}`;
         const storageRef = sRef(storage, path);
-
-        await withTimeout(uploadBytes(storageRef, file), 15000, "Image upload");
-        imageUrl = await withTimeout(getDownloadURL(storageRef), 8000, "Get image URL");
+        await uploadBytes(storageRef, file);
+        imageUrl = await getDownloadURL(storageRef);
       }
 
-      const payload = {
-        name,
-        category,
-        stock,
-        price,
-        imageUrl,
-        active,
-        updatedAt: now
-      };
-      if(!productsCache[id]?.createdAt) payload.createdAt = now;
+      await update(ref(db, `stores/${currentStoreId}/products/${id}`), {
+        name, category, stock, price, imageUrl,
+        createdAt: Date.now(),
+        active: true
+      });
 
-      await withTimeout(update(ref(db, `stores/${currentStoreId}/products/${id}`), payload), 12000, "Save product");
-
-      toast("good","Saved","Product saved successfully.");
-      await loadProducts();
-      renderProductsTable();
-      refreshBundleProductPicker();
-      resetProductForm();
+      toast("good","Saved","Product saved to Firebase.");
+      $("#prodName").value = "";
+      $("#prodCategory").value = "";
+      $("#prodStock").value = "";
+      $("#prodPrice").value = "";
+      $("#prodImageUrl").value = "";
+      $("#prodImageFile").value = "";
+      if(localPreview){ URL.revokeObjectURL(localPreview); localPreview=null; }
+      updatePreview();
     }catch(e){
       toast("bad","Save failed", e.message || String(e));
     }finally{
-      setBusy(btn, false);
+      const btn = $("#btnSaveProduct");
+      btn.disabled = false;
+      btn.textContent = "Save Product";
     }
   });
 
-  $("#btnDeleteProduct").addEventListener("click", async ()=>{
-    const btn = $("#btnDeleteProduct");
-    try{
-      requireStore();
-      const id = prodId.value;
-      if(!id) return;
-      if(!confirm("Delete this product?")) return;
-
-      setBusy(btn, true);
-      await withTimeout(remove(ref(db, `stores/${currentStoreId}/products/${id}`)), 10000, "Delete product");
-      toast("good","Deleted","Product deleted.");
-      await loadProducts();
-      renderProductsTable();
-      refreshBundleProductPicker();
-      resetProductForm();
-    }catch(e){
-      toast("bad","Delete failed", e.message || String(e));
-    }finally{
-      setBusy(btn, false);
-    }
-  });
-
-  $("#btnReloadProducts").addEventListener("click", async ()=>{
-    try{
-      requireStore();
-      await loadProducts();
-      renderProductsTable();
-      toast("good","Reloaded","Products refreshed.");
-    }catch(e){
-      toast("bad","Reload failed", e.message || String(e));
-    }
-  });
-
-  async function loadProducts(){
-    requireStore();
-    const snap = await get(ref(db, `stores/${currentStoreId}/products`));
-    productsCache = snap.exists() ? (snap.val() || {}) : {};
+  // Logo save
+  function setBrandMark(url){
+    const box = $("#brandMark");
+    if(url) box.innerHTML = `<img src="${url}" alt="logo">`;
+    else box.innerHTML = `<span class="muted" style="font-weight:900;">T</span>`;
   }
-
-  function renderProductsTable(){
-    const body = $("#productsBody");
-    const q = ($("#prodSearch").value || "").trim().toLowerCase();
-
-    const rows = Object.entries(productsCache)
-      .map(([id,p])=>({id, ...p}))
-      .filter(p=>{
-        if(!q) return true;
-        return (p.name||"").toLowerCase().includes(q)
-          || (p.category||"").toLowerCase().includes(q)
-          || String(p.price||"").includes(q);
-      })
-      .sort((a,b)=> (b.updatedAt||0) - (a.updatedAt||0));
-
-    if(rows.length === 0){
-      body.innerHTML = `<tr><td colspan="5" class="muted">No products found.</td></tr>`;
-      $("#kpiProducts").textContent = "0";
-      return;
-    }
-
-    body.innerHTML = rows.map(p=>`
-      <tr data-pid="${escapeAttr(p.id)}" style="cursor:pointer;">
-        <td><b>${escapeHtml(p.name||"")}</b></td>
-        <td class="muted">${escapeHtml(p.category||"")}</td>
-        <td>${money(p.price)}</td>
-        <td>${Number(p.stock||0)}</td>
-        <td>${p.active ? "Yes" : "No"}</td>
-      </tr>
-    `).join("");
-
-    $("#kpiProducts").textContent = String(rows.filter(x=>x.active).length);
-
-    body.querySelectorAll("tr[data-pid]").forEach(tr=>{
-      tr.addEventListener("click", ()=>{
-        const id = tr.dataset.pid;
-        const p = productsCache[id];
-        if(!p) return;
-
-        prodId.value = id;
-        prodName.value = p.name || "";
-        prodCategory.value = p.category || "";
-        prodStock.value = String(p.stock ?? "");
-        prodPrice.value = String(p.price ?? "");
-        prodActive.value = p.active ? "true" : "false";
-        prodImageUrl.value = p.imageUrl || "";
-        prodImageFile.value = "";
-        if(localFilePreviewUrl){
-          URL.revokeObjectURL(localFilePreviewUrl);
-          localFilePreviewUrl = null;
-        }
-        $("#btnDeleteProduct").classList.remove("hidden");
-        updatePreview();
-        toast("warn","Editing","You are editing an existing product.");
-      });
-    });
-  }
-
-  $("#prodSearch").addEventListener("input", renderProductsTable);
-
-  // ---------- Bundles ----------
-  const bundleId = $("#bundleId");
-  const bundleTitle = $("#bundleTitle");
-  const bundlePrice = $("#bundlePrice");
-  const bundleActive = $("#bundleActive");
-  const bundleImageUrl = $("#bundleImageUrl");
-  const bundlePickProduct = $("#bundlePickProduct");
-  const bundlePickQty = $("#bundlePickQty");
-  const bundleItemsList = $("#bundleItemsList");
-
-  function resetBundleForm(){
-    bundleId.value = "";
-    bundleTitle.value = "";
-    bundlePrice.value = "";
-    bundleActive.value = "true";
-    bundleImageUrl.value = "";
-    bundleDraftItems = {};
-    $("#btnDeleteBundle").classList.add("hidden");
-    renderBundleItemsList();
-  }
-  $("#btnResetBundle").addEventListener("click", resetBundleForm);
-
-  function refreshBundleProductPicker(){
-    const products = Object.entries(productsCache).map(([id,p])=>({id, ...p}))
-      .sort((a,b)=>(a.name||"").localeCompare(b.name||""));
-    bundlePickProduct.innerHTML = products.length
-      ? products.map(p=>`<option value="${escapeAttr(p.id)}">${escapeHtml(p.name||p.id)}</option>`).join("")
-      : `<option value="">No products yet</option>`;
-  }
-
-  $("#btnAddBundleItem").addEventListener("click", ()=>{
-    const pid = bundlePickProduct.value;
-    const qty = Math.max(1, Number(bundlePickQty.value)||1);
-    if(!pid) return toast("bad","No product","Add products first.");
-    bundleDraftItems[pid] = (bundleDraftItems[pid] || 0) + qty;
-    renderBundleItemsList();
-  });
-
-  function renderBundleItemsList(){
-    const entries = Object.entries(bundleDraftItems);
-    if(entries.length === 0){
-      bundleItemsList.innerHTML = `<span class="muted">No items added.</span>`;
-      return;
-    }
-    bundleItemsList.innerHTML = entries.map(([pid,qty])=>{
-      const p = productsCache[pid];
-      const name = p?.name || pid;
-      return `
-        <div class="row" style="justify-content:space-between; border-bottom:1px solid var(--line); padding:8px 0;">
-          <div><b>${escapeHtml(name)}</b> <span class="muted">x${qty}</span></div>
-          <button class="btn danger" data-rm="${escapeAttr(pid)}">Remove</button>
-        </div>
-      `;
-    }).join("");
-
-    bundleItemsList.querySelectorAll("[data-rm]").forEach(b=>{
-      b.addEventListener("click", ()=>{
-        delete bundleDraftItems[b.dataset.rm];
-        renderBundleItemsList();
-      });
-    });
-  }
-
-  async function loadBundles(){
-    requireStore();
-    const snap = await get(ref(db, `stores/${currentStoreId}/bundles`));
-    bundlesCache = snap.exists() ? (snap.val() || {}) : {};
-  }
-
-  function renderBundlesTable(){
-    const body = $("#bundlesBody");
-    const rows = Object.entries(bundlesCache).map(([id,b])=>({id, ...b}))
-      .sort((a,b)=> (b.updatedAt||0) - (a.updatedAt||0));
-
-    if(rows.length === 0){
-      body.innerHTML = `<tr><td colspan="4" class="muted">No bundles yet.</td></tr>`;
-      return;
-    }
-
-    body.innerHTML = rows.map(b=>{
-      const itemsCount = b.items ? Object.keys(b.items).length : 0;
-      return `
-        <tr data-bid="${escapeAttr(b.id)}" style="cursor:pointer;">
-          <td><b>${escapeHtml(b.title||"")}</b></td>
-          <td>${money(b.bundlePrice)}</td>
-          <td>${b.active ? "Yes" : "No"}</td>
-          <td class="muted">${itemsCount} item(s)</td>
-        </tr>
-      `;
-    }).join("");
-
-    body.querySelectorAll("tr[data-bid]").forEach(tr=>{
-      tr.addEventListener("click", ()=>{
-        const id = tr.dataset.bid;
-        const b = bundlesCache[id];
-        if(!b) return;
-
-        bundleId.value = id;
-        bundleTitle.value = b.title || "";
-        bundlePrice.value = String(b.bundlePrice ?? "");
-        bundleActive.value = b.active ? "true" : "false";
-        bundleImageUrl.value = b.imageUrl || "";
-        bundleDraftItems = {};
-        if(b.items){
-          for(const [pid,obj] of Object.entries(b.items)){
-            bundleDraftItems[pid] = Number(obj?.qty || 0);
-          }
-        }
-        $("#btnDeleteBundle").classList.remove("hidden");
-        renderBundleItemsList();
-        toast("warn","Editing","You are editing an existing bundle.");
-      });
-    });
-  }
-
-  $("#btnSaveBundle").addEventListener("click", async ()=>{
-    const btn = $("#btnSaveBundle");
-    try{
-      requireStore();
-      const title = bundleTitle.value.trim();
-      const bp = Number(bundlePrice.value);
-      const active = (bundleActive.value === "true");
-      const imageUrl = bundleImageUrl.value.trim();
-
-      if(!title) return toast("bad","Missing title","Bundle title is required.");
-      if(!Number.isFinite(bp) || bp < 0) return toast("bad","Invalid price","Bundle price must be 0 or more.");
-      if(Object.keys(bundleDraftItems).length === 0) return toast("bad","No items","Add at least 1 item to the bundle.");
-
-      setBusy(btn, true);
-
-      const now = Date.now();
-      let id = bundleId.value || null;
-      if(!id) id = push(ref(db, `stores/${currentStoreId}/bundles`)).key;
-
-      const items = {};
-      for(const [pid,qty] of Object.entries(bundleDraftItems)){
-        items[pid] = { qty: Number(qty) };
-      }
-
-      const payload = { title, bundlePrice: bp, imageUrl, active, items, updatedAt: now };
-      if(!bundlesCache[id]?.createdAt) payload.createdAt = now;
-
-      await withTimeout(update(ref(db, `stores/${currentStoreId}/bundles/${id}`), payload), 12000, "Save bundle");
-
-      toast("good","Saved","Bundle saved.");
-      await loadBundles();
-      renderBundlesTable();
-      resetBundleForm();
-    }catch(e){
-      toast("bad","Save failed", e.message || String(e));
-    }finally{
-      setBusy(btn, false);
-    }
-  });
-
-  $("#btnDeleteBundle").addEventListener("click", async ()=>{
-    const btn = $("#btnDeleteBundle");
-    try{
-      requireStore();
-      const id = bundleId.value;
-      if(!id) return;
-      if(!confirm("Delete this bundle?")) return;
-      setBusy(btn, true);
-      await withTimeout(remove(ref(db, `stores/${currentStoreId}/bundles/${id}`)), 10000, "Delete bundle");
-      toast("good","Deleted","Bundle deleted.");
-      await loadBundles();
-      renderBundlesTable();
-      resetBundleForm();
-    }catch(e){
-      toast("bad","Delete failed", e.message || String(e));
-    }finally{
-      setBusy(btn, false);
-    }
-  });
-
-  // ---------- Coupons ----------
-  async function loadCoupons(){
-    requireStore();
-    const snap = await get(ref(db, `stores/${currentStoreId}/coupons`));
-    const val = snap.exists() ? (snap.val() || {}) : {};
-    $("#couponsBody").dataset._cache = JSON.stringify(val);
-    renderCouponsTable();
-  }
-
-  function getCouponsCache(){
-    try{ return JSON.parse($("#couponsBody").dataset._cache || "{}"); }
-    catch{ return {}; }
-  }
-
-  function renderCouponsTable(){
-    const body = $("#couponsBody");
-    const coupons = getCouponsCache();
-    const rows = Object.entries(coupons).map(([code,c])=>({code, ...c}))
-      .sort((a,b)=> (a.code||"").localeCompare(b.code||""));
-
-    if(rows.length === 0){
-      body.innerHTML = `<tr><td colspan="4" class="muted">No coupons yet.</td></tr>`;
-      return;
-    }
-
-    body.innerHTML = rows.map(c=>`
-      <tr>
-        <td><b>${escapeHtml(c.code)}</b></td>
-        <td class="muted">${escapeHtml(c.type||"")}</td>
-        <td>${Number(c.value||0)}</td>
-        <td>${c.active ? "Yes" : "No"}</td>
-      </tr>
-    `).join("");
-  }
-
-  $("#btnSaveCoupon").addEventListener("click", async ()=>{
-    const btn = $("#btnSaveCoupon");
-    try{
-      requireStore();
-      const code = ($("#couponCode").value || "").trim().toUpperCase();
-      const type = $("#couponType").value;
-      const value = Number($("#couponValue").value);
-      const active = ($("#couponActive").value === "true");
-
-      if(!code) return toast("bad","Missing code","Coupon code is required.");
-      if(!/^[A-Z0-9_-]{3,20}$/.test(code)) return toast("bad","Invalid code","Use A-Z, 0-9, _ or -. Length 3–20.");
-      if(!Number.isFinite(value) || value <= 0) return toast("bad","Invalid value","Value must be > 0.");
-      if(type === "percent" && value > 90) return toast("bad","Too high","Percent should be <= 90.");
-
-      setBusy(btn, true);
-      const payload = { type, value, active, updatedAt: Date.now() };
-      await withTimeout(update(ref(db, `stores/${currentStoreId}/coupons/${code}`), payload), 12000, "Save coupon");
-      toast("good","Saved","Coupon saved.");
-      $("#couponCode").value = "";
-      $("#couponValue").value = "";
-      await loadCoupons();
-    }catch(e){
-      toast("bad","Save failed", e.message || String(e));
-    }finally{
-      setBusy(btn, false);
-    }
-  });
-
-  // ---------- Orders & Analytics ----------
-  async function loadOrders(){
-    requireStore();
-    const snap = await get(ref(db, `stores/${currentStoreId}/orders`));
-    ordersCache = snap.exists() ? (snap.val() || {}) : {};
-  }
-
-  function renderOrdersTables(){
-    const all = Object.entries(ordersCache).map(([id,o])=>({id, ...o}))
-      .sort((a,b)=> (b.createdAt||0) - (a.createdAt||0));
-
-    const ordersBody = $("#ordersBody");
-    const recentBody = $("#recentOrdersBody");
-
-    if(all.length === 0){
-      ordersBody.innerHTML = `<tr><td colspan="5" class="muted">No orders yet.</td></tr>`;
-      recentBody.innerHTML = `<tr><td colspan="5" class="muted">No orders yet.</td></tr>`;
-      return;
-    }
-
-    const recent = all.slice(0,10);
-
-    ordersBody.innerHTML = all.map(o=> orderRowHTML(o)).join("");
-    recentBody.innerHTML = recent.map(o=> orderRowHTML(o)).join("");
-  }
-
-  function orderRowHTML(o){
-    const dt = o.createdAt ? new Date(o.createdAt).toISOString().slice(0,19).replace("T"," ") : "—";
-    const cust = o.customer?.email || o.customer?.uid || "—";
-    const total = money(o.total || 0);
-    const status = o.status || "placed";
-    return `<tr>
-      <td><b>${escapeHtml(o.id)}</b></td>
-      <td class="muted">${escapeHtml(dt)}</td>
-      <td class="muted">${escapeHtml(cust)}</td>
-      <td>${total}</td>
-      <td class="muted">${escapeHtml(status)}</td>
-    </tr>`;
-  }
-
-  function renderAnalytics(){
-    const orders = Object.values(ordersCache || {});
-    const totalOrders = orders.length;
-    const revenue = orders.reduce((s,o)=> s + Number(o.total||0), 0);
-
-    const sold = {};
-    for(const o of orders){
-      const lines = o.lines || {};
-      if(Array.isArray(lines)){
-        for(const l of lines){
-          const pid = l.productId || l.id || l.productID;
-          const qty = Number(l.qty||0);
-          if(pid) sold[pid] = (sold[pid]||0) + qty;
-        }
-      }else{
-        for(const [pid, l] of Object.entries(lines)){
-          const qty = Number(l.qty||0);
-          sold[pid] = (sold[pid]||0) + qty;
-        }
-      }
-    }
-
-    const top = Object.entries(sold).sort((a,b)=> b[1]-a[1]).slice(0,10);
-
-    $("#kpiRevenue").textContent = money(revenue);
-    $("#kpiOrders").textContent = String(totalOrders);
-
-    if(top.length){
-      const [topPid, topQty] = top[0];
-      const name = productsCache[topPid]?.name || topPid;
-      $("#kpiTop").textContent = `${name} (${topQty})`;
-      $("#topSoldBody").innerHTML = top.map(([pid,qty])=>{
-        const n = productsCache[pid]?.name || pid;
-        return `<tr><td><b>${escapeHtml(n)}</b></td><td>${qty}</td></tr>`;
-      }).join("");
-    }else{
-      $("#kpiTop").textContent = "—";
-      $("#topSoldBody").innerHTML = `<tr><td colspan="2" class="muted">No data yet.</td></tr>`;
-    }
-  }
-
-  $("#btnReloadOrders").addEventListener("click", async ()=>{
-    try{
-      requireStore();
-      await loadOrders();
-      renderOrdersTables();
-      renderAnalytics();
-      toast("good","Reloaded","Orders refreshed.");
-    }catch(e){
-      toast("bad","Reload failed", e.message || String(e));
-    }
-  });
-
-  // ---------- Settings + Logo ----------
-  async function loadSettingsIntoForm(){
-    requireStore();
-    const snap = await get(ref(db, `stores/${currentStoreId}/meta`));
-    const m = snap.exists() ? snap.val() : {};
-    $("#setStoreName").value = m.name || "";
-    $("#setStoreSlug").value = m.slug || "";
-    $("#setStorePublic").value = (m.isPublic === false) ? "false" : "true";
-    $("#setStoreCurrency").value = m.currency || "USD";
-    $("#setLogoUrl").value = m.logoUrl || "";
-    renderLogoPreview(m.logoUrl || "");
-  }
-
-  function renderLogoPreview(url){
+  function setLogoPreview(url){
     const box = $("#logoPreview");
-    if(url){
-      box.innerHTML = `<img src="${escapeAttr(url)}" alt="logo preview">`;
-    }else{
-      box.textContent = "No logo";
-    }
+    if(url) box.innerHTML = `<img src="${url}" alt="logo preview">`;
+    else box.textContent="No logo";
   }
 
-  $("#setLogoUrl").addEventListener("input", ()=>{
-    const url = $("#setLogoUrl").value.trim();
-    renderLogoPreview(url);
-  });
-
-  $("#setLogoFile").addEventListener("change", ()=>{
-    const f = $("#setLogoFile").files?.[0];
-    if(!f) return;
-    const preview = URL.createObjectURL(f);
-    renderLogoPreview(preview);
-    // release later
-    setTimeout(()=>URL.revokeObjectURL(preview), 8000);
+  let logoLocal = null;
+  $("#logoUrl").addEventListener("input", ()=> setLogoPreview($("#logoUrl").value.trim()));
+  $("#logoFile").addEventListener("change", ()=>{
+    if(logoLocal){ URL.revokeObjectURL(logoLocal); logoLocal=null; }
+    const f = $("#logoFile").files?.[0];
+    if(f) logoLocal = URL.createObjectURL(f);
+    setLogoPreview(logoLocal);
   });
 
   $("#btnSaveLogo").addEventListener("click", async ()=>{
-    const btn = $("#btnSaveLogo");
     try{
-      requireStore();
-      setBusy(btn, true);
+      if(!currentStoreId) return toast("warn","No store","Create a store first.");
 
-      const urlInput = $("#setLogoUrl").value.trim();
-      const file = $("#setLogoFile").files?.[0] || null;
+      const btn = $("#btnSaveLogo");
+      btn.disabled = true;
+      btn.textContent = "Working...";
+
+      const urlInput = $("#logoUrl").value.trim();
+      const file = $("#logoFile").files?.[0] || null;
 
       let logoUrl = urlInput || "";
 
-      if(urlInput && !file){
-        await withTimeout(testImageLoad(urlInput), 6000, "Logo URL check");
-      }
-
       if(file){
-        const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+        const safeName = file.name.replace(/[^\w.\-]+/g,"_");
         const path = `stores/${currentStoreId}/branding/logo_${Date.now()}_${safeName}`;
         const storageRef = sRef(storage, path);
-        await withTimeout(uploadBytes(storageRef, file), 15000, "Logo upload");
-        logoUrl = await withTimeout(getDownloadURL(storageRef), 8000, "Get logo URL");
+        await uploadBytes(storageRef, file);
+        logoUrl = await getDownloadURL(storageRef);
       }
 
-      await withTimeout(update(ref(db, `stores/${currentStoreId}/meta`), {
-        logoUrl,
-        updatedAt: Date.now()
-      }), 12000, "Save logo");
-
+      await update(ref(db, `stores/${currentStoreId}/meta`), { logoUrl, updatedAt: Date.now() });
+      setBrandMark(logoUrl);
+      setLogoPreview(logoUrl);
       toast("good","Saved","Logo saved.");
-      renderLogoPreview(logoUrl);
-      renderBrandMark(logoUrl);
-      // clear file input
-      $("#setLogoFile").value = "";
     }catch(e){
-      toast("bad","Logo save failed", e.message || String(e));
+      toast("bad","Logo failed", e.message || String(e));
     }finally{
-      setBusy(btn, false);
+      const btn = $("#btnSaveLogo");
+      btn.disabled = false;
+      btn.textContent = "Save Logo";
     }
   });
 
-  $("#btnSaveStoreSettings").addEventListener("click", async ()=>{
-    const btn = $("#btnSaveStoreSettings");
-    try{
-      requireStore();
-      const name = $("#setStoreName").value.trim();
-      const slug = normSlug($("#setStoreSlug").value.trim() || name);
-      const isPublic = ($("#setStorePublic").value === "true");
-      const currency = ($("#setStoreCurrency").value.trim() || "USD").toUpperCase();
-
-      if(!name) return toast("bad","Missing name","Store name is required.");
-      if(!slug) return toast("bad","Invalid slug","Slug cannot be empty.");
-
-      setBusy(btn, true);
-
-      const updates = {};
-      updates[`stores/${currentStoreId}/meta/name`] = name;
-      updates[`stores/${currentStoreId}/meta/slug`] = slug;
-      updates[`stores/${currentStoreId}/meta/isPublic`] = isPublic;
-      updates[`stores/${currentStoreId}/meta/currency`] = currency;
-      updates[`stores/${currentStoreId}/meta/updatedAt`] = Date.now();
-      updates[`slugs/${slug}`] = currentStoreId;
-
-      await withTimeout(update(ref(db), updates), 12000, "Save settings");
-
-      toast("good","Saved","Store settings saved.");
-      storeChip.textContent = name;
-      await loadMyStores();
-    }catch(e){
-      toast("bad","Save failed", e.message || String(e));
-    }finally{
-      setBusy(btn, false);
-    }
-  });
-
-  $("#btnExportStoreJSON").addEventListener("click", async ()=>{
-    try{
-      requireStore();
-      const snap = await get(ref(db, `stores/${currentStoreId}`));
-      const payload = snap.exists() ? snap.val() : {};
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `store_${currentStoreId}.json`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      toast("good","Exported","Store JSON exported.");
-    }catch(e){
-      toast("bad","Export failed", e.message || String(e));
-    }
-  });
-
-  // ---------- Init / Auth state ----------
+  // Auth state
   onAuthStateChanged(auth, async (user)=>{
     currentUser = user || null;
 
@@ -1873,66 +788,16 @@
       $("#userEmail").textContent = user.email || "(no email)";
       setAppVisible(true);
       showPage(currentHashPage());
-
       try{
         await loadMyStores();
-        if(currentStoreId){
-          await onStoreChanged();
-        }else{
-          toast("warn","No store yet","Click “Create new store”.");
-        }
+        toast("good","Ready","You can navigate now.");
       }catch(e){
         toast("bad","Load failed", e.message || String(e));
       }
     }else{
-      currentStoreId = null;
-      storesIndex = [];
-      productsCache = {};
-      bundlesCache = {};
-      ordersCache = {};
-      bundleDraftItems = {};
-      resetProductForm();
-      resetBundleForm();
-      renderBrandMark(null);
       setAppVisible(false);
     }
   });
-
-  // ---------- Remaining small functions ----------
-  function resetBundleForm(){
-    $("#bundleId").value = "";
-    $("#bundleTitle").value = "";
-    $("#bundlePrice").value = "";
-    $("#bundleActive").value = "true";
-    $("#bundleImageUrl").value = "";
-    bundleDraftItems = {};
-    $("#btnDeleteBundle").classList.add("hidden");
-    renderBundleItemsList();
-  }
-
-  async function loadCoupons(){ /* replaced above */ }
-  // (coupon functions already defined)
-
-  function escapeHtml(s){
-    return String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-  function escapeAttr(s){
-    return String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;");
-  }
 </script>
-
-<script>
-  // Bundles list renderer is in module scope; keep it in window for safety
-</script>
-
 </body>
 </html>
